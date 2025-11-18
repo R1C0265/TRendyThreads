@@ -1,5 +1,5 @@
 <?php
-require("../config/main.php");
+require("/config/main.php");
 $name = $_POST['name'];
 $email = $_POST['email'];
 
