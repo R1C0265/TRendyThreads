@@ -152,7 +152,7 @@ require_once 'partials/header.php';
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addBailForm" method="POST" action="#">
+                <form id="addBailForm">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -206,137 +206,192 @@ require_once 'partials/header.php';
                         <label for="bailDescription" class="form-label">Description</label>
                         <textarea class="form-control" id="bailDescription" name="b_description" placeholder="Enter bail description" rows="3"></textarea>
                     </div>
-                </form>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="saveBail()">Save Bail</button>
+                <button type="submit" class="btn btn-primary" id="btnSub" ">Save Bail</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Bail Detail Modal -->
-<div class="modal fade" id="bailDetailModal" tabindex="-1" aria-labelledby="bailDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-dark">
-                <h5 class="modal-title text-white" id="bailDetailModalLabel">Bail Details</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Bail Name</h6>
-                        <p class="text-muted" id="detailBailName">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Status</h6>
-                        <p class="text-muted" id="detailBailStatus">-</p>
-                    </div>
-                </div>
+<div class=" modal fade" id="bailDetailModal" tabindex="-1" aria-labelledby="bailDetailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-gradient-dark">
+                                <h5 class="modal-title text-white" id="bailDetailModalLabel">Bail Details</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Bail Name</h6>
+                                        <p class="text-muted" id="detailBailName">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Status</h6>
+                                        <p class="text-muted" id="detailBailStatus">-</p>
+                                    </div>
+                                </div>
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Items Available</h6>
-                        <p class="text-muted" id="detailBailItems">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Stock Quantity</h6>
-                        <p class="text-muted" id="detailBailStock">-</p>
-                    </div>
-                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Items Available</h6>
+                                        <p class="text-muted" id="detailBailItems">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Stock Quantity</h6>
+                                        <p class="text-muted" id="detailBailStock">-</p>
+                                    </div>
+                                </div>
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Purchase Date</h6>
-                        <p class="text-muted" id="detailBailPurchaseDate">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Stock Level</h6>
-                        <div id="detailBailProgressBar">
-                            <div class="progress">
-                                <div class="progress-bar bg-gradient-info" role="progressbar" style="width: 0%"></div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Purchase Date</h6>
+                                        <p class="text-muted" id="detailBailPurchaseDate">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Stock Level</h6>
+                                        <div id="detailBailProgressBar">
+                                            <div class="progress">
+                                                <div class="progress-bar bg-gradient-info" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-dark mb-2">Description</h6>
+                                        <p class="text-muted" id="detailBailDescription">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Edit</button>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <h6 class="text-dark mb-2">Description</h6>
-                        <p class="text-muted" id="detailBailDescription">-</p>
-                    </div>
-                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Edit</button>
-            </div>
-        </div>
-    </div>
-</div>
+            <script>
+                $("#addBailForm").submit(function(e) {
+                    e.preventDefault();
 
-<script>
-    function showBailDetail(id, name, items, purchaseDate, status, stockLevel, description) {
-        // Set the bail details
-        document.getElementById('detailBailName').textContent = name;
-        document.getElementById('detailBailStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
-        document.getElementById('detailBailItems').textContent = items;
-        document.getElementById('detailBailStock').textContent = stockLevel + '%';
-        document.getElementById('detailBailPurchaseDate').textContent = purchaseDate;
-        document.getElementById('detailBailDescription').textContent = description;
+                    $.ajax({
+                        url: "model/addBail.php",
+                        type: "POST",
+                        data: new FormData(this),
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        beforeSend: function() {
+                            $("#btnSub").addClass("disabled");
+                            $("#btnSub").html("Processing");
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            if (data == 1) {
+                                window.location.href = "admin/index.php";
+                            } else if (data == 2) {
+                                window.location.href = "employee/";
+                            } else if (data == 3) {
+                                window.location.href = "customer/index.php";
+                            } else {
+                                // show server response for debugging
+                                alert("Login failed. Server returned: " + data);
+                            }
+                            $("#btnSub").removeClass("disabled");
+                            $("#btnSub").html("Adding Bail");
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error(
+                                "AJAX error:",
+                                textStatus,
+                                errorThrown,
+                                "response:",
+                                jqXHR.responseText
+                            );
+                            alert(
+                                "Request failed: " + textStatus + " — see console for details."
+                            );
+                            $("#btnSub").prop("disabled", false).text("LOGIN");
+                        },
+                    });
+                });
+            </script>
 
-        // Update progress bar color based on stock level
-        let barColor = 'bg-gradient-success';
-        if (stockLevel < 30) {
-            barColor = 'bg-gradient-danger';
-        } else if (stockLevel < 70) {
-            barColor = 'bg-gradient-warning';
-        }
+            <script>
+                function showBailDetail(id, name, items, purchaseDate, status, stockLevel, description) {
+                    // Set the bail details
+                    document.getElementById('detailBailName').textContent = name;
+                    document.getElementById('detailBailStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                    document.getElementById('detailBailItems').textContent = items;
+                    document.getElementById('detailBailStock').textContent = stockLevel + '%';
+                    document.getElementById('detailBailPurchaseDate').textContent = purchaseDate;
+                    document.getElementById('detailBailDescription').textContent = description;
 
-        document.getElementById('detailBailProgressBar').innerHTML = `
+                    // Update progress bar color based on stock level
+                    let barColor = 'bg-gradient-success';
+                    if (stockLevel < 30) {
+                        barColor = 'bg-gradient-danger';
+                    } else if (stockLevel < 70) {
+                        barColor = 'bg-gradient-warning';
+                    }
+
+                    document.getElementById('detailBailProgressBar').innerHTML = `
             <div class="progress">
                 <div class="progress-bar ${barColor}" role="progressbar" aria-valuenow="${stockLevel}" aria-valuemin="0" aria-valuemax="100" style="width: ${stockLevel}%"></div>
             </div>
         `;
 
-        // Show the modal
-        const modal = new bootstrap.Modal(document.getElementById('bailDetailModal'));
-        modal.show();
-    }
+                    // Show the modal
+                    const modal = new bootstrap.Modal(document.getElementById('bailDetailModal'));
+                    modal.show();
+                }
 
-    function saveBail() {
-        const form = document.getElementById('addBailForm');
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-            form.classList.add('was-validated');
-        } else {
-            // Submit the form
-            const formData = new FormData(form);
-            fetch('../model/addBail.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('addBailModal'));
-                        modal.hide();
-                        // Optionally reload the page or add the new bail to the table
-                        location.reload();
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    }
-</script>
+                /* function saveBail() {
+
+                                $("#addBailForm").submit(function(e) {
+                                    e.preventDefault();
+
+                                    $.ajax({
+                                        url: "../model/addBail.php",
+                                        type: "POST",
+                                        data: new FormData(this),
+                                        contentType: false,
+                                        cache: false,
+                                        processData: false,
+                                        beforeSend: function() {
+                                            $("#saveBtn").html("Saving Bail");
+
+                                        },
+                                        success: function(data) {
+                                            console.log(data);
+                                            if (data == 1) {
+
+                                                setTimeout(function() {
+                                                    alert("Bail Created!");
+                                                    window.location.reload();
+                                                }, 500);
+                                            } else if (data == 3) {
+                                                alert("Project already exists in system!");
+                                            } else {
+                                                //user not found
+                                                alert("Error Creating Account!");
+                                            }
+                                        },
+                                        error: function() {}
+                                    });
+                   
+                                });
+                } */
+            </script>
 
 
 
-<?php
-require_once "partials/footer.php";
-?>
+            <?php
+            require_once "partials/footer.php";
+            ?>

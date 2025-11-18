@@ -1,6 +1,6 @@
 <!-- <?php
 
-/* 
+
 require_once("config/main.php");
     
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,13 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
  
     $save = $db->query("INSERT INTO `bails` (`b_name`, `b_items_count`, `b_avg_price_per_item`, `b_purchase_date`, `b_description`, `b_status`, `b_stock_quantity`) 
-    VALUES (NULL, '$$b_name', '$b_items_count', '$b_avg_price_per_item', '$b_purchase_date', '$b_description', '$b_status', '$b_stock_quantity')");
+    VALUES (NULL, '$b_name', '$b_items_count', '$b_avg_price_per_item', '$b_purchase_date', '$b_description', '$b_status', '$b_stock_quantity')");
     if($save) echo 1;
     else echo 2;
-} */
-?>
- 
- <?php
+} 
+
+ /* 
 require_once '../config/main.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -63,5 +62,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $stmt->close();
-}
+}*/
 ?>
