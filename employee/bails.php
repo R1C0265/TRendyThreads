@@ -212,6 +212,7 @@ require_once 'partials/header.php';
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary" id="btnSub" ">Save Bail</button>
             </div>
+            </form>
         </div>
     </div>
 </div>
@@ -276,12 +277,13 @@ require_once 'partials/header.php';
                         </div>
                     </div>
             </div>
+            <script src="../assets/js/jquery-3.7.1.min.js"></script>
             <script>
                 $("#addBailForm").submit(function(e) {
                     e.preventDefault();
 
                     $.ajax({
-                        url: "model/addBail.php",
+                        url: "../model/addBail.php",
                         type: "POST",
                         data: new FormData(this),
                         contentType: false,
@@ -294,14 +296,10 @@ require_once 'partials/header.php';
                         success: function(data) {
                             console.log(data);
                             if (data == 1) {
-                                window.location.href = "admin/index.php";
-                            } else if (data == 2) {
-                                window.location.href = "employee/";
-                            } else if (data == 3) {
-                                window.location.href = "customer/index.php";
+                                alert("hazaa!")
                             } else {
                                 // show server response for debugging
-                                alert("Login failed. Server returned: " + data);
+                                alert("Error in insertion. Server returned: " + data);
                             }
                             $("#btnSub").removeClass("disabled");
                             $("#btnSub").html("Adding Bail");
