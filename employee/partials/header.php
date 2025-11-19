@@ -1,4 +1,6 @@
 <?php
+
+require_once "../config/main.php";
 //Global Header for TrendyTHreads CMS
 
 // Get current page filename

@@ -1,6 +1,23 @@
 <?php
 $page_title = "Bails - Trendy Threads";
 require_once 'partials/header.php';
+
+// 2. Define the Query
+$sql = "SELECT 
+            b_id, 
+            b_name, 
+            b_items_count, 
+            b_purchase_date, 
+            b_status, 
+            b_stock_quantity
+        FROM bails WHERE b_status != 'sold' 
+        ORDER BY b_created_date DESC";
+
+$bails = $db->query($sql)->fetchAll();
+
+
+
+// --- END: PHP Data Fetching ---
 ?>
 <div class="container-fluid py-2">
     <div class="row">
@@ -61,79 +78,87 @@ require_once 'partials/header.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr onclick="showBailDetail(1, 'Asana', 50, '2024-10-15', 'available', 60, 'High-quality clothing items')" style="cursor: pointer;">
-                                    <td>
-                                        <div class="d-flex px-2">
-                                            <div>
-                                                <img src="assets/img/small-logos/logo-asana.svg" class="avatar avatar-sm rounded-circle me-2" alt="asana">
-                                            </div>
-                                            <div class="my-auto">
-                                                <h6 class="mb-0 text-sm">Asana</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-sm font-weight-bold mb-0">50</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-sm font-weight-bold mb-0">2024-10-15</p>
-                                    </td>
-                                    <td>
-                                        <span class="text-xs font-weight-bold">working</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <span class="me-2 text-xs font-weight-bold">60%</span>
-                                            <div>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle">
-                                        <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();">
-                                            <i class="fa fa-ellipsis-v text-xs"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr onclick="showBailDetail(2, 'Github', 75, '2024-09-20', 'sold', 100, 'Tech merchandise and apparel')" style="cursor: pointer;">
-                                    <td>
-                                        <div class="d-flex px-2">
-                                            <div>
-                                                <img src="assets/img/small-logos/github.svg" class="avatar avatar-sm rounded-circle me-2" alt="github">
-                                            </div>
-                                            <div class="my-auto">
-                                                <h6 class="mb-0 text-sm">Github</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-sm font-weight-bold mb-0">75</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-sm font-weight-bold mb-0">2024-09-20</p>
-                                    </td>
-                                    <td>
-                                        <span class="text-xs font-weight-bold">done</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <span class="me-2 text-xs font-weight-bold">100%</span>
-                                            <div>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle">
-                                        <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-v text-xs"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <?php if (!empty($bails)): ?>
+                                    <?php foreach ($bails as $bail):
+                                        // Calculate Stock Level and determine progress bar color
+                                        // We use b_items_count as the total capacity for stock level calculation.
+                                        $stock_percentage = ($bail['b_stock_quantity'] / $bail['b_items_count']) * 100;
+                                        $stock_percentage = round($stock_percentage); // Round for display
 
+                                        $bar_color = 'bg-gradient-success';
+                                        if ($stock_percentage < 30) {
+                                            $bar_color = 'bg-gradient-danger';
+                                        } elseif ($stock_percentage < 70) {
+                                            $bar_color = 'bg-gradient-warning';
+                                        } else {
+                                            $bar_color = 'bg-gradient-success'; // Default color for > 70%
+                                        }
+
+                                        // Note: Assuming you can fetch 'b_description' for showBailDetail 
+                                        // You might need an AJAX call later for description, or fetch it now.
+                                        // For now, we'll pass placeholder data if not fetched.
+                                        $description = "Description not fetched in the main query.";
+
+                                        // Status Mapping for display
+                                        $display_status = htmlspecialchars(ucfirst($bail['b_status']));
+
+                                        // Image/Logo: Use a standard placeholder or logic to select an image
+                                        $image_src = 'assets/img/small-logos/logo-asana.svg'; // Placeholder
+                                    ?>
+
+                                        <tr
+                                            onclick="showBailDetail(
+                                        '<?php echo $bail['b_id']; ?>', 
+                                        '<?php echo htmlspecialchars($bail['b_name']); ?>', 
+                                        '<?php echo $bail['b_items_count']; ?>', 
+                                        '<?php echo $bail['b_purchase_date']; ?>', 
+                                        '<?php echo $bail['b_status']; ?>', 
+                                        '<?php echo $stock_percentage; ?>', 
+                                        '<?php echo $description; ?>'
+                                    )"
+                                            style="cursor: pointer;">
+
+                                            <td>
+                                                <div class="d-flex px-2">
+                                                    <div>
+                                                        <img src="<?php echo $image_src; ?>" class="avatar avatar-sm rounded-circle me-2" alt="bail-logo">
+                                                    </div>
+                                                    <div class="my-auto">
+                                                        <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($bail['b_name']); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-sm font-weight-bold mb-0"><?php echo $bail['b_items_count']; ?></p>
+                                            </td>
+                                            <td>
+                                                <p class="text-sm font-weight-bold mb-0"><?php echo $bail['b_purchase_date']; ?></p>
+                                            </td>
+                                            <td>
+                                                <span class="text-xs font-weight-bold"><?php echo $display_status; ?></span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <span class="me-2 text-xs font-weight-bold"><?php echo $stock_percentage; ?>%</span>
+                                                    <div>
+                                                        <div class="progress">
+                                                            <div class="progress-bar <?php echo $bar_color; ?>" role="progressbar" aria-valuenow="<?php echo $stock_percentage; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $stock_percentage; ?>%;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();">
+                                                    <i class="fa fa-ellipsis-v text-xs"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No bails found in the database.</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
