@@ -56,10 +56,13 @@ function isActive($pageName)
         class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2"
         id="sidenav-main">
         <div class="sidenav-header">
-            <i
-                class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
-                aria-hidden="true"
-                id="iconSidenav"></i>
+            <button
+                class="btn btn-link p-3 cursor-pointer text-dark position-absolute end-0 top-0"
+                id="iconSidenav"
+                onclick="toggleSidebar()"
+                aria-label="Close navigation">
+                <i class="fas fa-times" style="font-size: 18px;"></i>
+            </button>
             <a
                 class="navbar-brand px-4 py-3 m-0"
                 href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard "
@@ -137,7 +140,7 @@ function isActive($pageName)
                 </a>
                 <a
                     class="btn bg-gradient-dark w-100"
-                    href="https://www.creative-tim.com/product/material-dashboard-pro?ref=sidebarfree"
+                    href="../../index.html"
                     type="button">
                     Go To Main Site
                 </a>
@@ -174,9 +177,217 @@ function isActive($pageName)
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                         <div class="input-group input-group-outline"></div>
                     </div>
-                    <ul
-                        class="navbar-nav d-flex align-items-center justify-content-end"></ul>
+                    <ul class="navbar-nav d-flex align-items-center justify-content-end">
+                        <li class="nav-item ps-3 d-flex align-items-center">
+                            <button class="btn btn-link text-body p-2 m-0" id="iconNavbarSidenav" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                                <span class="hamburger-menu">
+                                    <span class="hamburger-line"></span>
+                                    <span class="hamburger-line"></span>
+                                    <span class="hamburger-line"></span>
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
         <!-- End Navbar -->
+
+        <!-- Sidebar Backdrop -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidenav-main');
+                const backdrop = document.getElementById('sidebarBackdrop');
+                const body = document.body;
+
+                if (sidebar.classList.contains('sidebar-open')) {
+                    closeSidebar();
+                } else {
+                    sidebar.classList.add('sidebar-open');
+                    backdrop.classList.add('show');
+                    body.style.overflow = 'hidden';
+                }
+            }
+
+            function closeSidebar() {
+                const sidebar = document.getElementById('sidenav-main');
+                const backdrop = document.getElementById('sidebarBackdrop');
+                const body = document.body;
+
+                sidebar.classList.remove('sidebar-open');
+                backdrop.classList.remove('show');
+                body.style.overflow = '';
+            }
+
+
+
+
+            // Close sidebar on escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeSidebar();
+                }
+            });
+        </script>
+
+        <style>
+            /* Professional Hamburger Menu */
+            .hamburger-menu {
+                display: flex;
+                flex-direction: column;
+                width: 24px;
+                height: 18px;
+                justify-content: space-between;
+                cursor: pointer;
+            }
+
+            .hamburger-line {
+                width: 100%;
+                height: 3px;
+                background-color: #344767;
+                border-radius: 2px;
+                transition: all 0.3s ease;
+            }
+
+            #iconNavbarSidenav {
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                transition: background-color 0.2s ease;
+            }
+
+            #iconNavbarSidenav:hover {
+                background-color: rgba(52, 71, 103, 0.1);
+            }
+
+            #iconNavbarSidenav:focus {
+                outline: 2px solid #344767;
+                outline-offset: 2px;
+            }
+
+            /* Professional Sidebar */
+            .sidenav {
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1050;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidenav.sidebar-open {
+                transform: translateX(0);
+            }
+
+            /* Backdrop */
+            .sidebar-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar-backdrop.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Close button styling */
+            #iconSidenav {
+                min-width: 40px;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+                transition: background-color 0.2s ease;
+            }
+
+            #iconSidenav:hover {
+                background-color: rgba(52, 71, 103, 0.1);
+            }
+
+            #iconSidenav:focus {
+                outline: 2px solid #344767;
+                outline-offset: 2px;
+            }
+
+            /* Responsive adjustments */
+            @media (min-width: 1200px) {
+                .sidenav {
+                    transform: translateX(0);
+                    position: relative;
+                }
+
+                .sidebar-backdrop {
+                    display: none;
+                }
+
+                .main-content {
+                    margin-left: 17.125rem;
+                }
+            }
+
+            @media (max-width: 1199.98px) {
+                .main-content {
+                    margin-left: 0 !important;
+                    width: 100% !important;
+                }
+            }
+
+            @media (max-width: 1199.98px) {
+                .sidenav {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s ease;
+                }
+
+                .sidenav.show {
+                    transform: translateX(0);
+                }
+
+                .main-content {
+                    margin-left: 0 !important;
+                }
+            }
+
+            .sidenav-toggler-inner {
+                width: 20px;
+                position: relative;
+                transform: rotate(0deg);
+                transition: 0.5s ease-in-out;
+            }
+
+            .sidenav-toggler-line {
+                display: block;
+                position: absolute;
+                height: 2px;
+                width: 100%;
+                background: #344767;
+                border-radius: 9px;
+                opacity: 1;
+                left: 0;
+                transform: rotate(0deg);
+                transition: 0.25s ease-in-out;
+            }
+
+            .sidenav-toggler-line:nth-child(1) {
+                top: 0px;
+            }
+
+            .sidenav-toggler-line:nth-child(2) {
+                top: 7px;
+            }
+
+            .sidenav-toggler-line:nth-child(3) {
+                top: 14px;
+            }
+        </style>
