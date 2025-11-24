@@ -64,95 +64,96 @@ require_once 'partials/header.php';
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                // Fetch all purchases with customer and bail details
-                                $sales = $db->query("
-                                    SELECT 
-                                        p.*,
-                                        c.c_name,
-                                        c.c_email,
-                                        b.b_name
-                                    FROM purchases p
-                                    INNER JOIN customers c ON p.p_customer_id = c.c_id
-                                    INNER JOIN bails b ON p.p_bail_id = b.b_id
-                                    ORDER BY p.p_purchase_date DESC
-                                ")->fetchAll();
-                                
-                                foreach ($sales as $sale) {
-                                    // Determine badge color based on status
-                                    $badgeColor = 'bg-gradient-secondary';
-                                    switch($sale['p_status']) {
-                                        case 'completed':
-                                            $badgeColor = 'bg-gradient-success';
-                                            break;
-                                        case 'pending':
-                                            $badgeColor = 'bg-gradient-warning';
-                                            break;
-                                        case 'cancelled':
-                                            $badgeColor = 'bg-gradient-danger';
-                                            break;
-                                        case 'refunded':
-                                            $badgeColor = 'bg-gradient-info';
-                                            break;
-                                    }
-                                ?>
-                                    <tr onclick="showSaleDetail(
-                                        <?php echo $sale['p_id']; ?>, 
-                                        '<?php echo htmlspecialchars($sale['c_name']); ?>', 
-                                        '<?php echo htmlspecialchars($sale['c_email']); ?>', 
-                                        '<?php echo htmlspecialchars($sale['b_name']); ?>', 
-                                        <?php echo $sale['p_quantity']; ?>, 
-                                        <?php echo $sale['p_unit_price']; ?>, 
-                                        <?php echo $sale['p_total_amount']; ?>, 
-                                        '<?php echo $sale['p_status']; ?>', 
-                                        '<?php echo htmlspecialchars($sale['p_payment_method']); ?>', 
-                                        '<?php echo date('Y-m-d', strtotime($sale['p_purchase_date'])); ?>',
-                                        '<?php echo htmlspecialchars($sale['p_notes'] ?? ''); ?>'
-                                    )" style="cursor: pointer;">
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div>
-                                                    <img src="assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user">
-                                                </div>
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($sale['c_name']); ?></h6>
-                                                    <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($sale['c_email']); ?></p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($sale['b_name']); ?></p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0"><?php echo $sale['p_quantity']; ?></p>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">$<?php echo number_format($sale['p_unit_price'], 2); ?></p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm <?php echo $badgeColor; ?>">$<?php echo number_format($sale['p_total_amount'], 2); ?></span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs font-weight-bold"><?php echo ucfirst($sale['p_status']); ?></span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs font-weight-bold"><?php echo date('M d, Y', strtotime($sale['p_purchase_date'])); ?></span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();">
-                                                <i class="fa fa-ellipsis-v text-xs"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php 
-                                }
-                                
-                                if (empty($sales)) {
-                                    echo '<tr><td colspan="8" class="text-center">No sales found</td></tr>';
-                                }
-                                ?>
-                            </tbody>
+                           <tbody>
+    <?php
+    // Fetch all purchases with customer and bail details
+    $sales = $db->query("
+        SELECT 
+            p.*,
+            c.c_name,
+            c.c_email,
+            b.b_name
+        FROM purchases p
+        INNER JOIN customers c ON p.p_customer_id = c.c_id
+        INNER JOIN bails b ON p.p_bail_id = b.b_id
+        ORDER BY p.p_purchase_date DESC
+    ")->fetchAll();
+    
+    foreach ($sales as $sale) {
+        // Determine badge color based on status
+        $badgeColor = 'bg-gradient-secondary';
+        switch($sale['p_status']) {
+            case 'completed':
+                $badgeColor = 'bg-gradient-success';
+                break;
+            case 'pending':
+                $badgeColor = 'bg-gradient-warning';
+                break;
+            case 'cancelled':
+                $badgeColor = 'bg-gradient-danger';
+                break;
+            case 'refunded':
+                $badgeColor = 'bg-gradient-info';
+                break;
+        }
+    ?>
+        <tr onclick="showSaleDetail(
+            <?php echo $sale['p_id']; ?>, 
+            '<?php echo htmlspecialchars($sale['c_name']); ?>', 
+            '<?php echo htmlspecialchars($sale['c_email']); ?>', 
+            '<?php echo htmlspecialchars($sale['b_name']); ?>', 
+            <?php echo $sale['p_quantity']; ?>, 
+            <?php echo $sale['p_unit_price']; ?>, 
+            <?php echo $sale['p_total_amount']; ?>, 
+            '<?php echo $sale['p_status']; ?>', 
+            '<?php echo htmlspecialchars($sale['p_payment_method']); ?>', 
+            '<?php echo date('Y-m-d', strtotime($sale['p_purchase_date'])); ?>',
+            '<?php echo htmlspecialchars($sale['p_notes'] ?? ''); ?>'
+        )" style="cursor: pointer;">
+            <td>
+                <div class="d-flex px-2 py-1">
+                    <div>
+                        <img src="assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user">
+                    </div>
+                    <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($sale['c_name']); ?></h6>
+                        <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($sale['c_email']); ?></p>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($sale['b_name']); ?></p>
+            </td>
+            <td>
+                <p class="text-xs font-weight-bold mb-0"><?php echo $sale['p_quantity']; ?></p>
+            </td>
+            <td>
+                <p class="text-xs font-weight-bold mb-0">$<?php echo number_format($sale['p_unit_price'], 2); ?></p>
+            </td>
+            <td class="align-middle text-center text-sm">
+                <span class="badge badge-sm <?php echo $badgeColor; ?>">$<?php echo number_format($sale['p_total_amount'], 2); ?></span>
+            </td>
+            <td>
+                <span class="text-xs font-weight-bold"><?php echo ucfirst($sale['p_status']); ?></span>
+            </td>
+            <td>
+                <span class="text-xs font-weight-bold"><?php echo date('M d, Y', strtotime($sale['p_purchase_date'])); ?></span>
+            </td>
+            <td class="align-middle">
+                <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();">
+                    <i class="fa fa-ellipsis-v text-xs"></i>
+                </button>
+            </td>
+        </tr>
+    <?php 
+    }
+    
+    // Show message if no sales found
+    if (empty($sales)) {
+        echo '<tr><td colspan="8" class="text-center">No sales found</td></tr>';
+    }
+    ?>
+</tbody>
                         </table>
                     </div>
                 </div>
@@ -250,7 +251,7 @@ require_once 'partials/header.php';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="btnSaveSale">Record Sale</button>
+                <button type="submit" class="btn btn-primary" id="btnSaveSale" form="recordSaleForm">Record Sale</button>
             </div>
         </div>
     </div>
@@ -266,7 +267,7 @@ require_once 'partials/header.php';
             </div>
             <div class="modal-body">
                 <input type="hidden" id="currentSaleId" value="">
-                
+
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h6 class="text-dark mb-2">Customer</h6>
@@ -355,70 +356,111 @@ require_once 'partials/header.php';
 </div>
 
 <script>
-// Auto-fill unit price when bail is selected
-$('#saleBailId').on('change', function() {
-    var selectedOption = $(this).find('option:selected');
-    var price = selectedOption.data('price');
-    if (price) {
-        $('#saleUnitPrice').val(price);
-    }
-});
-
-function showSaleDetail(id, customer, email, bail, quantity, unitPrice, totalAmount, status, paymentMethod, purchaseDate, notes) {
-    document.getElementById('currentSaleId').value = id;
-    document.getElementById('detailSaleCustomer').textContent = customer;
-    document.getElementById('detailSaleEmail').textContent = email;
-    document.getElementById('detailSaleBail').textContent = bail;
-    document.getElementById('detailSaleQuantity').textContent = quantity;
-    document.getElementById('detailSaleUnitPrice').textContent = '$' + parseFloat(unitPrice).toFixed(2);
-    document.getElementById('detailSaleTotalAmount').textContent = '$' + parseFloat(totalAmount).toFixed(2);
-    document.getElementById('detailSaleStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
-    document.getElementById('detailSalePaymentMethod').textContent = paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1);
-    document.getElementById('detailSalePurchaseDate').textContent = purchaseDate;
-    document.getElementById('detailSaleNotes').textContent = notes || 'No notes';
-
-    const modal = new bootstrap.Modal(document.getElementById('saleDetailModal'));
-    modal.show();
-}
-
-function showDeleteSaleConfirmation() {
-    const detailModal = bootstrap.Modal.getInstance(document.getElementById('saleDetailModal'));
-    detailModal.hide();
-    
-    const confirmModal = new bootstrap.Modal(document.getElementById('deleteSaleConfirmModal'));
-    confirmModal.show();
-}
-
-function deleteSale() {
-    const saleId = document.getElementById('currentSaleId').value;
-    
-    $.ajax({
-        url: "model/delSale.php",
-        type: "POST",
-        data: { sale_id: saleId },
-        dataType: "json",
-        beforeSend: function() {
-            $("#confirmDeleteSaleBtn").prop("disabled", true).html("Deleting...");
-        },
-        success: function(response) {
-            if (response.success) {
-                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteSaleConfirmModal'));
-                confirmModal.hide();
-                
-                alert("Sale deleted successfully!");
-                window.location.reload();
-            } else {
-                alert("Error: " + response.message);
-                $("#confirmDeleteSaleBtn").prop("disabled", false).html("Yes, Delete");
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("AJAX error:", textStatus, errorThrown);
-            alert("Request failed: " + textStatus);
-            $("#confirmDeleteSaleBtn").prop("disabled", false).html("Yes, Delete");
+    // Auto-fill unit price when bail is selected
+    $('#saleBailId').on('change', function() {
+        var selectedOption = $(this).find('option:selected');
+        var price = selectedOption.data('price');
+        if (price) {
+            $('#saleUnitPrice').val(price);
         }
     });
-}
+
+    // Handle form submission
+    $("#recordSaleForm").submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: "model/addSale.php",
+            type: "POST",
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#btnSaveSale").prop("disabled", true).html("Processing...");
+            },
+            success: function(data) {
+                console.log(data);
+                var response = typeof data === 'string' ? JSON.parse(data) : data;
+
+                if (response.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('recordSaleModal'));
+                    modal.hide();
+
+                    alert("Sale recorded successfully!");
+                    $("#recordSaleForm")[0].reset();
+                    window.location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                }
+
+                $("#btnSaveSale").prop("disabled", false).html("Record Sale");
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX error:", textStatus, errorThrown, "response:", jqXHR.responseText);
+                alert("Request failed: " + textStatus + " — see console for details.");
+                $("#btnSaveSale").prop("disabled", false).html("Record Sale");
+            }
+        });
+    });
+
+    function showSaleDetail(id, customer, email, bail, quantity, unitPrice, totalAmount, status, paymentMethod, purchaseDate, notes) {
+        document.getElementById('currentSaleId').value = id;
+        document.getElementById('detailSaleCustomer').textContent = customer;
+        document.getElementById('detailSaleEmail').textContent = email;
+        document.getElementById('detailSaleBail').textContent = bail;
+        document.getElementById('detailSaleQuantity').textContent = quantity;
+        document.getElementById('detailSaleUnitPrice').textContent = '$' + parseFloat(unitPrice).toFixed(2);
+        document.getElementById('detailSaleTotalAmount').textContent = '$' + parseFloat(totalAmount).toFixed(2);
+        document.getElementById('detailSaleStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        document.getElementById('detailSalePaymentMethod').textContent = paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1);
+        document.getElementById('detailSalePurchaseDate').textContent = purchaseDate;
+        document.getElementById('detailSaleNotes').textContent = notes || 'No notes';
+
+        const modal = new bootstrap.Modal(document.getElementById('saleDetailModal'));
+        modal.show();
+    }
+
+    function showDeleteSaleConfirmation() {
+        const detailModal = bootstrap.Modal.getInstance(document.getElementById('saleDetailModal'));
+        detailModal.hide();
+
+        const confirmModal = new bootstrap.Modal(document.getElementById('deleteSaleConfirmModal'));
+        confirmModal.show();
+    }
+
+    function deleteSale() {
+        const saleId = document.getElementById('currentSaleId').value;
+
+        $.ajax({
+            url: "model/delSale.php",
+            type: "POST",
+            data: {
+                sale_id: saleId
+            },
+            dataType: "json",
+            beforeSend: function() {
+                $("#confirmDeleteSaleBtn").prop("disabled", true).html("Deleting...");
+            },
+            success: function(response) {
+                if (response.success) {
+                    const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteSaleConfirmModal'));
+                    confirmModal.hide();
+
+                    alert("Sale deleted successfully!");
+                    window.location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                    $("#confirmDeleteSaleBtn").prop("disabled", false).html("Yes, Delete");
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX error:", textStatus, errorThrown);
+                alert("Request failed: " + textStatus);
+                $("#confirmDeleteSaleBtn").prop("disabled", false).html("Yes, Delete");
+            }
+        });
+    }
 </script>
 
 <?php
