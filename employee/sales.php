@@ -64,10 +64,10 @@ require_once 'partials/header.php';
                                     <th></th>
                                 </tr>
                             </thead>
-                           <tbody>
-    <?php
-    // Fetch all purchases with customer and bail details
-    $sales = $db->query("
+                            <tbody>
+                                <?php
+                                // Fetch all purchases with customer and bail details
+                                $sales = $db->query("
         SELECT 
             p.*,
             c.c_name,
@@ -78,26 +78,26 @@ require_once 'partials/header.php';
         INNER JOIN bails b ON p.p_bail_id = b.b_id
         ORDER BY p.p_purchase_date DESC
     ")->fetchAll();
-    
-    foreach ($sales as $sale) {
-        // Determine badge color based on status
-        $badgeColor = 'bg-gradient-secondary';
-        switch($sale['p_status']) {
-            case 'completed':
-                $badgeColor = 'bg-gradient-success';
-                break;
-            case 'pending':
-                $badgeColor = 'bg-gradient-warning';
-                break;
-            case 'cancelled':
-                $badgeColor = 'bg-gradient-danger';
-                break;
-            case 'refunded':
-                $badgeColor = 'bg-gradient-info';
-                break;
-        }
-    ?>
-        <tr onclick="showSaleDetail(
+
+                                foreach ($sales as $sale) {
+                                    // Determine badge color based on status
+                                    $badgeColor = 'bg-gradient-secondary';
+                                    switch ($sale['p_status']) {
+                                        case 'completed':
+                                            $badgeColor = 'bg-gradient-success';
+                                            break;
+                                        case 'pending':
+                                            $badgeColor = 'bg-gradient-warning';
+                                            break;
+                                        case 'cancelled':
+                                            $badgeColor = 'bg-gradient-danger';
+                                            break;
+                                        case 'refunded':
+                                            $badgeColor = 'bg-gradient-info';
+                                            break;
+                                    }
+                                ?>
+                                    <tr onclick="showSaleDetail(
             <?php echo $sale['p_id']; ?>, 
             '<?php echo htmlspecialchars($sale['c_name']); ?>', 
             '<?php echo htmlspecialchars($sale['c_email']); ?>', 
@@ -110,50 +110,50 @@ require_once 'partials/header.php';
             '<?php echo date('Y-m-d', strtotime($sale['p_purchase_date'])); ?>',
             '<?php echo htmlspecialchars($sale['p_notes'] ?? ''); ?>'
         )" style="cursor: pointer;">
-            <td>
-                <div class="d-flex px-2 py-1">
-                    <div>
-                        <img src="assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user">
-                    </div>
-                    <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($sale['c_name']); ?></h6>
-                        <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($sale['c_email']); ?></p>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($sale['b_name']); ?></p>
-            </td>
-            <td>
-                <p class="text-xs font-weight-bold mb-0"><?php echo $sale['p_quantity']; ?></p>
-            </td>
-            <td>
-                <p class="text-xs font-weight-bold mb-0">$<?php echo number_format($sale['p_unit_price'], 2); ?></p>
-            </td>
-            <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm <?php echo $badgeColor; ?>">$<?php echo number_format($sale['p_total_amount'], 2); ?></span>
-            </td>
-            <td>
-                <span class="text-xs font-weight-bold"><?php echo ucfirst($sale['p_status']); ?></span>
-            </td>
-            <td>
-                <span class="text-xs font-weight-bold"><?php echo date('M d, Y', strtotime($sale['p_purchase_date'])); ?></span>
-            </td>
-            <td class="align-middle">
-                <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();">
-                    <i class="fa fa-ellipsis-v text-xs"></i>
-                </button>
-            </td>
-        </tr>
-    <?php 
-    }
-    
-    // Show message if no sales found
-    if (empty($sales)) {
-        echo '<tr><td colspan="8" class="text-center">No sales found</td></tr>';
-    }
-    ?>
-</tbody>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <img src="assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user">
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($sale['c_name']); ?></h6>
+                                                    <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($sale['c_email']); ?></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0"><?php echo htmlspecialchars($sale['b_name']); ?></p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0"><?php echo $sale['p_quantity']; ?></p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">$<?php echo number_format($sale['p_unit_price'], 2); ?></p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm <?php echo $badgeColor; ?>">$<?php echo number_format($sale['p_total_amount'], 2); ?></span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs font-weight-bold"><?php echo ucfirst($sale['p_status']); ?></span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs font-weight-bold"><?php echo date('M d, Y', strtotime($sale['p_purchase_date'])); ?></span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <button class="btn btn-link text-secondary mb-0" onclick="event.stopPropagation();">
+                                                <i class="fa fa-ellipsis-v text-xs"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+
+                                // Show message if no sales found
+                                if (empty($sales)) {
+                                    echo '<tr><td colspan="8" class="text-center">No sales found</td></tr>';
+                                }
+                                ?>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -247,12 +247,13 @@ require_once 'partials/header.php';
                         <label for="saleNotes" class="form-label">Notes</label>
                         <textarea class="form-control" id="saleNotes" name="p_notes" placeholder="Enter sale notes" rows="3"></textarea>
                     </div>
-                </form>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary" id="btnSaveSale" form="recordSaleForm">Record Sale</button>
             </div>
+        </form>
         </div>
     </div>
 </div>
@@ -370,7 +371,7 @@ require_once 'partials/header.php';
         e.preventDefault();
 
         $.ajax({
-            url: "model/addSale.php",
+            url: "../model/addSale.php",
             type: "POST",
             data: new FormData(this),
             contentType: false,
@@ -433,7 +434,7 @@ require_once 'partials/header.php';
         const saleId = document.getElementById('currentSaleId').value;
 
         $.ajax({
-            url: "model/delSale.php",
+            url: "../model/delSale.php",
             type: "POST",
             data: {
                 sale_id: saleId
