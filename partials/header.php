@@ -8,9 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['logged_in']);
 
 // Only require database connection if needed
-if ($isLoggedIn) {
+
   require_once "config/main.php";
-}
 
 // Get current page filename
 $currentPage = basename($_SERVER['PHP_SELF']);

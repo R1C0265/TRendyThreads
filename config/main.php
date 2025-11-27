@@ -1,49 +1,54 @@
 <?php
 
 
-define('ROOT',dirname(__DIR__)."/");
-define('HOME','./');
-define('CONTROLLER',HOME.'controller/');
-define('CSS',HOME.'public/assets/css/');
-define('VENDOR',HOME.'public/assets/vendor/');
-define('JS',HOME.'public/assets/js/');
-define('IMG',HOME.'public/assets/img/');
+define('ROOT', dirname(__DIR__) . "/");
+define('HOME', './');
+define('CONTROLLER', HOME . 'controller/');
+define('CSS', HOME . 'public/assets/css/');
+define('VENDOR', HOME . 'public/assets/vendor/');
+define('JS', HOME . 'public/assets/js/');
+define('IMG', HOME . 'public/assets/img/');
 
 
 
 $modules = [CONTROLLER];
-set_include_path(get_include_path().PATH_SEPARATOR.implode(PATH_SEPARATOR,$modules));
+set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, $modules));
 //spl_autoload_register('spl_autoload', false);
-function autoloader($class_name){
-    require_once ROOT.'controller/'.$class_name.'.php';
+function autoloader($class_name)
+{
+    require_once ROOT . 'controller/' . $class_name . '.php';
     //require_once ROOT.'models/'.$class_name.'.php';
 }
 spl_autoload_register('autoloader');
 
 
 //useful functions
-function readMore($content, $limit) {
-    $content = substr($content,0,$limit);
-    $content = substr($content,0,strrpos($content,' '));
-    return $content."...";
+function readMore($content, $limit)
+{
+    $content = substr($content, 0, $limit);
+    $content = substr($content, 0, strrpos($content, ' '));
+    return $content . "...";
 }
 
-function getRand($len) {
+function getRand($len)
+{
     $characters = "452&678a9efghi2&ijklm5678o0123&456789pqrstUVwxyzabcD01JKL";
     $string = "";
     for ($i = 0; $i < $len; $i++)
         $string .= $characters[mt_rand(0, strlen($characters) - 1)];
     return $string;
 }
-function dateS($date){
+function dateS($date)
+{
     $convert = date("jS F Y", strtotime($date));
     return $convert;
 }
-function dateStr($date){
+function dateStr($date)
+{
     $convert = date("jS F Y, h:i:a", strtotime($date));
     return $convert;
 }
-function create_square_image($original_file, $destination_file=NULL, $square_size = 100)
+function create_square_image($original_file, $destination_file = NULL, $square_size = 100)
 {
 
     if (isset($destination_file) and $destination_file != NULL) {
@@ -130,13 +135,13 @@ $meta = new Meta();
 
 
 ///functions
-function addComment($author,$email,$comment,$id, $db){
+function addComment($author, $email, $comment, $id, $db)
+{
     $insert = $db->query("INSERT INTO comment(news_id,author,email,description) VALUES('$id','$author','$email','$comment')");
     echo 1;
 }
 
-session_start();
-
-
-
-?>
+// To this:
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
