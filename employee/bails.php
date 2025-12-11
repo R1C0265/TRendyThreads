@@ -301,7 +301,78 @@ $bails = $db->query($sql)->fetchAll();
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" onclick="showDeleteConfirmation()">Delete</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-primary" onclick="editBail()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Bail Modal -->
+<div class="modal fade" id="editBailModal" tabindex="-1" aria-labelledby="editBailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary">
+                <h5 class="modal-title text-white" id="editBailModalLabel">Edit Bail</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBailForm">
+                    <input type="hidden" id="editBailId" name="bail_id">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editBailName" class="form-label">Bail Name *</label>
+                                <input type="text" class="form-control" id="editBailName" name="b_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editBailItemsCount" class="form-label">Items Count *</label>
+                                <input type="number" class="form-control" id="editBailItemsCount" name="b_items_count" required min="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editBailAvgPrice" class="form-label">Avg Price Per Item *</label>
+                                <input type="number" class="form-control" id="editBailAvgPrice" name="b_avg_price_per_item" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editBailStockQuantity" class="form-label">Stock Quantity</label>
+                                <input type="number" class="form-control" id="editBailStockQuantity" name="b_stock_quantity" min="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editBailPurchaseDate" class="form-label">Purchase Date *</label>
+                                <input type="date" class="form-control" id="editBailPurchaseDate" name="b_purchase_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editBailStatus" class="form-label">Status</label>
+                                <select class="form-control" id="editBailStatus" name="b_status">
+                                    <option value="available">Available</option>
+                                    <option value="sold">Sold</option>
+                                    <option value="discontinued">Discontinued</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBailDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editBailDescription" name="b_description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="btnUpdateBail" form="editBailForm">Update Bail</button>
             </div>
         </div>
     </div>
@@ -413,6 +484,66 @@ function showDeleteConfirmation() {
     const confirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
     confirmModal.show();
 }
+
+function editBail() {
+    // Get current bail data from detail modal
+    const bailId = document.getElementById('currentBailId').value;
+    const bailName = document.getElementById('detailBailName').textContent;
+    const bailStatus = document.getElementById('detailBailStatus').textContent.toLowerCase();
+    const bailItems = document.getElementById('detailBailItems').textContent;
+    const bailPurchaseDate = document.getElementById('detailBailPurchaseDate').textContent;
+    
+    // Hide detail modal
+    const detailModal = bootstrap.Modal.getInstance(document.getElementById('bailDetailModal'));
+    detailModal.hide();
+    
+    // Populate edit form
+    document.getElementById('editBailId').value = bailId;
+    document.getElementById('editBailName').value = bailName;
+    document.getElementById('editBailItemsCount').value = bailItems;
+    document.getElementById('editBailStatus').value = bailStatus;
+    document.getElementById('editBailPurchaseDate').value = bailPurchaseDate;
+    
+    // Show edit modal
+    const editModal = new bootstrap.Modal(document.getElementById('editBailModal'));
+    editModal.show();
+}
+
+// Handle edit form submission
+$("#editBailForm").submit(function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+        url: "../model/updateBail.php",
+        type: "POST",
+        data: new FormData(this),
+        contentType: false,
+        cache: false,
+        processData: false,
+        beforeSend: function() {
+            $("#btnUpdateBail").prop("disabled", true).html("Updating...");
+        },
+        success: function(data) {
+            const response = typeof data === 'string' ? JSON.parse(data) : data;
+            
+            if (response.success) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editBailModal'));
+                modal.hide();
+                alert("Bail updated successfully!");
+                window.location.reload();
+            } else {
+                alert("Error: " + response.message);
+            }
+            
+            $("#btnUpdateBail").prop("disabled", false).html("Update Bail");
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("AJAX error:", textStatus, errorThrown);
+            alert("Request failed: " + textStatus);
+            $("#btnUpdateBail").prop("disabled", false).html("Update Bail");
+        }
+    });
+});
 
 function deleteBail() {
     const bailId = document.getElementById('currentBailId').value;

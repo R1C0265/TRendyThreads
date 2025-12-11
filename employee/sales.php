@@ -328,33 +328,14 @@ require_once 'partials/header.php';
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="showDeleteSaleConfirmation()">Delete</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Edit</button>
+                <div class="text-muted small">Sales records are read-only for audit purposes</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteSaleConfirmModal" tabindex="-1" aria-labelledby="deleteSaleConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-danger">
-                <h5 class="modal-title text-white" id="deleteSaleConfirmModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this sale?</p>
-                <p class="text-danger"><strong>This action cannot be undone.</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteSaleBtn" onclick="deleteSale()">Yes, Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
     // Auto-fill unit price when bail is selected
@@ -422,46 +403,7 @@ require_once 'partials/header.php';
         modal.show();
     }
 
-    function showDeleteSaleConfirmation() {
-        const detailModal = bootstrap.Modal.getInstance(document.getElementById('saleDetailModal'));
-        detailModal.hide();
 
-        const confirmModal = new bootstrap.Modal(document.getElementById('deleteSaleConfirmModal'));
-        confirmModal.show();
-    }
-
-    function deleteSale() {
-        const saleId = document.getElementById('currentSaleId').value;
-
-        $.ajax({
-            url: "../model/delSale.php",
-            type: "POST",
-            data: {
-                sale_id: saleId
-            },
-            dataType: "json",
-            beforeSend: function() {
-                $("#confirmDeleteSaleBtn").prop("disabled", true).html("Deleting...");
-            },
-            success: function(response) {
-                if (response.success) {
-                    const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteSaleConfirmModal'));
-                    confirmModal.hide();
-
-                    alert("Sale deleted successfully!");
-                    window.location.reload();
-                } else {
-                    alert("Error: " + response.message);
-                    $("#confirmDeleteSaleBtn").prop("disabled", false).html("Yes, Delete");
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("AJAX error:", textStatus, errorThrown);
-                alert("Request failed: " + textStatus);
-                $("#confirmDeleteSaleBtn").prop("disabled", false).html("Yes, Delete");
-            }
-        });
-    }
 </script>
 
 <?php
