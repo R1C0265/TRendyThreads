@@ -1,5 +1,7 @@
 <?php
 require_once 'partials/header.php';
+$isLoggedIn = isset($_SESSION['userId']);
+$userType = $_SESSION['userType'] ?? null;
 
 
 // Fetch dynamic content from database
@@ -19,6 +21,15 @@ foreach ($backgrounds as $background) {
 }
 ?>
 <main class="main">
+  <?php if ($isLoggedIn && $userType == '3'): ?>
+    <!-- Customer Dashboard -->
+    <section class="customer-dashboard section">
+      <div class="container">
+        <h2>Welcome back, <?php echo htmlspecialchars($_SESSION['userName'] ?? 'Customer'); ?>!</h2>
+        <!-- Add customer-specific content here -->
+      </div>
+    </section>
+  <?php else: ?>
   <!-- Hero Section -->
   <section id="hero" class="hero section light-background">
     <div class="container">
@@ -227,6 +238,7 @@ foreach ($backgrounds as $background) {
     </div>
   </section>
   <!-- /Contact Section -->
+  <?php endif; ?>
 </main>
 
 <?php
