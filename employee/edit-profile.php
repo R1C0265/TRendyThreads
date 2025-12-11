@@ -56,7 +56,7 @@ $error = $_GET['error'] ?? '';
                         <h6 class="mb-0">Profile Information</h6>
                     </div>
                     <div class="card-body p-3">
-                        <form action="../model/updateProfile.php" method="POST">
+                        <form id="employeeProfileForm">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="input-group input-group-outline mb-3">
@@ -112,4 +112,5 @@ $error = $_GET['error'] ?? '';
     </div>
 </div>
 
+<script src="../assets/js/forms.js"></script>
 <?php require_once 'partials/footer.php'; ?>

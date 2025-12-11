@@ -20,12 +20,6 @@ $message = $_GET['success'] ?? '';
 ?>
 
 <div class="container-fluid py-2">
-    <?php if ($message): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Content updated successfully!
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
 
     <!-- Hero Section Management -->
     <div class="row mb-4">
@@ -48,7 +42,12 @@ $message = $_GET['success'] ?? '';
                             <p><strong>CTA Link:</strong> <?php echo htmlspecialchars($hero['cta_link'] ?? '#about'); ?></p>
                         </div>
                         <div class="col-md-4">
-                            <img src="<?php echo $hero['hero_image'] ?? '../assets/ig/hero-img.png'; ?>" class="img-fluid border-radius-lg" alt="Hero Image">
+                            <?php 
+                            $heroImagePath = $hero['hero_image'] ?? 'assets/img/hero-img.png';
+                            // Add ../ prefix if path doesn't start with ../ (for CMS display)
+                            $displayPath = strpos($heroImagePath, '../') === 0 ? $heroImagePath : '../' . $heroImagePath;
+                            ?>
+                            <img src="<?php echo $displayPath; ?>" class="img-fluid border-radius-lg" alt="Hero Image">
                         </div>
                     </div>
                 </div>
@@ -63,15 +62,25 @@ $message = $_GET['success'] ?? '';
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center px-3">
                         <h6 class="text-white text-capitalize mb-0">About Section</h6>
-                        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#editAboutModal">
-                            <i class="material-symbols-rounded text-sm me-1">edit</i>Edit About
-                        </button>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-light me-2" data-bs-toggle="modal" data-bs-target="#editAboutModal">
+                                <i class="material-symbols-rounded text-sm me-1">edit</i>Edit About
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#manageFeaturesModal">
+                                <i class="material-symbols-rounded text-sm me-1">list</i>Manage Features
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body px-3 pb-2 pt-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="<?php echo $about['image_path'] ?? '../assets/img/about.jpg'; ?>" class="img-fluid border-radius-lg" alt="About Image">
+                            <?php 
+                            $aboutImagePath = $about['image_path'] ?? 'assets/img/about.jpg';
+                            // Add ../ prefix if path doesn't start with ../ (for CMS display)
+                            $displayPath = strpos($aboutImagePath, '../') === 0 ? $aboutImagePath : '../' . $aboutImagePath;
+                            ?>
+                            <img src="<?php echo $displayPath; ?>" class="img-fluid border-radius-lg" alt="About Image">
                         </div>
                         <div class="col-md-6">
                             <h5><?php echo htmlspecialchars($about['title'] ?? 'About Us'); ?></h5>
@@ -226,7 +235,7 @@ $message = $_GET['success'] ?? '';
                 <h5 class="modal-title" id="editHeroModalLabel">Edit Hero Section</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="../model/updateHero.php" method="POST">
+            <form id="heroForm">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -256,9 +265,20 @@ $message = $_GET['success'] ?? '';
                             </div>
                         </div>
                     </div>
-                    <div class="input-group input-group-outline mb-3">
-                        <label class="form-label">Hero Image Path</label>
-                        <input type="text" class="form-control" name="hero_image" value="<?php echo htmlspecialchars($hero['hero_image'] ?? ''); ?>">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="input-group input-group-outline mb-3">
+                                <label class="form-label">Hero Image Path</label>
+                                <input type="text" class="form-control" id="heroImagePath" name="hero_image" value="<?php echo htmlspecialchars($hero['hero_image'] ?? ''); ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Upload New Image</label>
+                                <input type="file" class="form-control" id="heroImageUpload" accept="image/*">
+                                <button type="button" class="btn btn-sm btn-info mt-2" onclick="uploadHeroImage()">Upload</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -278,7 +298,7 @@ $message = $_GET['success'] ?? '';
                 <h5 class="modal-title" id="editAboutModalLabel">Edit About Section</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="../model/updateAbout.php" method="POST">
+            <form id="aboutForm">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -302,7 +322,12 @@ $message = $_GET['success'] ?? '';
                         <div class="col-md-6">
                             <div class="input-group input-group-outline mb-3">
                                 <label class="form-label">Image Path</label>
-                                <input type="text" class="form-control" name="image_path" value="<?php echo htmlspecialchars($about['image_path'] ?? ''); ?>">
+                                <input type="text" class="form-control" id="aboutImagePath" name="image_path" value="<?php echo htmlspecialchars($about['image_path'] ?? ''); ?>">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Upload New Image</label>
+                                <input type="file" class="form-control" id="aboutImageUpload" accept="image/*">
+                                <button type="button" class="btn btn-sm btn-info mt-2" onclick="uploadAboutImage()">Upload</button>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -316,6 +341,94 @@ $message = $_GET['success'] ?? '';
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn bg-gradient-info">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Manage Features Modal -->
+<div class="modal fade" id="manageFeaturesModal" tabindex="-1" aria-labelledby="manageFeaturesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="manageFeaturesModalLabel">Manage About Features</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($about_features as $feature): ?>
+                                <tr>
+                                    <td><i class="<?php echo htmlspecialchars($feature['icon_class']); ?> text-info"></i></td>
+                                    <td><?php echo htmlspecialchars($feature['title']); ?></td>
+                                    <td><?php echo htmlspecialchars(substr($feature['description'], 0, 50)) . '...'; ?></td>
+                                    <td><?php echo $feature['sort_order']; ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" onclick="editFeature(<?php echo $feature['id']; ?>, '<?php echo htmlspecialchars($feature['icon_class']); ?>', '<?php echo htmlspecialchars($feature['title']); ?>', '<?php echo htmlspecialchars($feature['description']); ?>', <?php echo $feature['sort_order']; ?>)">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteFeature(<?php echo $feature['id']; ?>)">Delete</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="addFeature()">Add New Feature</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Feature Modal -->
+<div class="modal fade" id="featureFormModal" tabindex="-1" aria-labelledby="featureFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="featureFormModalLabel">Add Feature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="featureForm">
+                <div class="modal-body">
+                    <input type="hidden" id="featureId" name="feature_id" value="">
+                    <input type="hidden" id="featureAction" name="action" value="add">
+                    
+                    <div class="mb-3">
+                        <label for="featureIcon" class="form-label">Icon Class</label>
+                        <input type="text" class="form-control" id="featureIcon" name="icon_class" placeholder="e.g., bi bi-diagram-3" required>
+                        <small class="text-muted">Use Bootstrap Icons classes</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="featureTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="featureTitle" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="featureDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="featureDescription" name="description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="featureOrder" class="form-label">Sort Order</label>
+                        <input type="number" class="form-control" id="featureOrder" name="sort_order" value="1" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="featureSubmitBtn">Save Feature</button>
                 </div>
             </form>
         </div>
@@ -511,6 +624,178 @@ function addClient() { alert('Add Client - Feature coming soon!'); }
 function editContact(id) { alert('Edit Contact ' + id + ' - Feature coming soon!'); }
 function deleteContact(id) { if(confirm('Delete this contact?')) alert('Delete Contact ' + id + ' - Feature coming soon!'); }
 function addContact() { alert('Add Contact - Feature coming soon!'); }
+
+// Image upload functions
+function uploadHeroImage() {
+    const fileInput = document.getElementById('heroImageUpload');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('Please select an image first');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    $.ajax({
+        url: '../model/uploadImage.php',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            $('button[onclick="uploadHeroImage()"]').prop('disabled', true).text('Uploading...');
+        },
+        success: function(data) {
+            const response = typeof data === 'string' ? JSON.parse(data) : data;
+            if (response.success) {
+                document.getElementById('heroImagePath').value = response.path;
+                alert('Image uploaded successfully!');
+                fileInput.value = '';
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function() {
+            alert('Error uploading image');
+        },
+        complete: function() {
+            $('button[onclick="uploadHeroImage()"]').prop('disabled', false).text('Upload');
+        }
+    });
+}
+
+function uploadAboutImage() {
+    const fileInput = document.getElementById('aboutImageUpload');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('Please select an image first');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    $.ajax({
+        url: '../model/uploadImage.php',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            $('button[onclick="uploadAboutImage()"]').prop('disabled', true).text('Uploading...');
+        },
+        success: function(data) {
+            const response = typeof data === 'string' ? JSON.parse(data) : data;
+            if (response.success) {
+                document.getElementById('aboutImagePath').value = response.path;
+                alert('Image uploaded successfully!');
+                fileInput.value = '';
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function() {
+            alert('Error uploading image');
+        },
+        complete: function() {
+            $('button[onclick="uploadAboutImage()"]').prop('disabled', false).text('Upload');
+        }
+    });
+}
+
+// Features management functions
+function addFeature() {
+    document.getElementById('featureFormModalLabel').textContent = 'Add Feature';
+    document.getElementById('featureAction').value = 'add';
+    document.getElementById('featureId').value = '';
+    document.getElementById('featureForm').reset();
+    
+    const modal = new bootstrap.Modal(document.getElementById('featureFormModal'));
+    modal.show();
+}
+
+function editFeature(id, iconClass, title, description, sortOrder) {
+    document.getElementById('featureFormModalLabel').textContent = 'Edit Feature';
+    document.getElementById('featureAction').value = 'edit';
+    document.getElementById('featureId').value = id;
+    document.getElementById('featureIcon').value = iconClass;
+    document.getElementById('featureTitle').value = title;
+    document.getElementById('featureDescription').value = description;
+    document.getElementById('featureOrder').value = sortOrder;
+    
+    const modal = new bootstrap.Modal(document.getElementById('featureFormModal'));
+    modal.show();
+}
+
+function deleteFeature(id) {
+    if (confirm('Are you sure you want to delete this feature?')) {
+        $.ajax({
+            url: '../model/updateFeature.php',
+            type: 'POST',
+            data: { action: 'delete', feature_id: id },
+            success: function(data) {
+                try {
+                    const response = typeof data === 'string' ? JSON.parse(data) : data;
+                    if (response.success) {
+                        alert('Feature deleted successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    alert('Error processing response');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('Error deleting feature');
+            }
+        });
+    }
+}
+
+// Handle feature form submission
+$(document).ready(function() {
+    $('#featureForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: '../model/updateFeature.php',
+            type: 'POST',
+            data: $(this).serialize(),
+            beforeSend: function() {
+                $('#featureSubmitBtn').prop('disabled', true).text('Saving...');
+            },
+            success: function(data) {
+                console.log('Raw response:', data);
+                try {
+                    const response = typeof data === 'string' ? JSON.parse(data) : data;
+                    if (response.success) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('featureFormModal'));
+                        modal.hide();
+                        alert('Feature saved successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    alert('Error processing response');
+                }
+                $('#featureSubmitBtn').prop('disabled', false).text('Save Feature');
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('Error saving feature');
+                $('#featureSubmitBtn').prop('disabled', false).text('Save Feature');
+            }
+        });
+    });
+});
 </script>
 
 <?php require_once 'partials/footer.php'; ?>

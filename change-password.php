@@ -33,7 +33,7 @@ $success = $_GET['success'] ?? '';
                                 <div class="alert alert-danger">Password must be at least 6 characters!</div>
                             <?php endif; ?>
                             
-                            <form action="model/updatePassword.php" method="POST">
+                            <form id="customerPasswordForm">
                                 <div class="mb-3">
                                     <label for="current_password" class="form-label">Current Password:</label>
                                     <input type="password" class="form-control" id="current_password" name="current_password" required>
@@ -62,4 +62,5 @@ $success = $_GET['success'] ?? '';
     </section>
 </main>
 
+<script src="assets/js/forms.js"></script>
 <?php require_once 'partials/footer.php'; ?>

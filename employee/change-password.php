@@ -56,7 +56,7 @@ $success = $_GET['success'] ?? '';
                         <h6 class="mb-0">Password Settings</h6>
                     </div>
                     <div class="card-body p-3">
-                        <form action="../model/updatePassword.php" method="POST">
+                        <form id="employeePasswordForm">
                             <div class="input-group input-group-outline mb-3">
                                 <label class="form-label">Current Password</label>
                                 <input type="password" class="form-control" name="current_password" required>
@@ -84,4 +84,5 @@ $success = $_GET['success'] ?? '';
     </div>
 </div>
 
+<script src="../assets/js/forms.js"></script>
 <?php require_once 'partials/footer.php'; ?>

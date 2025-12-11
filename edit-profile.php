@@ -21,7 +21,7 @@ $user = $db->query("SELECT * FROM users WHERE u_id = '{$_SESSION['userId']}'")->
                             <h4>Edit Profile</h4>
                         </div>
                         <div class="card-body">
-                            <form action="model/updateProfile.php" method="POST">
+                            <form id="customerProfileForm">
                                 <div class="row mb-3">
                                     <label for="name" class="col-sm-3 col-form-label">Name:</label>
                                     <div class="col-sm-9">
@@ -66,4 +66,5 @@ $user = $db->query("SELECT * FROM users WHERE u_id = '{$_SESSION['userId']}'")->
     </section>
 </main>
 
+<script src="assets/js/forms.js"></script>
 <?php require_once 'partials/footer.php'; ?>

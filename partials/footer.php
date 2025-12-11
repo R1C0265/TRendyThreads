@@ -103,5 +103,6 @@
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/contact-form.js"></script>
   </body>
 </html>
