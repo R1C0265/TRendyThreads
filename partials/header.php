@@ -82,7 +82,7 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
               <ul>
                 <li><a href="#">Help</a></li>
                 <li><a href="profile.php">Profile</a></li>
-                <li><a href="#">Sign Out</a></li>
+                <li><a href=" logout.php">Sign Out</a></li>
               </ul>
             </li>
           <?php else: ?>

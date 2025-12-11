@@ -65,7 +65,7 @@ function isActive($pageName)
             </button>
             <a
                 class="navbar-brand px-4 py-3 m-0"
-                href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard "
+                href="index.php"
                 target="_blank">
                 <img
                     src="assets/img/logo-ct-dark.png"
@@ -115,7 +115,7 @@ function isActive($pageName)
                 <li class="nav-item">
                     <a
                         class="nav-link <?php echo isActive('profile.php'); ?>"
-                        href="../pages/profile.html">
+                        href="profile.php">
                         <i class="material-symbols-rounded opacity-5">person</i>
                         <span class="nav-link-text ms-1">Profile</span>
                     </a>
@@ -123,28 +123,14 @@ function isActive($pageName)
                 <hr class="horizontal dark mt-0 mb-2" />
                 <li class="nav-item">
                     <a
-                        class="nav-link <?php echo isActive('profile.php'); ?>"
-                        href="../pages/profile.html">
-                        <i class="material-symbols-rounded opacity-5">person</i>
-                        <span class="nav-link-text ms-1">Home</span>
+                        class="nav-link <?php echo isActive('home_about.php'); ?>"
+                        href="home_about.php">
+                        <i class="material-symbols-rounded opacity-5">home</i>
+                        <span class="nav-link-text ms-1">Home & About</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a
-                        class="nav-link <?php echo isActive('profile.php'); ?>"
-                        href="../pages/profile.html">
-                        <i class="material-symbols-rounded opacity-5">person</i>
-                        <span class="nav-link-text ms-1">Services and About</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a
-                        class="nav-link <?php echo isActive('profile.php'); ?>"
-                        href="../pages/profile.html">
-                        <i class="material-symbols-rounded opacity-5">person</i>
-                        <span class="nav-link-text ms-1">Profile</span>
-                    </a>
-                </li>
+
+
                 <li class="nav-item">
                     <a
                         class="nav-link <?php echo isActive('sign-in.php'); ?>"

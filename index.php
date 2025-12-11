@@ -21,15 +21,7 @@ foreach ($backgrounds as $background) {
 }
 ?>
 <main class="main">
-  <?php if ($isLoggedIn && $userType == '3'): ?>
-    <!-- Customer Dashboard -->
-    <section class="customer-dashboard section">
-      <div class="container">
-        <h2>Welcome back, <?php echo htmlspecialchars($_SESSION['userName'] ?? 'Customer'); ?>!</h2>
-        <!-- Add customer-specific content here -->
-      </div>
-    </section>
-  <?php else: ?>
+
   <!-- Hero Section -->
   <section id="hero" class="hero section light-background">
     <div class="container">
@@ -88,42 +80,7 @@ foreach ($backgrounds as $background) {
   </section>
   <!-- /About Section -->
 
-  <!-- Services Section -->
-  <section id="services" class="services section light-background">
-    <div class="container section-title" data-aos="fade-up">
-      <h2>Services</h2>
-      <p>Discover our comprehensive range of professional services</p>
-    </div>
 
-    <div class="container">
-      <div class="row gy-4">
-        <?php
-        $delay = 100;
-        foreach ($services as $service):
-        ?>
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?php echo $delay; ?>">
-            <div class="service-item position-relative">
-              <div class="icon">
-                <i class="<?php echo htmlspecialchars($service['icon_class']); ?>" style="color: <?php echo htmlspecialchars($service['icon_color']); ?>"></i>
-              </div>
-              <?php if (!empty($service['link_url'])): ?>
-                <a href="<?php echo htmlspecialchars($service['link_url']); ?>" class="stretched-link">
-                  <h3><?php echo htmlspecialchars($service['title']); ?></h3>
-                </a>
-              <?php else: ?>
-                <h3><?php echo htmlspecialchars($service['title']); ?></h3>
-              <?php endif; ?>
-              <p><?php echo htmlspecialchars($service['description']); ?></p>
-            </div>
-          </div>
-        <?php
-          $delay += 100;
-        endforeach;
-        ?>
-      </div>
-    </div>
-  </section>
-  <!-- /Services Section -->
 
   <!-- Stats Section -->
   <section id="stats" class="stats section light-background">
@@ -238,7 +195,7 @@ foreach ($backgrounds as $background) {
     </div>
   </section>
   <!-- /Contact Section -->
-  <?php endif; ?>
+
 </main>
 
 <?php

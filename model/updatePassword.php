@@ -2,7 +2,7 @@
 include("../config/main.php");
 
 // Check if user is logged in
-if (!isset($_SESSION['userId']) || $_SESSION['userType'] != '3') {
+if (!isset($_SESSION['userId']) || ($_SESSION['userType'] != '3' && $_SESSION['userType'] != '2')) {
     header('Location: ../signin.php');
     exit;
 }
@@ -19,13 +19,21 @@ $confirmPassword = $_POST['confirm_password'];
 
 // Validate passwords match
 if ($newPassword !== $confirmPassword) {
-    header('Location: ../change-password.php?error=match');
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/change-password.php?error=match');
+    } else {
+        header('Location: ../change-password.php?error=match');
+    }
     exit;
 }
 
 // Validate password length
 if (strlen($newPassword) < 6) {
-    header('Location: ../change-password.php?error=length');
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/change-password.php?error=length');
+    } else {
+        header('Location: ../change-password.php?error=length');
+    }
     exit;
 }
 
@@ -35,7 +43,11 @@ $user = $db->query("SELECT u_password FROM users WHERE u_id = '$userId'")->fetch
 
 // Verify current password
 if (sha1($currentPassword) !== $user['u_password']) {
-    header('Location: ../change-password.php?error=current');
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/change-password.php?error=current');
+    } else {
+        header('Location: ../change-password.php?error=current');
+    }
     exit;
 }
 
@@ -44,9 +56,17 @@ $hashedNewPassword = sha1($newPassword);
 $query = "UPDATE users SET u_password = '$hashedNewPassword' WHERE u_id = '$userId'";
 
 if ($db->query($query)) {
-    header('Location: ../change-password.php?success=1');
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/change-password.php?success=1');
+    } else {
+        header('Location: ../change-password.php?success=1');
+    }
 } else {
-    header('Location: ../change-password.php?error=update');
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/change-password.php?error=update');
+    } else {
+        header('Location: ../change-password.php?error=update');
+    }
 }
 exit;
 ?>

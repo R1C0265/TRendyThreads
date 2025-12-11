@@ -2,7 +2,7 @@
 include("../config/main.php");
 
 // Check if user is logged in
-if (!isset($_SESSION['userId']) || $_SESSION['userType'] != '3') {
+if (!isset($_SESSION['userId']) || ($_SESSION['userType'] != '3' && $_SESSION['userType'] != '2')) {
     header('Location: ../signin.php');
     exit;
 }
@@ -40,11 +40,19 @@ if ($db->query($query)) {
     $_SESSION['userName'] = $name;
     $_SESSION['userEmail'] = $email;
     
-    // Redirect with success message
-    header('Location: ../profile.php?success=1');
+    // Redirect based on user type
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/profile.php?success=1');
+    } else {
+        header('Location: ../profile.php?success=1');
+    }
 } else {
-    // Redirect with error
-    header('Location: ../edit-profile.php?error=update');
+    // Redirect with error based on user type
+    if ($_SESSION['userType'] == '2') {
+        header('Location: ../employee/edit-profile.php?error=update');
+    } else {
+        header('Location: ../edit-profile.php?error=update');
+    }
 }
 exit;
 ?>
