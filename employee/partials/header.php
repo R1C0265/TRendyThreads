@@ -36,7 +36,7 @@ function isActive($pageName)
     <!-- Nucleo Icons -->
     <link href="assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome 2025Icons -->
     <script
         src="https://kit.fontawesome.com/42d5adcbca.js"
         crossorigin="anonymous"></script>
@@ -120,10 +120,35 @@ function isActive($pageName)
                         <span class="nav-link-text ms-1">Profile</span>
                     </a>
                 </li>
+                <hr class="horizontal dark mt-0 mb-2" />
+                <li class="nav-item">
+                    <a
+                        class="nav-link <?php echo isActive('profile.php'); ?>"
+                        href="../pages/profile.html">
+                        <i class="material-symbols-rounded opacity-5">person</i>
+                        <span class="nav-link-text ms-1">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                        class="nav-link <?php echo isActive('profile.php'); ?>"
+                        href="../pages/profile.html">
+                        <i class="material-symbols-rounded opacity-5">person</i>
+                        <span class="nav-link-text ms-1">Services and About</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                        class="nav-link <?php echo isActive('profile.php'); ?>"
+                        href="../pages/profile.html">
+                        <i class="material-symbols-rounded opacity-5">person</i>
+                        <span class="nav-link-text ms-1">Profile</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a
                         class="nav-link <?php echo isActive('sign-in.php'); ?>"
-                        href="../pages/sign-in.html">
+                        href="../../logout.php">
                         <i class="material-symbols-rounded opacity-5">login</i>
                         <span class="nav-link-text ms-1">Sign Out</span>
                     </a>

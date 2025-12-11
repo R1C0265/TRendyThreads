@@ -5,11 +5,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Check if user is logged in
-$isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['logged_in']);
+$isLoggedIn = isset($_SESSION['userId']);
+$userType = $_SESSION['userType'] ?? null;
 
 // Only require database connection if needed
 
-  require_once "config/main.php";
+require_once "config/main.php";
 
 // Get current page filename
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -67,24 +68,25 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
           <li><a href="#hero" class="active">Home</a></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
-          <li class="dropdown">
-            <a href="#">
-              <span>Dropdown</span>
-              <i class="bi bi-chevron-down toggle-dropdown"></i>
-            </a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-            </ul>
-          </li>
+          <li><a href="store.php">Store</a></li>
+
           <li><a href="#contact">Contact</a></li>
-          <?php if ($isLoggedIn): ?>
-            <li><a href="employee/dashboard.php">Dashboard</a></li>
-            <li><a href="logout.php">Logout</a></li>
+
+
+          <?php if ($isLoggedIn && $userType == '3'): ?>
+            <li class="dropdown">
+              <a href="#">
+                <span><i class="icon bi bi-person-down toggle-dropdown"></i></span>
+                <i class="bi bi-chevron-down toggle-dropdown"></i>
+              </a>
+              <ul>
+                <li><a href="#">Help</a></li>
+                <li><a href="profile.php">Profile</a></li>
+                <li><a href="#">Sign Out</a></li>
+              </ul>
+            </li>
           <?php else: ?>
-            <li><a href="login.php">Login</a></li>
+            <li><a href="signin.php">Login</a></li>
           <?php endif; ?>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
