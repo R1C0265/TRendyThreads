@@ -3,7 +3,7 @@ require_once 'partials/header.php';
 $isLoggedIn = isset($_SESSION['userId']);
 $userType = $_SESSION['userType'] ?? null;
 
-
+  
 // Fetch dynamic content from database
 $hero = $db->query("SELECT * FROM hero_content WHERE is_active = 1 LIMIT 1")->fetchArray();
 $about = $db->query("SELECT * FROM about_content WHERE is_active = 1 LIMIT 1")->fetchArray();

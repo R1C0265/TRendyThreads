@@ -1,0 +1,1 @@
+When editing certaun similar featuures i.e creating a filter for a searchfield you should be implementing those changes to all similar pages with related features.

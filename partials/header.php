@@ -65,13 +65,10 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#hero" class="active">Home</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="store.php">Store</a></li>
-
-          <li><a href="#contact">Contact</a></li>
-
+          <li><a href="index.php " class="<?php echo isActive(''); ?>">Home</a></li>
+          <li><a href="#about" class="<?php echo isActive('about'); ?>">About Us</a></li>
+          <li><a href="#contact" class="<?php echo isActive('contact'); ?>">Contact</a></li>
+          <li><a href="store.php" class="<?php echo isActive('store'); ?>">Store</a></li>
 
           <?php if ($isLoggedIn && $userType == '3'): ?>
             <li class="dropdown">

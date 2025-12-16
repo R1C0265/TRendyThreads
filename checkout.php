@@ -1,0 +1,245 @@
+<?php
+require_once 'partials/header.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['userId'])) {
+    header('Location: signin.php');
+    exit;
+}
+
+$userId = $_SESSION['userId'];
+
+// Get cart items
+$cartItems = $db->query("
+    SELECT c.*, p.product_name, p.product_price, p.product_image_location 
+    FROM cart c 
+    JOIN products p ON c.product_id = p.product_id 
+    WHERE c.user_id = ?
+", $userId)->fetchAll();
+
+if (empty($cartItems)) {
+    header('Location: cart.php');
+    exit;
+}
+
+// Calculate totals
+$subtotal = 0;
+foreach ($cartItems as $item) {
+    $subtotal += (float)$item['product_price'] * $item['quantity'];
+}
+$tax = $subtotal * 0.08;
+$shipping = $subtotal > 50 ? 0 : 9.99;
+$total = $subtotal + $tax + $shipping;
+
+// Get user info
+$user = $db->query("SELECT * FROM users WHERE id = ?", $userId)->fetchArray();
+?>
+
+<main class="main">
+    <section class="checkout-section section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4">Checkout</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <form id="checkoutForm">
+                        <!-- Shipping Information -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Shipping Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-control" name="first_name" 
+                                                   value="<?php echo htmlspecialchars($user['firstName'] ?? ''); ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" name="last_name" 
+                                                   value="<?php echo htmlspecialchars($user['lastName'] ?? ''); ?>" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" 
+                                           value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" class="form-control" name="address" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">City</label>
+                                            <input type="text" class="form-control" name="city" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">State</label>
+                                            <input type="text" class="form-control" name="state" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">ZIP Code</label>
+                                            <input type="text" class="form-control" name="zip" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Payment Method</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    <strong>Demo Mode:</strong> This is a demonstration checkout. No real payment will be processed.
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="payment_method" value="stripe" id="stripe" checked>
+                                    <label class="form-check-label" for="stripe">
+                                        <i class="bi bi-credit-card"></i> Credit Card (Stripe)
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="payment_method" value="paypal" id="paypal">
+                                    <label class="form-check-label" for="paypal">
+                                        <i class="bi bi-paypal"></i> PayPal
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" value="demo" id="demo">
+                                    <label class="form-check-label" for="demo">
+                                        <i class="bi bi-cash"></i> Demo Payment (Testing)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Order Summary -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Cart Items -->
+                            <div class="order-items mb-3">
+                                <?php foreach ($cartItems as $item): ?>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="<?php echo htmlspecialchars($item['product_image_location']); ?>" 
+                                             class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <div class="flex-grow-1">
+                                            <small class="d-block"><?php echo htmlspecialchars($item['product_name']); ?></small>
+                                            <small class="text-muted">Qty: <?php echo $item['quantity']; ?></small>
+                                        </div>
+                                        <small>$<?php echo number_format((float)$item['product_price'] * $item['quantity'], 2); ?></small>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            
+                            <hr>
+                            
+                            <!-- Totals -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>$<?php echo number_format($subtotal, 2); ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax:</span>
+                                <span>$<?php echo number_format($tax, 2); ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Shipping:</span>
+                                <span><?php echo $shipping > 0 ? '$' . number_format($shipping, 2) : 'FREE'; ?></span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-4">
+                                <strong>Total:</strong>
+                                <strong>$<?php echo number_format($total, 2); ?></strong>
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary w-100 mb-2" onclick="processOrder()">
+                                Place Order
+                            </button>
+                            <a href="cart.php" class="btn btn-outline-secondary w-100">
+                                Back to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+function processOrder() {
+    const form = document.getElementById('checkoutForm');
+    const formData = new FormData(form);
+    
+    // Basic validation
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+    
+    if (paymentMethod === 'demo') {
+        // Demo payment - just process the order
+        processOrderDemo(formData);
+    } else if (paymentMethod === 'stripe') {
+        alert('Stripe integration would be implemented here. For demo, use "Demo Payment" option.');
+    } else if (paymentMethod === 'paypal') {
+        alert('PayPal integration would be implemented here. For demo, use "Demo Payment" option.');
+    }
+}
+
+function processOrderDemo(formData) {
+    formData.append('payment_method', 'demo');
+    
+    $.ajax({
+        url: 'model/processOrder.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            const response = JSON.parse(data);
+            if (response.success) {
+                alert('Order placed successfully! Order ID: ' + response.order_id);
+                window.location.href = 'order-success.php?order=' + response.order_id;
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function() {
+            alert('Error processing order. Please try again.');
+        }
+    });
+}
+</script>
+
+<?php require_once 'partials/footer.php'; ?>
