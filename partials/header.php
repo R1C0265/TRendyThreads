@@ -16,10 +16,21 @@ require_once "config/main.php";
 $currentPage = basename($_SERVER['PHP_SELF']);
 
 // Function to check if nav item is active
-function isActive($pageName)
+function isActive($pageName, $isSection = false)
 {
   $currentPage = basename($_SERVER['PHP_SELF']);
-  return ($currentPage === $pageName) ? 'active bg-gradient-dark text-white' : 'text-dark';
+  
+  // For sections on index.php (home, about, contact)
+  if ($isSection && $currentPage === 'index.php') {
+    return 'active';
+  }
+  
+  // For separate pages
+  if (!$isSection && $currentPage === $pageName) {
+    return 'active';
+  }
+  
+  return '';
 }
 // Set page name for title
 $pageName = ucfirst(str_replace('.php', '', $currentPage));
@@ -54,6 +65,13 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet" />
+  
+  <style>
+  .navmenu a.active {
+    color: #007bff !important;
+    font-weight: 600;
+  }
+  </style>
 </head>
 
 <body class="index-page">
@@ -65,10 +83,10 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.php " class="<?php echo isActive(''); ?>">Home</a></li>
-          <li><a href="#about" class="<?php echo isActive('about'); ?>">About Us</a></li>
-          <li><a href="#contact" class="<?php echo isActive('contact'); ?>">Contact</a></li>
-          <li><a href="store.php" class="<?php echo isActive('store'); ?>">Store</a></li>
+          <li><a href="index.php" class="<?php echo isActive('index.php', true); ?>">Home</a></li>
+          <li><a href="index.php#about" class="<?php echo isActive('about', true); ?>">About Us</a></li>
+          <li><a href="index.php#contact" class="<?php echo isActive('contact', true); ?>">Contact</a></li>
+          <li><a href="store.php" class="<?php echo isActive('store.php'); ?>">Store</a></li>
 
           <?php if ($isLoggedIn && $userType == '3'): ?>
             <li class="dropdown">
@@ -78,12 +96,12 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
               </a>
               <ul>
                 <li><a href="#">Help</a></li>
-                <li><a href="profile.php">Profile</a></li>
+                <li><a href="profile.php" class="<?php echo isActive('profile.php'); ?>">Profile</a></li>
                 <li><a href=" logout.php">Sign Out</a></li>
               </ul>
             </li>
           <?php else: ?>
-            <li><a href="signin.php">Login</a></li>
+            <li><a href="signin.php" class="<?php echo isActive('signin.php'); ?>">Login</a></li>
           <?php endif; ?>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>

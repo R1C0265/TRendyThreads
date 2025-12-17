@@ -9,11 +9,13 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
-// Get cart items with product details
+// Get cart items with bail details
 $cartItems = $db->query("
-    SELECT c.*, p.product_name, p.product_price, p.product_image_location, p.product_image_alt 
+    SELECT c.*, b.b_name as product_name, b.b_avg_price_per_item as product_price, b.b_items_count, b.b_stock_quantity,
+           CONCAT('assets/img/bails/', LOWER(REPLACE(b.b_name, ' ', '-')), '.jpg') as product_image_location,
+           CONCAT(b.b_name, ' - Secondhand Clothing Bundle') as product_image_alt
     FROM cart c 
-    JOIN products p ON c.product_id = p.product_id 
+    JOIN bails b ON c.product_id = b.b_id 
     WHERE c.user_id = ?
     ORDER BY c.created_at DESC
 ", $userId)->fetchAll();
@@ -64,7 +66,8 @@ $total = $subtotal + $tax + $shipping;
                                             </div>
                                             <div class="col-md-4">
                                                 <h5 class="mb-1"><?php echo htmlspecialchars($item['product_name']); ?></h5>
-                                                <p class="text-muted mb-0">$<?php echo number_format((float)$item['product_price'], 2); ?> each</p>
+                                                <p class="text-muted mb-0">MWK <?php echo number_format((float)$item['product_price'], 2); ?> per item avg</p>
+                                                <small class="text-muted"><?php echo $item['b_items_count']; ?> items per bail</small>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="input-group" style="width: 120px;">
@@ -79,7 +82,7 @@ $total = $subtotal + $tax + $shipping;
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
-                                                <strong>$<?php echo number_format((float)$item['product_price'] * $item['quantity'], 2); ?></strong>
+                                                <strong>MWK <?php echo number_format((float)$item['product_price'] * $item['quantity'], 2); ?></strong>
                                             </div>
                                             <div class="col-md-1">
                                                 <button class="btn btn-outline-danger btn-sm" 
@@ -102,26 +105,26 @@ $total = $subtotal + $tax + $shipping;
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal:</span>
-                                    <span>$<?php echo number_format($subtotal, 2); ?></span>
+                                    <span>MWK <?php echo number_format($subtotal, 2); ?></span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Tax:</span>
-                                    <span>$<?php echo number_format($tax, 2); ?></span>
+                                    <span>MWK <?php echo number_format($tax, 2); ?></span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3">
                                     <span>Shipping:</span>
-                                    <span><?php echo $shipping > 0 ? '$' . number_format($shipping, 2) : 'FREE'; ?></span>
+                                    <span><?php echo $shipping > 0 ? 'MWK ' . number_format($shipping, 2) : 'FREE'; ?></span>
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mb-3">
                                     <strong>Total:</strong>
-                                    <strong>$<?php echo number_format($total, 2); ?></strong>
+                                    <strong>MWK <?php echo number_format($total, 2); ?></strong>
                                 </div>
                                 
                                 <?php if ($subtotal < 50 && $shipping > 0): ?>
                                     <div class="alert alert-info small">
                                         <i class="bi bi-info-circle"></i>
-                                        Add $<?php echo number_format(50 - $subtotal, 2); ?> more for free shipping!
+                                        Add MWK <?php echo number_format(50 - $subtotal, 2); ?> more for free shipping!
                                     </div>
                                 <?php endif; ?>
                                 

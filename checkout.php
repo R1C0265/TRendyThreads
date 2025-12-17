@@ -9,11 +9,12 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
-// Get cart items
+// Get cart items with bail details
 $cartItems = $db->query("
-    SELECT c.*, p.product_name, p.product_price, p.product_image_location 
+    SELECT c.*, b.b_name as product_name, b.b_avg_price_per_item as product_price, b.b_items_count,
+           CONCAT('assets/img/bails/', LOWER(REPLACE(b.b_name, ' ', '-')), '.jpg') as product_image_location
     FROM cart c 
-    JOIN products p ON c.product_id = p.product_id 
+    JOIN bails b ON c.product_id = b.b_id 
     WHERE c.user_id = ?
 ", $userId)->fetchAll();
 
@@ -32,7 +33,7 @@ $shipping = $subtotal > 50 ? 0 : 9.99;
 $total = $subtotal + $tax + $shipping;
 
 // Get user info
-$user = $db->query("SELECT * FROM users WHERE id = ?", $userId)->fetchArray();
+$user = $db->query("SELECT * FROM users WHERE u_id = ?", $userId)->fetchArray();
 ?>
 
 <main class="main">
@@ -58,21 +59,21 @@ $user = $db->query("SELECT * FROM users WHERE id = ?", $userId)->fetchArray();
                                         <div class="mb-3">
                                             <label class="form-label">First Name</label>
                                             <input type="text" class="form-control" name="first_name" 
-                                                   value="<?php echo htmlspecialchars($user['firstName'] ?? ''); ?>" required>
+                                                   value="<?php echo htmlspecialchars($user['u_name'] ?? ''); ?>" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Last Name</label>
                                             <input type="text" class="form-control" name="last_name" 
-                                                   value="<?php echo htmlspecialchars($user['lastName'] ?? ''); ?>" required>
+                                                   value="" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control" name="email" 
-                                           value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                                           value="<?php echo htmlspecialchars($user['u_email'] ?? ''); ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Address</label>
@@ -152,7 +153,7 @@ $user = $db->query("SELECT * FROM users WHERE id = ?", $userId)->fetchArray();
                                              class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
                                         <div class="flex-grow-1">
                                             <small class="d-block"><?php echo htmlspecialchars($item['product_name']); ?></small>
-                                            <small class="text-muted">Qty: <?php echo $item['quantity']; ?></small>
+                                            <small class="text-muted">Qty: <?php echo $item['quantity']; ?> bails (<?php echo $item['quantity'] * $item['b_items_count']; ?> items)</small>
                                         </div>
                                         <small>$<?php echo number_format((float)$item['product_price'] * $item['quantity'], 2); ?></small>
                                     </div>
@@ -164,20 +165,20 @@ $user = $db->query("SELECT * FROM users WHERE id = ?", $userId)->fetchArray();
                             <!-- Totals -->
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Subtotal:</span>
-                                <span>$<?php echo number_format($subtotal, 2); ?></span>
+                                <span>MWK <?php echo number_format($subtotal, 2); ?></span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Tax:</span>
-                                <span>$<?php echo number_format($tax, 2); ?></span>
+                                <span>MWK <?php echo number_format($tax, 2); ?></span>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
                                 <span>Shipping:</span>
-                                <span><?php echo $shipping > 0 ? '$' . number_format($shipping, 2) : 'FREE'; ?></span>
+                                <span><?php echo $shipping > 0 ? 'MWK ' . number_format($shipping, 2) : 'FREE'; ?></span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between mb-4">
                                 <strong>Total:</strong>
-                                <strong>$<?php echo number_format($total, 2); ?></strong>
+                                <strong>MWK <?php echo number_format($total, 2); ?></strong>
                             </div>
                             
                             <button type="button" class="btn btn-primary w-100 mb-2" onclick="processOrder()">

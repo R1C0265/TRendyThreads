@@ -196,7 +196,7 @@ $bails = $db->query($sql)->fetchAll();
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="bailAvgPrice" class="form-label">Avg Price Per Item *</label>
+                                <label for="bailAvgPrice" class="form-label">Avg Price Per Item (MWK) *</label>
                                 <input type="number" class="form-control" id="bailAvgPrice" name="b_avg_price_per_item" placeholder="Enter average price" step="0.01" required>
                             </div>
                         </div>
@@ -335,7 +335,7 @@ $bails = $db->query($sql)->fetchAll();
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="editBailAvgPrice" class="form-label">Avg Price Per Item *</label>
+                                <label for="editBailAvgPrice" class="form-label">Avg Price Per Item (MWK) *</label>
                                 <input type="number" class="form-control" id="editBailAvgPrice" name="b_avg_price_per_item" step="0.01" required>
                             </div>
                         </div>

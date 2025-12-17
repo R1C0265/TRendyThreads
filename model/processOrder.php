@@ -30,11 +30,11 @@ if (empty($firstName) || empty($lastName) || empty($email) || empty($address) ||
 }
 
 try {
-    // Get cart items
+    // Get cart items with bail details
     $cartItems = $db->query("
-        SELECT c.*, p.product_name, p.product_price 
+        SELECT c.*, b.b_name as product_name, b.b_avg_price_per_item as product_price, b.b_stock_quantity 
         FROM cart c 
-        JOIN products p ON c.product_id = p.product_id 
+        JOIN bails b ON c.product_id = b.b_id 
         WHERE c.user_id = ?
     ", $userId)->fetchAll();
     
@@ -61,10 +61,26 @@ try {
     
     $orderId = $db->lastInsertID();
     
-    // Create order items
+    // Create order items and update bail stock
     foreach ($cartItems as $item) {
+        // Check if enough stock available
+        if ($item['b_stock_quantity'] < $item['quantity']) {
+            echo json_encode(['success' => false, 'message' => 'Not enough stock for ' . $item['product_name']]);
+            exit;
+        }
+        
+        // Insert order item
         $db->query("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
                    $orderId, $item['product_id'], $item['quantity'], $item['product_price']);
+        
+        // Update bail stock
+        $newStock = $item['b_stock_quantity'] - $item['quantity'];
+        $db->query("UPDATE bails SET b_stock_quantity = ? WHERE b_id = ?", $newStock, $item['product_id']);
+        
+        // Mark bail as sold if stock reaches 0
+        if ($newStock <= 0) {
+            $db->query("UPDATE bails SET b_status = 'sold' WHERE b_id = ?", $item['product_id']);
+        }
     }
     
     // Clear cart

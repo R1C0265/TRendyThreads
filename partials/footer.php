@@ -92,6 +92,7 @@
     <div id="preloader"></div>
 
     <!-- Vendor JS Files -->
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/php-email-form/validate.js"></script>
     <script src="assets/vendor/aos/aos.js"></script>
@@ -104,5 +105,63 @@
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/contact-form.js"></script>
+    
+    <script>
+    // Handle active navigation for sections on index page
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentPage = window.location.pathname.split('/').pop();
+      
+      // Only run on index page
+      if (currentPage === 'index.php' || currentPage === '') {
+        const navLinks = document.querySelectorAll('.navmenu a[href*="#"]');
+        const sections = document.querySelectorAll('section[id]');
+        
+        // Function to update active nav item
+        function updateActiveNav() {
+          let current = '';
+          
+          sections.forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+              current = section.getAttribute('id');
+            }
+          });
+          
+          // Default to hero/home if at top
+          if (window.scrollY < 200) {
+            current = 'hero';
+          }
+          
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            const href = link.getAttribute('href');
+            
+            if ((current === 'hero' && href.includes('index.php') && !href.includes('#')) ||
+                (current && href.includes('#' + current))) {
+              link.classList.add('active');
+            }
+          });
+        }
+        
+        // Update on scroll
+        window.addEventListener('scroll', updateActiveNav);
+        
+        // Update on load
+        updateActiveNav();
+        
+        // Handle hash in URL
+        if (window.location.hash) {
+          setTimeout(() => {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 100);
+        }
+      }
+    });
+    </script>
   </body>
 </html>

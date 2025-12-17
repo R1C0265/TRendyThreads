@@ -8,17 +8,12 @@ $category = $_GET['category'] ?? '';
 $search = $_GET['search'] ?? '';
 $sort = $_GET['sort'] ?? 'name';
 
-// Build query for products
-$whereClause = "WHERE 1=1";
+// Build query for bails (secondhand clothing bundles)
+$whereClause = "WHERE b_status = 'available' AND b_stock_quantity > 0";
 $params = [];
 
-if ($category) {
-    $whereClause .= " AND product_category = ?";
-    $params[] = $category;
-}
-
 if ($search) {
-    $whereClause .= " AND (product_name LIKE ? OR product_description LIKE ?)";
+    $whereClause .= " AND (b_name LIKE ? OR b_description LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
@@ -26,26 +21,42 @@ if ($search) {
 $orderClause = "ORDER BY ";
 switch ($sort) {
     case 'price_low':
-        $orderClause .= "CAST(product_price AS DECIMAL) ASC";
+        $orderClause .= "b_avg_price_per_item ASC";
         break;
     case 'price_high':
-        $orderClause .= "CAST(product_price AS DECIMAL) DESC";
+        $orderClause .= "b_avg_price_per_item DESC";
+        break;
+    case 'stock':
+        $orderClause .= "b_stock_quantity DESC";
         break;
     case 'name':
     default:
-        $orderClause .= "product_name ASC";
+        $orderClause .= "b_name ASC";
         break;
 }
 
-// Fetch products
+// Fetch available bails
 if (empty($params)) {
-    $products = $db->query("SELECT * FROM products $whereClause $orderClause")->fetchAll();
+    $products = $db->query("SELECT *, b_id as product_id, b_name as product_name, b_description as product_description, b_avg_price_per_item as product_price FROM bails $whereClause $orderClause")->fetchAll();
 } else {
-    $products = $db->query("SELECT * FROM products $whereClause $orderClause", ...$params)->fetchAll();
+    $products = $db->query("SELECT *, b_id as product_id, b_name as product_name, b_description as product_description, b_avg_price_per_item as product_price FROM bails $whereClause $orderClause", ...$params)->fetchAll();
 }
 
-// Get categories for filter
-$categories = $db->query("SELECT DISTINCT product_category FROM products ORDER BY product_category")->fetchAll();
+// Add default image for bails
+foreach ($products as &$product) {
+    $imageName = strtolower(str_replace(' ', '-', $product['product_name'])) . '.jpg';
+    $imagePath = 'assets/img/bails/' . $imageName;
+    
+    // Check if specific bail image exists, otherwise use placeholder
+    if (file_exists($imagePath)) {
+        $product['product_image_location'] = $imagePath;
+    } else {
+        $product['product_image_location'] = 'assets/img/hero-img.png'; // Fallback to hero image
+    }
+    
+    $product['product_image_alt'] = $product['product_name'] . ' - Secondhand Clothing Bundle';
+    $product['product_category'] = 'Secondhand Clothing Bundle';
+}
 
 // Get cart count for logged in users
 $cartCount = 0;
@@ -60,8 +71,8 @@ if ($isLoggedIn) {
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-8">
-          <h1 class="mb-3">Our Store</h1>
-          <p class="lead">Discover the latest trends in fashion and style</p>
+          <h1 class="mb-3">Secondhand Clothing Bails</h1>
+          <p class="lead">Quality secondhand clothing bundles from international donors</p>
         </div>
         <div class="col-lg-4 text-lg-end">
           <?php if ($isLoggedIn): ?>
@@ -97,20 +108,11 @@ if ($isLoggedIn) {
               </form>
             </div>
 
-            <!-- Categories -->
+            <!-- Bail Info -->
             <div class="mb-4">
-              <label class="form-label">Categories</label>
-              <div class="list-group">
-                <a href="?sort=<?php echo $sort; ?>&search=<?php echo $search; ?>" 
-                   class="list-group-item list-group-item-action <?php echo empty($category) ? 'active' : ''; ?>">
-                  All Categories
-                </a>
-                <?php foreach ($categories as $cat): ?>
-                  <a href="?category=<?php echo urlencode($cat['product_category']); ?>&sort=<?php echo $sort; ?>&search=<?php echo $search; ?>" 
-                     class="list-group-item list-group-item-action <?php echo $category === $cat['product_category'] ? 'active' : ''; ?>">
-                    <?php echo htmlspecialchars($cat['product_category']); ?>
-                  </a>
-                <?php endforeach; ?>
+              <div class="alert alert-info">
+                <h6><i class="bi bi-info-circle"></i> About Our Bails</h6>
+                <small>Each bail contains multiple secondhand clothing items from international donors. Perfect for resellers or bulk buyers.</small>
               </div>
             </div>
           </div>
@@ -122,10 +124,11 @@ if ($isLoggedIn) {
             <p class="mb-0"><?php echo count($products); ?> products found</p>
             <div class="d-flex align-items-center">
               <label class="form-label me-2 mb-0">Sort by:</label>
-              <select class="form-select" style="width: auto;" onchange="window.location.href='?category=<?php echo $category; ?>&search=<?php echo $search; ?>&sort=' + this.value">
+              <select class="form-select" style="width: auto;" onchange="window.location.href='?search=<?php echo $search; ?>&sort=' + this.value">
                 <option value="name" <?php echo $sort === 'name' ? 'selected' : ''; ?>>Name</option>
                 <option value="price_low" <?php echo $sort === 'price_low' ? 'selected' : ''; ?>>Price: Low to High</option>
                 <option value="price_high" <?php echo $sort === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
+                <option value="stock" <?php echo $sort === 'stock' ? 'selected' : ''; ?>>Stock Available</option>
               </select>
             </div>
           </div>
@@ -135,9 +138,9 @@ if ($isLoggedIn) {
             <?php if (empty($products)): ?>
               <div class="col-12">
                 <div class="text-center py-5">
-                  <i class="bi bi-search display-1 text-muted"></i>
-                  <h3 class="mt-3">No products found</h3>
-                  <p class="text-muted">Try adjusting your search or filter criteria</p>
+                  <i class="bi bi-archive display-1 text-muted"></i>
+                  <h3 class="mt-3">No bails available</h3>
+                  <p class="text-muted">Check back soon for new secondhand clothing bundles</p>
                 </div>
               </div>
             <?php else: ?>
@@ -148,7 +151,8 @@ if ($isLoggedIn) {
                       <img src="<?php echo htmlspecialchars($product['product_image_location']); ?>" 
                            class="card-img-top" 
                            alt="<?php echo htmlspecialchars($product['product_image_alt']); ?>"
-                           style="height: 250px; object-fit: cover;">
+                           style="height: 250px; object-fit: cover;"
+                           onerror="this.src='assets/img/hero-img.png'">
                       <div class="product-overlay">
                         <button class="btn btn-primary btn-sm" onclick="viewProduct(<?php echo $product['product_id']; ?>)">
                           <i class="bi bi-eye"></i> View
@@ -163,11 +167,21 @@ if ($isLoggedIn) {
                     <div class="card-body d-flex flex-column">
                       <h5 class="card-title"><?php echo htmlspecialchars($product['product_name']); ?></h5>
                       <p class="card-text text-muted small flex-grow-1">
-                        <?php echo htmlspecialchars(substr($product['product_description'], 0, 100)) . '...'; ?>
+                        <?php echo htmlspecialchars(substr($product['product_description'] ?? 'Quality secondhand clothing bundle', 0, 100)) . '...'; ?>
                       </p>
+                      <div class="mb-2">
+                        <small class="text-muted">
+                          <i class="bi bi-box"></i> <?php echo $product['b_items_count']; ?> items per bail
+                        </small>
+                      </div>
                       <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <span class="h5 text-primary mb-0">$<?php echo number_format((float)$product['product_price'], 2); ?></span>
-                        <span class="badge bg-secondary"><?php echo htmlspecialchars($product['product_category']); ?></span>
+                        <div>
+                          <span class="h5 text-primary mb-0">MWK <?php echo number_format((float)$product['product_price'], 2); ?></span>
+                          <small class="text-muted d-block">per item avg</small>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge bg-success"><?php echo $product['b_stock_quantity']; ?> in stock</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -183,14 +197,18 @@ if ($isLoggedIn) {
 
 <!-- Product Modal -->
 <div class="modal fade" id="productModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="productModalTitle">Product Details</h5>
+        <h5 class="modal-title" id="productModalTitle">Bail Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="productModalBody">
         <!-- Product details will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div id="modalCartButton"></div>
       </div>
     </div>
   </div>
@@ -248,6 +266,31 @@ if ($isLoggedIn) {
 .store-header h1 {
   color: white;
 }
+
+.product-modal-image {
+  max-height: 500px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.product-modal-image:hover {
+  transform: scale(1.05);
+}
+
+.bail-info-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.badge-large {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+}
 </style>
 
 <script>
@@ -259,54 +302,124 @@ function viewProduct(productId) {
     data: { id: productId },
     success: function(data) {
       const product = JSON.parse(data);
-      $('#productModalTitle').text(product.product_name);
-      $('#productModalBody').html(`
+      $('#productModalTitle').text(product.product_name + ' - Secondhand Clothing Bail');
+      
+      const modalContent = `
         <div class="row">
-          <div class="col-md-6">
-            <img src="${product.product_image_location}" class="img-fluid rounded" alt="${product.product_image_alt}">
+          <div class="col-lg-6">
+            <div class="text-center">
+              <img src="${product.product_image_location}" 
+                   class="product-modal-image" 
+                   alt="${product.product_image_alt}" 
+                   onerror="this.src='assets/img/hero-img.png'"
+                   onclick="openImageFullscreen(this.src)">
+              <p class="text-muted mt-2 small">Click image to view fullscreen</p>
+            </div>
           </div>
-          <div class="col-md-6">
-            <h4>$${parseFloat(product.product_price).toFixed(2)}</h4>
-            <p class="text-muted">${product.product_category}</p>
-            <p>${product.product_description}</p>
-            <?php if ($isLoggedIn): ?>
-            <div class="mt-4">
-              <div class="input-group mb-3" style="width: 150px;">
-                <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(-1)">-</button>
-                <input type="number" class="form-control text-center" id="quantity" value="1" min="1">
-                <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(1)">+</button>
+          <div class="col-lg-6">
+            <div class="bail-info-card">
+              <h3 class="text-primary mb-3">${product.product_name}</h3>
+              
+              <div class="row mb-3">
+                <div class="col-6">
+                  <div class="text-center p-3 bg-white rounded">
+                    <h4 class="text-success mb-1">MWK ${parseFloat(product.product_price).toFixed(2)}</h4>
+                    <small class="text-muted">Per item average</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="text-center p-3 bg-white rounded">
+                    <h4 class="text-info mb-1">MWK ${parseFloat(product.b_total_value || product.product_price * product.b_items_count).toFixed(2)}</h4>
+                    <small class="text-muted">Total bail value</small>
+                  </div>
+                </div>
               </div>
-              <button class="btn btn-primary" onclick="addToCart(${product.product_id}, document.getElementById('quantity').value)">
-                <i class="bi bi-cart-plus"></i> Add to Cart
-              </button>
+              
+              <div class="mb-3">
+                <span class="badge bg-info badge-large me-2">
+                  <i class="bi bi-box"></i> ${product.b_items_count} items per bail
+                </span>
+                <span class="badge bg-success badge-large">
+                  <i class="bi bi-check-circle"></i> ${product.b_stock_quantity} bails available
+                </span>
+              </div>
+              
+              <div class="mb-3">
+                <h6>Description:</h6>
+                <p class="text-muted">${product.product_description || 'Quality secondhand clothing bundle from international donors. Each bail contains a variety of clothing items perfect for resale or personal use.'}</p>
+              </div>
+              
+              <div class="mb-3">
+                <h6>Bail Information:</h6>
+                <ul class="list-unstyled text-muted">
+                  <li><i class="bi bi-globe text-info"></i> Sourced from international donors</li>
+                  <li><i class="bi bi-recycle text-success"></i> Sustainable secondhand clothing</li>
+                  <li><i class="bi bi-shop text-primary"></i> Perfect for retail resale</li>
+                  <li><i class="bi bi-people text-warning"></i> Bulk buying opportunity</li>
+                </ul>
+              </div>
             </div>
-            <?php else: ?>
-            <div class="mt-4">
-              <a href="signin.php" class="btn btn-primary">Sign In to Purchase</a>
-            </div>
-            <?php endif; ?>
           </div>
         </div>
-      `);
-      $('#productModal').modal('show');
+      `;
+      
+      $('#productModalBody').html(modalContent);
+      
+      // Update modal footer with cart button
+      const cartButton = `
+        <?php if ($isLoggedIn): ?>
+        <div class="d-flex align-items-center">
+          <div class="input-group me-3" style="width: 150px;">
+            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(-1)">-</button>
+            <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="${product.b_stock_quantity}">
+            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(1)">+</button>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="addToCart(${product.product_id}, document.getElementById('quantity').value)">
+            <i class="bi bi-cart-plus"></i> Add ${product.b_items_count} Items to Cart
+          </button>
+        </div>
+        <?php else: ?>
+        <a href="signin.php" class="btn btn-primary btn-lg">
+          <i class="bi bi-person-plus"></i> Sign In to Purchase
+        </a>
+        <?php endif; ?>
+      `;
+      
+      $('#modalCartButton').html(cartButton);
+      const modal = new bootstrap.Modal(document.getElementById('productModal'));
+      modal.show();
+    },
+    error: function() {
+      alert('Error loading product details');
     }
   });
 }
 
 function addToCart(productId, quantity = 1) {
   <?php if ($isLoggedIn): ?>
+  console.log('Adding to cart:', productId, quantity);
   $.ajax({
     url: 'model/addToCart.php',
     type: 'POST',
     data: { product_id: productId, quantity: quantity },
     success: function(data) {
-      const response = JSON.parse(data);
-      if (response.success) {
-        alert('Product added to cart!');
-        location.reload(); // Refresh to update cart count
-      } else {
-        alert('Error: ' + response.message);
+      console.log('Response:', data);
+      try {
+        const response = JSON.parse(data);
+        if (response.success) {
+          alert('Bail added to cart!');
+          location.reload();
+        } else {
+          alert('Error: ' + response.message);
+        }
+      } catch (e) {
+        console.error('JSON parse error:', e);
+        alert('Server response error: ' + data);
       }
+    },
+    error: function(xhr, status, error) {
+      console.error('AJAX error:', status, error);
+      alert('Network error: ' + error);
     }
   });
   <?php else: ?>
@@ -316,11 +429,50 @@ function addToCart(productId, quantity = 1) {
 
 function changeQuantity(change) {
   const quantityInput = document.getElementById('quantity');
+  if (!quantityInput) return;
+  
   const currentValue = parseInt(quantityInput.value);
+  const maxValue = parseInt(quantityInput.getAttribute('max'));
   const newValue = currentValue + change;
-  if (newValue >= 1) {
+  
+  if (newValue >= 1 && newValue <= maxValue) {
     quantityInput.value = newValue;
   }
+}
+
+function openImageFullscreen(imageSrc) {
+  const fullscreenModal = `
+    <div class="modal fade" id="imageModal" tabindex="-1">
+      <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content bg-dark">
+          <div class="modal-header border-0">
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body d-flex align-items-center justify-content-center">
+            <img src="${imageSrc}" class="img-fluid" style="max-height: 90vh; max-width: 90vw;">
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Remove existing image modal if any
+  const existingModal = document.getElementById('imageModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Add new modal to body
+  document.body.insertAdjacentHTML('beforeend', fullscreenModal);
+  
+  // Show the modal
+  const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+  modal.show();
+  
+  // Remove modal from DOM when hidden
+  document.getElementById('imageModal').addEventListener('hidden.bs.modal', function() {
+    this.remove();
+  });
 }
 </script>
 

@@ -14,7 +14,7 @@ require_once 'partials/header.php';
                 <div class="d-flex justify-content-between">
                   <div>
                     <p class="text-sm mb-0 text-capitalize">Today's Sales</p>
-                    <h4 class="mb-0">$53k</h4>
+                    <h4 class="mb-0">MWK 53k</h4>
                   </div>
                   <div
                     class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg"
@@ -88,7 +88,7 @@ require_once 'partials/header.php';
                 <div class="d-flex justify-content-between">
                   <div>
                     <p class="text-sm mb-0 text-capitalize">Sales</p>
-                    <h4 class="mb-0">$103,430</h4>
+                    <h4 class="mb-0">MWK 103,430</h4>
                   </div>
                   <div
                     class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg"
@@ -328,7 +328,7 @@ require_once 'partials/header.php';
                           </div>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">$14,000</span>
+                          <span class="text-xs font-weight-bold">MWK 14,000</span>
                         </td>
                         <td class="align-middle">
                           <div class="progress-wrapper w-75 mx-auto">
@@ -391,7 +391,7 @@ require_once 'partials/header.php';
                           </div>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">$3,000</span>
+                          <span class="text-xs font-weight-bold">MWK 3,000</span>
                         </td>
                         <td class="align-middle">
                           <div class="progress-wrapper w-75 mx-auto">
@@ -537,7 +537,7 @@ require_once 'partials/header.php';
                           </div>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">$20,500</span>
+                          <span class="text-xs font-weight-bold">MWK 20,500</span>
                         </td>
                         <td class="align-middle">
                           <div class="progress-wrapper w-75 mx-auto">
@@ -593,7 +593,7 @@ require_once 'partials/header.php';
                           </div>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">$500</span>
+                          <span class="text-xs font-weight-bold">MWK 500</span>
                         </td>
                         <td class="align-middle">
                           <div class="progress-wrapper w-75 mx-auto">
@@ -658,7 +658,7 @@ require_once 'partials/header.php';
                           </div>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">$2,000</span>
+                          <span class="text-xs font-weight-bold">MWK 2,000</span>
                         </td>
                         <td class="align-middle">
                           <div class="progress-wrapper w-75 mx-auto">
@@ -709,7 +709,7 @@ require_once 'partials/header.php';
                     </span>
                     <div class="timeline-content">
                       <h6 class="text-dark text-sm font-weight-bold mb-0">
-                        $2400, Design changes
+                        MWK 2,400, Design changes
                       </h6>
                       <p
                         class="text-secondary font-weight-bold text-xs mt-1 mb-0"

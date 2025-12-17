@@ -128,10 +128,10 @@ require_once 'partials/header.php';
                                             <p class="text-xs font-weight-bold mb-0"><?php echo $sale['p_quantity']; ?></p>
                                         </td>
                                         <td>
-                                            <p class="text-xs font-weight-bold mb-0">$<?php echo number_format($sale['p_unit_price'], 2); ?></p>
+                                            <p class="text-xs font-weight-bold mb-0">MWK <?php echo number_format($sale['p_unit_price'], 2); ?></p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm <?php echo $badgeColor; ?>">$<?php echo number_format($sale['p_total_amount'], 2); ?></span>
+                                            <span class="badge badge-sm <?php echo $badgeColor; ?>">MWK <?php echo number_format($sale['p_total_amount'], 2); ?></span>
                                         </td>
                                         <td>
                                             <span class="text-xs font-weight-bold"><?php echo ucfirst($sale['p_status']); ?></span>
@@ -195,7 +195,7 @@ require_once 'partials/header.php';
                                     <?php
                                     $bails = $db->query("SELECT b_id, b_name, b_avg_price_per_item FROM bails WHERE b_status = 'available' ORDER BY b_name")->fetchAll();
                                     foreach ($bails as $bail) {
-                                        echo "<option value='{$bail['b_id']}' data-price='{$bail['b_avg_price_per_item']}'>{$bail['b_name']} (\${$bail['b_avg_price_per_item']})</option>";
+                                        echo "<option value='{$bail['b_id']}' data-price='{$bail['b_avg_price_per_item']}'>{$bail['b_name']} (MWK {$bail['b_avg_price_per_item']})</option>";
                                     }
                                     ?>
                                 </select>
@@ -212,7 +212,7 @@ require_once 'partials/header.php';
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="saleUnitPrice" class="form-label">Unit Price *</label>
+                                <label for="saleUnitPrice" class="form-label">Unit Price (MWK) *</label>
                                 <input type="number" class="form-control" id="saleUnitPrice" name="p_unit_price" placeholder="Enter unit price" step="0.01" required>
                             </div>
                         </div>
@@ -392,8 +392,8 @@ require_once 'partials/header.php';
         document.getElementById('detailSaleEmail').textContent = email;
         document.getElementById('detailSaleBail').textContent = bail;
         document.getElementById('detailSaleQuantity').textContent = quantity;
-        document.getElementById('detailSaleUnitPrice').textContent = '$' + parseFloat(unitPrice).toFixed(2);
-        document.getElementById('detailSaleTotalAmount').textContent = '$' + parseFloat(totalAmount).toFixed(2);
+        document.getElementById('detailSaleUnitPrice').textContent = 'MWK ' + parseFloat(unitPrice).toFixed(2);
+        document.getElementById('detailSaleTotalAmount').textContent = 'MWK ' + parseFloat(totalAmount).toFixed(2);
         document.getElementById('detailSaleStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
         document.getElementById('detailSalePaymentMethod').textContent = paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1);
         document.getElementById('detailSalePurchaseDate').textContent = purchaseDate;

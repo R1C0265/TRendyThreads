@@ -22,10 +22,16 @@ if ($productId <= 0 || $quantity <= 0) {
 }
 
 try {
-    // Check if product exists
-    $product = $db->query("SELECT * FROM products WHERE product_id = ?", $productId)->fetchArray();
-    if (!$product) {
-        echo json_encode(['success' => false, 'message' => 'Product not found']);
+    // Check if bail exists and is available
+    $bail = $db->query("SELECT * FROM bails WHERE b_id = ? AND b_status = 'available'", $productId)->fetchArray();
+    if (!$bail) {
+        echo json_encode(['success' => false, 'message' => 'Bail not found or not available']);
+        exit;
+    }
+    
+    // Check stock availability
+    if ($bail['b_stock_quantity'] < $quantity) {
+        echo json_encode(['success' => false, 'message' => 'Not enough stock available. Only ' . $bail['b_stock_quantity'] . ' bails in stock']);
         exit;
     }
     

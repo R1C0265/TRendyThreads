@@ -17,11 +17,12 @@ if (!$order) {
     exit;
 }
 
-// Get order items
+// Get order items with bail details
 $orderItems = $db->query("
-    SELECT oi.*, p.product_name, p.product_image_location 
+    SELECT oi.*, b.b_name as product_name, b.b_items_count,
+           CONCAT('assets/img/bails/', LOWER(REPLACE(b.b_name, ' ', '-')), '.jpg') as product_image_location
     FROM order_items oi 
-    JOIN products p ON oi.product_id = p.product_id 
+    JOIN bails b ON oi.product_id = b.b_id 
     WHERE oi.order_id = ?
 ", $orderId)->fetchAll();
 ?>
@@ -55,7 +56,7 @@ $orderItems = $db->query("
                             
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <strong>Total Amount:</strong> $<?php echo number_format($order['total_amount'], 2); ?>
+                                    <strong>Total Amount:</strong> MWK <?php echo number_format($order['total_amount'], 2); ?>
                                 </div>
                                 <div class="col-md-6">
                                     <strong>Payment Status:</strong> 
@@ -88,12 +89,15 @@ $orderItems = $db->query("
                                                     <div class="d-flex align-items-center">
                                                         <img src="<?php echo htmlspecialchars($item['product_image_location']); ?>" 
                                                              class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
-                                                        <?php echo htmlspecialchars($item['product_name']); ?>
+                                                        <div>
+                                                            <?php echo htmlspecialchars($item['product_name']); ?>
+                                                            <small class="text-muted d-block"><?php echo $item['b_items_count']; ?> items per bail</small>
+                                                        </div>
                                                     </div>
                                                 </td>
-                                                <td><?php echo $item['quantity']; ?></td>
-                                                <td>$<?php echo number_format($item['price'], 2); ?></td>
-                                                <td>$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
+                                                <td><?php echo $item['quantity']; ?> bails</td>
+                                                <td>MWK <?php echo number_format($item['price'], 2); ?></td>
+                                                <td>MWK <?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
