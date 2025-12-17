@@ -2,18 +2,45 @@
 $page_title = "Bails - Trendy Threads";
 require_once 'partials/header.php';
 
-// 2. Define the Query
-$sql = "SELECT 
-            b_id, 
-            b_name, 
-            b_items_count, 
-            b_purchase_date, 
-            b_status, 
-            b_stock_quantity
-        FROM bails WHERE b_status != 'sold' 
-        ORDER BY b_created_date DESC";
+// Get filter parameters
+$search = $_GET['search'] ?? '';
+$status = $_GET['status'] ?? '';
+$dateFrom = $_GET['date_from'] ?? '';
+$dateTo = $_GET['date_to'] ?? '';
 
-$bails = $db->query($sql)->fetchAll();
+// Build query with filters
+$whereClause = "WHERE 1=1";
+$params = [];
+
+if ($search) {
+    $whereClause .= " AND (b_name LIKE ? OR b_description LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+}
+
+if ($status) {
+    $whereClause .= " AND b_status = ?";
+    $params[] = $status;
+}
+
+if ($dateFrom) {
+    $whereClause .= " AND b_purchase_date >= ?";
+    $params[] = $dateFrom;
+}
+
+if ($dateTo) {
+    $whereClause .= " AND b_purchase_date <= ?";
+    $params[] = $dateTo;
+}
+
+$sql = "SELECT b_id, b_name, b_items_count, b_purchase_date, b_status, b_stock_quantity 
+        FROM bails $whereClause ORDER BY b_created_date DESC";
+
+if (empty($params)) {
+    $bails = $db->query($sql)->fetchAll();
+} else {
+    $bails = $db->query($sql, ...$params)->fetchAll();
+}
 
 
 
@@ -30,39 +57,31 @@ $bails = $db->query($sql)->fetchAll();
                     </div>
                 </div>
                 <div class="card-body px-3 pb-2 pt-3">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <div class="input-group input-group-outline">
-                                <label class="form-label">Search...</label>
-                                <input type="text" class="form-control" id="searchInput" placeholder="Search by bail name">
+                    <form method="GET" id="filterForm">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by bail name or description">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="status">
+                                    <option value="">All Status</option>
+                                    <option value="available" <?php echo $status === 'available' ? 'selected' : ''; ?>>Available</option>
+                                    <option value="sold" <?php echo $status === 'sold' ? 'selected' : ''; ?>>Sold</option>
+                                    <option value="discontinued" <?php echo $status === 'discontinued' ? 'selected' : ''; ?>>Discontinued</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" placeholder="From Date">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" placeholder="To Date">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Filter</button>
+                                <a href="bails.php" class="btn btn-secondary btn-sm">Clear</a>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <select class="form-control" id="bailStatus">
-                                <option value="">All Status</option>
-                                <option value="finished">Finished</option>
-                                <option value="opened">Opened</option>
-                                <option value="unopened">Unopened</option>
-                                <option value="selling">Selling</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline">
-                                        <label class="form-label">From</label>
-                                        <input type="date" class="form-control" id="dateFrom">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline">
-                                        <label class="form-label">To</label>
-                                        <input type="date" class="form-control" id="dateTo">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive p-0">
@@ -232,6 +251,13 @@ $bails = $db->query($sql)->fetchAll();
                         <textarea class="form-control" id="bailDescription" name="b_description" placeholder="Enter bail description" rows="3"></textarea>
                     </div>
 
+                    <div class="form-group">
+                        <label class="form-label">Bail Images (Max 4)</label>
+                        <input type="file" class="form-control" name="bail_images[]" multiple accept="image/*" id="bailImages">
+                        <small class="text-muted">Select up to 4 images for this bail</small>
+                        <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                    </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -291,10 +317,37 @@ $bails = $db->query($sql)->fetchAll();
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row mb-4">
                     <div class="col-12">
                         <h6 class="text-dark mb-2">Description</h6>
                         <p class="text-muted" id="detailBailDescription">-</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="text-dark mb-3">Bail Images</h6>
+                        <div id="bailImagesContainer" class="d-flex flex-wrap gap-3 mb-3">
+                            <!-- Images will be loaded here -->
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="showImageUpload()">Add Images</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editImages()">Edit Images</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image upload section (hidden by default) -->
+                <div id="imageUploadSection" class="row mt-3" style="display: none;">
+                    <div class="col-12">
+                        <div class="border rounded p-3">
+                            <h6>Upload New Images</h6>
+                            <input type="file" class="form-control mb-2" id="newBailImages" multiple accept="image/*">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-success" onclick="uploadImages()">Upload</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="hideImageUpload()">Cancel</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -397,10 +450,69 @@ $bails = $db->query($sql)->fetchAll();
         </div>
     </div>
 </div>
+
+<!-- Edit Images Modal -->
+<div class="modal fade" id="editImagesModal" tabindex="-1" aria-labelledby="editImagesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-info">
+                <h5 class="modal-title text-white" id="editImagesModalLabel">Manage Bail Images</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editImagesContainer" class="row g-3">
+                    <!-- Images will be loaded here -->
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="mb-3">
+                    <h6>Upload New Images</h6>
+                    <input type="file" class="form-control" id="editNewImages" multiple accept="image/*">
+                    <small class="text-muted">Maximum 4 images total per bail</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="uploadNewImages()">Upload Selected</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
                                 
 
             <script src="../assets/js/jquery-3.7.1.min.js"></script>
             <script>
+                // Image preview functionality
+                document.getElementById('bailImages').addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = '';
+                    
+                    if (files.length > 4) {
+                        alert('Maximum 4 images allowed');
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'img-thumbnail';
+                            img.style.width = '80px';
+                            img.style.height = '80px';
+                            img.style.objectFit = 'cover';
+                            preview.appendChild(img);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+
                 $("#addBailForm").submit(function(e) {
                     e.preventDefault();
 
@@ -418,13 +530,14 @@ $bails = $db->query($sql)->fetchAll();
                         success: function(data) {
                             console.log(data);
                             if (data == 1) {
-                                alert("hazaa!")
+                                alert("Bail added successfully!");
+                                $('#addBailModal').modal('hide');
+                                window.location.reload();
                             } else {
-                                // show server response for debugging
                                 alert("Error in insertion. Server returned: " + data);
                             }
                             $("#btnSub").removeClass("disabled");
-                            $("#btnSub").html("Adding Bail");
+                            $("#btnSub").html("Save Bail");
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             console.error(
@@ -437,7 +550,7 @@ $bails = $db->query($sql)->fetchAll();
                             alert(
                                 "Request failed: " + textStatus + " — see console for details."
                             );
-                            $("#btnSub").prop("disabled", false).text("LOGIN");
+                            $("#btnSub").prop("disabled", false).text("Save Bail");
                         },
                     });
                 });
@@ -470,9 +583,206 @@ function showBailDetail(id, name, items, purchaseDate, status, stockLevel, descr
         </div>
     `;
 
+    // Load bail images
+    loadBailImages(id);
+
     // Show the modal
     const modal = new bootstrap.Modal(document.getElementById('bailDetailModal'));
     modal.show();
+}
+
+function loadBailImages(bailId) {
+    $.get('../model/getBailImages.php', { bail_id: bailId }, function(response) {
+        const container = document.getElementById('bailImagesContainer');
+        
+        if (response.success && response.images.length > 0) {
+            container.innerHTML = response.images.map(img => `
+                <div class="position-relative" style="width: 100px; height: 100px;">
+                    <img src="../${img.image_path}" class="img-thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                    ${img.is_primary ? '<span class="badge bg-primary position-absolute top-0 start-0">Primary</span>' : ''}
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0" 
+                            onclick="deleteImage(${img.id})" style="padding: 2px 6px;">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p class="text-muted">No images uploaded</p>';
+        }
+    }, 'json');
+}
+
+function showImageUpload() {
+    document.getElementById('imageUploadSection').style.display = 'block';
+}
+
+function hideImageUpload() {
+    document.getElementById('imageUploadSection').style.display = 'none';
+    document.getElementById('newBailImages').value = '';
+}
+
+function uploadImages() {
+    const bailId = document.getElementById('currentBailId').value;
+    const fileInput = document.getElementById('newBailImages');
+    
+    if (fileInput.files.length === 0) {
+        alert('Please select images to upload');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('bail_id', bailId);
+    
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('images[]', fileInput.files[i]);
+    }
+    
+    $.ajax({
+        url: '../model/uploadBailImages.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            const result = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (result.success) {
+                alert('Images uploaded successfully!');
+                loadBailImages(bailId);
+                hideImageUpload();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        },
+        error: function() {
+            alert('Error uploading images');
+        }
+    });
+}
+
+function deleteImage(imageId) {
+    if (confirm('Are you sure you want to delete this image?')) {
+        $.post('../model/deleteBailImage.php', { image_id: imageId }, function(response) {
+            const result = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (result.success) {
+                const bailId = document.getElementById('currentBailId').value;
+                loadBailImages(bailId);
+                // Refresh edit modal if open
+                if ($('#editImagesModal').hasClass('show')) {
+                    loadEditImages(bailId);
+                }
+            } else {
+                alert('Error deleting image');
+            }
+        }, 'json');
+    }
+}
+
+function editImages() {
+    const bailId = document.getElementById('currentBailId').value;
+    loadEditImages(bailId);
+    const modal = new bootstrap.Modal(document.getElementById('editImagesModal'));
+    modal.show();
+}
+
+function loadEditImages(bailId) {
+    $.get('../model/getBailImages.php', { bail_id: bailId }, function(response) {
+        const container = document.getElementById('editImagesContainer');
+        
+        if (response.success && response.images.length > 0) {
+            container.innerHTML = response.images.map(img => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card">
+                        <img src="../${img.image_path}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        <div class="card-body p-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    ${img.is_primary ? '<span class="badge bg-primary">Primary</span>' : '<button class="btn btn-sm btn-outline-primary" onclick="setPrimaryImage(' + img.id + ')">Set Primary</button>'}
+                                </div>
+                                <button class="btn btn-sm btn-danger" onclick="deleteImageFromEdit(' + img.id + ')">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div class="col-12"><p class="text-muted text-center">No images uploaded</p></div>';
+        }
+    }, 'json');
+}
+
+function setPrimaryImage(imageId) {
+    const bailId = document.getElementById('currentBailId').value;
+    
+    $.post('../model/setPrimaryImage.php', { image_id: imageId, bail_id: bailId }, function(response) {
+        const result = typeof response === 'string' ? JSON.parse(response) : response;
+        
+        if (result.success) {
+            loadEditImages(bailId);
+            loadBailImages(bailId);
+        } else {
+            alert('Error setting primary image');
+        }
+    }, 'json');
+}
+
+function deleteImageFromEdit(imageId) {
+    if (confirm('Are you sure you want to delete this image?')) {
+        $.post('../model/deleteBailImage.php', { image_id: imageId }, function(response) {
+            const result = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (result.success) {
+                const bailId = document.getElementById('currentBailId').value;
+                loadEditImages(bailId);
+                loadBailImages(bailId);
+            } else {
+                alert('Error deleting image');
+            }
+        }, 'json');
+    }
+}
+
+function uploadNewImages() {
+    const bailId = document.getElementById('currentBailId').value;
+    const fileInput = document.getElementById('editNewImages');
+    
+    if (fileInput.files.length === 0) {
+        alert('Please select images to upload');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('bail_id', bailId);
+    
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('images[]', fileInput.files[i]);
+    }
+    
+    $.ajax({
+        url: '../model/uploadBailImages.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            const result = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (result.success) {
+                alert('Images uploaded successfully!');
+                loadEditImages(bailId);
+                loadBailImages(bailId);
+                document.getElementById('editNewImages').value = '';
+            } else {
+                alert('Error: ' + result.message);
+            }
+        },
+        error: function() {
+            alert('Error uploading images');
+        }
+    });
 }
 
 function showDeleteConfirmation() {

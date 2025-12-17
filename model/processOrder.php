@@ -1,5 +1,6 @@
 <?php
 include(dirname(__DIR__) . "/config/main.php");
+require_once 'notificationHelper.php';
 
 if (!isset($_SESSION['userId'])) {
     echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -85,6 +86,13 @@ try {
     
     // Clear cart
     $db->query("DELETE FROM cart WHERE user_id = ?", $userId);
+    
+    // Get customer name for notification
+    $customer = $db->query("SELECT u_name FROM users WHERE u_id = ?", $userId)->fetch();
+    $itemCount = count($cartItems);
+    
+    // Add notification for online sale
+    notifySaleCompleted($customer['u_name'], "$itemCount items (Online)", $total, $orderId);
     
     echo json_encode(['success' => true, 'order_id' => $orderId, 'message' => 'Order placed successfully']);
     

@@ -1,6 +1,85 @@
 <?php
 $page_title = "Dashboard - Trendy Threads";
 require_once 'partials/header.php';
+
+// Get today's sales
+$todaySales = $db->query("SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE DATE(created_at) = CURDATE()")->fetchArray();
+$todaySales = $todaySales ?: ['total' => 0];
+
+// Get total sales this month
+$monthlySales = $db->query("SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())")->fetchArray();
+$monthlySales = $monthlySales ?: ['total' => 0];
+
+// Get bails in stock
+$bailsInStock = $db->query("SELECT COUNT(*) as count FROM bails WHERE b_status = 'available'")->fetchArray();
+$bailsInStock = $bailsInStock ?: ['count' => 0];
+
+// Get total customers (online customers)
+$totalCustomers = $db->query("SELECT COUNT(*) as count FROM users WHERE u_type = 3")->fetchArray();
+$totalCustomers = $totalCustomers ?: ['count' => 0];
+
+// Get recent bails for the table
+$recentBails = $db->query("SELECT * FROM bails ORDER BY b_id DESC LIMIT 6")->fetchAll();
+
+// Weekly sales data (last 7 days)
+$weeklySales = $db->query("
+    SELECT DATE(created_at) as sale_date, COALESCE(SUM(total_amount), 0) as daily_total
+    FROM orders 
+    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    GROUP BY DATE(created_at)
+    ORDER BY sale_date
+")->fetchAll();
+$weeklySales = $weeklySales ?: [];
+
+// Monthly sales this year
+$yearlyMonthlySales = $db->query("
+    SELECT MONTH(created_at) as month, COALESCE(SUM(total_amount), 0) as monthly_total
+    FROM orders 
+    WHERE YEAR(created_at) = YEAR(CURDATE())
+    GROUP BY MONTH(created_at)
+    ORDER BY month
+")->fetchAll();
+$yearlyMonthlySales = $yearlyMonthlySales ?: [];
+
+// Online purchases this year (orders with online payment methods)
+$onlinePurchases = $db->query("
+    SELECT MONTH(created_at) as month, COALESCE(SUM(total_amount), 0) as monthly_total
+    FROM orders 
+    WHERE YEAR(created_at) = YEAR(CURDATE()) AND payment_method IN ('stripe', 'paypal', 'demo')
+    GROUP BY MONTH(created_at)
+    ORDER BY month
+")->fetchAll();
+$onlinePurchases = $onlinePurchases ?: [];
+
+// Format data for JavaScript
+$weeklyLabels = [];
+$weeklyData = [];
+for ($i = 6; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $weeklyLabels[] = date('M j', strtotime($date));
+    $found = false;
+    foreach ($weeklySales as $sale) {
+        if ($sale['sale_date'] == $date) {
+            $weeklyData[] = (float)$sale['daily_total'];
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) $weeklyData[] = 0;
+}
+
+// Format monthly data (12 months)
+$monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+$monthlyData = array_fill(0, 12, 0);
+$onlineData = array_fill(0, 12, 0);
+
+foreach ($yearlyMonthlySales as $sale) {
+    $monthlyData[$sale['month'] - 1] = (float)$sale['monthly_total'];
+}
+
+foreach ($onlinePurchases as $purchase) {
+    $onlineData[$purchase['month'] - 1] = (float)$purchase['monthly_total'];
+}
 ?>
       <div class="container-fluid py-2">
         <div class="row">
@@ -14,7 +93,7 @@ require_once 'partials/header.php';
                 <div class="d-flex justify-content-between">
                   <div>
                     <p class="text-sm mb-0 text-capitalize">Today's Sales</p>
-                    <h4 class="mb-0">MWK 53k</h4>
+                    <h4 class="mb-0">MWK <?php echo number_format($todaySales['total'], 0); ?></h4>
                   </div>
                   <div
                     class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg"
@@ -37,8 +116,8 @@ require_once 'partials/header.php';
               <div class="card-header p-2 ps-3">
                 <div class="d-flex justify-content-between">
                   <div>
-                    <p class="text-sm mb-0 text-capitalize">Total Sales</p>
-                    <h4 class="mb-0">2300</h4>
+                    <p class="text-sm mb-0 text-capitalize">Total Sales This Month</p>
+                    <h4 class="mb-0">MWK <?php echo number_format($monthlySales['total'], 0); ?></h4>
                   </div>
                   <div
                     class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg"
@@ -62,7 +141,7 @@ require_once 'partials/header.php';
                 <div class="d-flex justify-content-between">
                   <div>
                     <p class="text-sm mb-0 text-capitalize">Bails In Stock</p>
-                    <h4 class="mb-0">3,462</h4>
+                    <h4 class="mb-0"><?php echo $bailsInStock['count']; ?></h4>
                   </div>
                   <div
                     class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg"
@@ -87,8 +166,8 @@ require_once 'partials/header.php';
               <div class="card-header p-2 ps-3">
                 <div class="d-flex justify-content-between">
                   <div>
-                    <p class="text-sm mb-0 text-capitalize">Sales</p>
-                    <h4 class="mb-0">MWK 103,430</h4>
+                    <p class="text-sm mb-0 text-capitalize">Online Customers</p>
+                    <h4 class="mb-0"><?php echo $totalCustomers['count']; ?></h4>
                   </div>
                   <div
                     class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg"
@@ -112,7 +191,7 @@ require_once 'partials/header.php';
             <div class="card">
               <div class="card-body">
                 <h6 class="mb-0">Sales for the Week</h6>
-                <p class="text-sm">Nov 9 - Nov 15</p>
+                <p class="text-sm"><?php echo date('M j', strtotime('-6 days')); ?> - <?php echo date('M j'); ?></p>
                 <div class="pe-2">
                   <div class="chart">
                     <canvas
@@ -127,7 +206,7 @@ require_once 'partials/header.php';
                   <i class="material-symbols-rounded text-sm my-auto me-1">
                     schedule
                   </i>
-                  <p class="mb-0 text-sm">campaign sent 2 days ago</p>
+                  <p class="mb-0 text-sm">updated <?php echo date('M j, Y'); ?></p>
                 </div>
               </div>
             </div>
@@ -135,7 +214,7 @@ require_once 'partials/header.php';
           <div class="col-lg-4 col-md-6 mt-4 mb-4">
             <div class="card">
               <div class="card-body">
-                <h6 class="mb-0">Bail Purchases This Year</h6>
+                <h6 class="mb-0">Sales This Year</h6>
                 <p class="text-sm">
                   (
                   <span class="font-weight-bolder">+15%</span>
@@ -155,7 +234,7 @@ require_once 'partials/header.php';
                   <i class="material-symbols-rounded text-sm my-auto me-1">
                     schedule
                   </i>
-                  <p class="mb-0 text-sm">updated 4 min ago</p>
+                  <p class="mb-0 text-sm">updated <?php echo date('M j, Y'); ?></p>
                 </div>
               </div>
             </div>
@@ -163,7 +242,7 @@ require_once 'partials/header.php';
           <div class="col-lg-4 mt-4 mb-3">
             <div class="card">
               <div class="card-body">
-                <h6 class="mb-0">Bail Sales This Year</h6>
+                <h6 class="mb-0">Online Purchases This Year</h6>
                 <p class="text-sm">Last Campaign Performance</p>
                 <div class="pe-2">
                   <div class="chart">
@@ -179,7 +258,7 @@ require_once 'partials/header.php';
                   <i class="material-symbols-rounded text-sm my-auto me-1">
                     schedule
                   </i>
-                  <p class="mb-0 text-sm">just updated</p>
+                  <p class="mb-0 text-sm">updated <?php echo date('M j, Y'); ?></p>
                 </div>
               </div>
             </div>
@@ -195,7 +274,7 @@ require_once 'partials/header.php';
                     <p class="text-sm mb-0">
                       <i class="fa fa-check text-info" aria-hidden="true"></i>
                       <span class="font-weight-bold ms-1">
-                        30 as of this month
+                        <?php echo count($recentBails); ?> as of this month
                       </span>
                     </p>
                   </div>
@@ -255,7 +334,7 @@ require_once 'partials/header.php';
                         <th
                           class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
                         >
-                          Amount of Items
+                          Items Count
                         </th>
                         <th
                           class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
@@ -265,11 +344,12 @@ require_once 'partials/header.php';
                         <th
                           class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
                         >
-                          Completion
+                          Status
                         </th>
                       </tr>
                     </thead>
                     <tbody>
+                      <?php foreach ($recentBails as $bail): ?>
                       <tr>
                         <td>
                           <div class="d-flex px-2 py-1">
@@ -277,73 +357,34 @@ require_once 'partials/header.php';
                               <img
                                 src="assets/img/small-logos/logo-xd.svg"
                                 class="avatar avatar-sm me-3"
-                                alt="xd"
+                                alt="bail"
                               />
                             </div>
-                            <div
-                              class="d-flex flex-column justify-content-center"
-                            >
-                              <h6 class="mb-0 text-sm">Material XD Version</h6>
+                            <div class="d-flex flex-column justify-content-center">
+                              <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($bail['b_name']); ?></h6>
                             </div>
                           </div>
                         </td>
                         <td>
-                          <div class="avatar-group mt-2">
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Ryan Tompson"
-                            >
-                              <img src="assets/img/team-1.jpg" alt="team1" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Romina Hadid"
-                            >
-                              <img src="assets/img/team-2.jpg" alt="team2" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Alexander Smith"
-                            >
-                              <img src="assets/img/team-3.jpg" alt="team3" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Jessica Doe"
-                            >
-                              <img src="assets/img/team-4.jpg" alt="team4" />
-                            </a>
-                          </div>
+                          <span class="text-xs font-weight-bold"><?php echo $bail['b_items_count']; ?> items</span>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">MWK 14,000</span>
+                          <span class="text-xs font-weight-bold">MWK <?php echo number_format($bail['b_avg_price_per_item'], 0); ?></span>
                         </td>
                         <td class="align-middle">
                           <div class="progress-wrapper w-75 mx-auto">
                             <div class="progress-info">
                               <div class="progress-percentage">
                                 <span class="text-xs font-weight-bold">
-                                  60%
+                                  <?php echo $bail['b_status'] == 'available' ? '100%' : '0%'; ?>
                                 </span>
                               </div>
                             </div>
                             <div class="progress">
                               <div
-                                class="progress-bar bg-gradient-info w-60"
+                                class="progress-bar <?php echo $bail['b_status'] == 'available' ? 'bg-gradient-success w-100' : 'bg-gradient-danger w-0'; ?>"
                                 role="progressbar"
-                                aria-valuenow="60"
+                                aria-valuenow="<?php echo $bail['b_status'] == 'available' ? '100' : '0'; ?>"
                                 aria-valuemin="0"
                                 aria-valuemax="100"
                               ></div>
@@ -351,336 +392,8 @@ require_once 'partials/header.php';
                           </div>
                         </td>
                       </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2 py-1">
-                            <div>
-                              <img
-                                src="assets/img/small-logos/logo-atlassian.svg"
-                                class="avatar avatar-sm me-3"
-                                alt="atlassian"
-                              />
-                            </div>
-                            <div
-                              class="d-flex flex-column justify-content-center"
-                            >
-                              <h6 class="mb-0 text-sm">Add Progress Track</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="avatar-group mt-2">
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Romina Hadid"
-                            >
-                              <img src="assets/img/team-2.jpg" alt="team5" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Jessica Doe"
-                            >
-                              <img src="assets/img/team-4.jpg" alt="team6" />
-                            </a>
-                          </div>
-                        </td>
-                        <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">MWK 3,000</span>
-                        </td>
-                        <td class="align-middle">
-                          <div class="progress-wrapper w-75 mx-auto">
-                            <div class="progress-info">
-                              <div class="progress-percentage">
-                                <span class="text-xs font-weight-bold">
-                                  10%
-                                </span>
-                              </div>
-                            </div>
-                            <div class="progress">
-                              <div
-                                class="progress-bar bg-gradient-info w-10"
-                                role="progressbar"
-                                aria-valuenow="10"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                              ></div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2 py-1">
-                            <div>
-                              <img
-                                src="assets/img/small-logos/logo-slack.svg"
-                                class="avatar avatar-sm me-3"
-                                alt="team7"
-                              />
-                            </div>
-                            <div
-                              class="d-flex flex-column justify-content-center"
-                            >
-                              <h6 class="mb-0 text-sm">Fix Platform Errors</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="avatar-group mt-2">
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Romina Hadid"
-                            >
-                              <img src="assets/img/team-3.jpg" alt="team8" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Jessica Doe"
-                            >
-                              <img src="assets/img/team-1.jpg" alt="team9" />
-                            </a>
-                          </div>
-                        </td>
-                        <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">Not set</span>
-                        </td>
-                        <td class="align-middle">
-                          <div class="progress-wrapper w-75 mx-auto">
-                            <div class="progress-info">
-                              <div class="progress-percentage">
-                                <span class="text-xs font-weight-bold">
-                                  100%
-                                </span>
-                              </div>
-                            </div>
-                            <div class="progress">
-                              <div
-                                class="progress-bar bg-gradient-success w-100"
-                                role="progressbar"
-                                aria-valuenow="100"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                              ></div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2 py-1">
-                            <div>
-                              <img
-                                src="assets/img/small-logos/logo-spotify.svg"
-                                class="avatar avatar-sm me-3"
-                                alt="spotify"
-                              />
-                            </div>
-                            <div
-                              class="d-flex flex-column justify-content-center"
-                            >
-                              <h6 class="mb-0 text-sm">
-                                Launch our Mobile App
-                              </h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="avatar-group mt-2">
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Ryan Tompson"
-                            >
-                              <img src="assets/img/team-4.jpg" alt="user1" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Romina Hadid"
-                            >
-                              <img src="assets/img/team-3.jpg" alt="user2" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Alexander Smith"
-                            >
-                              <img src="assets/img/team-4.jpg" alt="user3" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Jessica Doe"
-                            >
-                              <img src="assets/img/team-1.jpg" alt="user4" />
-                            </a>
-                          </div>
-                        </td>
-                        <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">MWK 20,500</span>
-                        </td>
-                        <td class="align-middle">
-                          <div class="progress-wrapper w-75 mx-auto">
-                            <div class="progress-info">
-                              <div class="progress-percentage">
-                                <span class="text-xs font-weight-bold">
-                                  100%
-                                </span>
-                              </div>
-                            </div>
-                            <div class="progress">
-                              <div
-                                class="progress-bar bg-gradient-success w-100"
-                                role="progressbar"
-                                aria-valuenow="100"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                              ></div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2 py-1">
-                            <div>
-                              <img
-                                src="assets/img/small-logos/logo-jira.svg"
-                                class="avatar avatar-sm me-3"
-                                alt="jira"
-                              />
-                            </div>
-                            <div
-                              class="d-flex flex-column justify-content-center"
-                            >
-                              <h6 class="mb-0 text-sm">
-                                Add the New Pricing Page
-                              </h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="avatar-group mt-2">
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Ryan Tompson"
-                            >
-                              <img src="assets/img/team-4.jpg" alt="user5" />
-                            </a>
-                          </div>
-                        </td>
-                        <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">MWK 500</span>
-                        </td>
-                        <td class="align-middle">
-                          <div class="progress-wrapper w-75 mx-auto">
-                            <div class="progress-info">
-                              <div class="progress-percentage">
-                                <span class="text-xs font-weight-bold">
-                                  25%
-                                </span>
-                              </div>
-                            </div>
-                            <div class="progress">
-                              <div
-                                class="progress-bar bg-gradient-info w-25"
-                                role="progressbar"
-                                aria-valuenow="25"
-                                aria-valuemin="0"
-                                aria-valuemax="25"
-                              ></div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="d-flex px-2 py-1">
-                            <div>
-                              <img
-                                src="assets/img/small-logos/logo-invision.svg"
-                                class="avatar avatar-sm me-3"
-                                alt="invision"
-                              />
-                            </div>
-                            <div
-                              class="d-flex flex-column justify-content-center"
-                            >
-                              <h6 class="mb-0 text-sm">
-                                Redesign New Online Shop
-                              </h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="avatar-group mt-2">
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Ryan Tompson"
-                            >
-                              <img src="assets/img/team-1.jpg" alt="user6" />
-                            </a>
-                            <a
-                              href="javascript:;"
-                              class="avatar avatar-xs rounded-circle"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Jessica Doe"
-                            >
-                              <img src="assets/img/team-4.jpg" alt="user7" />
-                            </a>
-                          </div>
-                        </td>
-                        <td class="align-middle text-center text-sm">
-                          <span class="text-xs font-weight-bold">MWK 2,000</span>
-                        </td>
-                        <td class="align-middle">
-                          <div class="progress-wrapper w-75 mx-auto">
-                            <div class="progress-info">
-                              <div class="progress-percentage">
-                                <span class="text-xs font-weight-bold">
-                                  40%
-                                </span>
-                              </div>
-                            </div>
-                            <div class="progress">
-                              <div
-                                class="progress-bar bg-gradient-info w-40"
-                                role="progressbar"
-                                aria-valuenow="40"
-                                aria-valuemin="0"
-                                aria-valuemax="40"
-                              ></div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
+                      <?php endforeach; ?>
+
                     </tbody>
                   </table>
                 </div>
@@ -818,6 +531,16 @@ require_once 'partials/header.php';
             </div>
           </div>
         </div>
+        <script>
+        // Store chart data for footer script
+        window.chartData = {
+            weeklyLabels: <?php echo json_encode($weeklyLabels); ?>,
+            weeklyData: <?php echo json_encode($weeklyData); ?>,
+            monthlyLabels: <?php echo json_encode($monthlyLabels); ?>,
+            monthlyData: <?php echo json_encode($monthlyData); ?>,
+            onlineData: <?php echo json_encode($onlineData); ?>
+        };
+        </script>
         <?php
         require_once"partials/footer.php";
         ?>

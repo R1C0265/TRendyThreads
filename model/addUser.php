@@ -1,5 +1,6 @@
 <?php
-require("/config/main.php");
+require_once '../config/main.php';
+require_once 'notificationHelper.php';
 $name = $_POST['name'];
 $email = $_POST['email'];
 
@@ -10,8 +11,13 @@ if($check){
 }else{
     //add to db
     $save = $db->query("INSERT INTO `users` (`u_id`, `u_name`, `u_email`, `u_password`, `u_type`, `u_img`, `u_stamp`) VALUES (NULL, '$name', '$email', default, 3, 'user.svg', current_timestamp())");
-    if($save) echo 1;
-    else echo 2;
+    if($save) {
+        $user_id = $db->lastInsertID();
+        notifyCustomerRegistered($name, $user_id);
+        echo 1;
+    } else {
+        echo 2;
+    }
 }
 
 ?>

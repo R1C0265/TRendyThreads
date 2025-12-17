@@ -1,6 +1,12 @@
 <?php
 $page_title = "Sales - Trendy Threads";
 require_once 'partials/header.php';
+
+// Get filter parameters
+$search = $_GET['search'] ?? '';
+$status = $_GET['status'] ?? '';
+$dateFrom = $_GET['date_from'] ?? '';
+$dateTo = $_GET['date_to'] ?? '';
 ?>
 <div class="container-fluid py-2">
     <div class="row">
@@ -15,39 +21,32 @@ require_once 'partials/header.php';
                     </div>
                 </div>
                 <div class="card-body px-3 pb-2 pt-3">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <div class="input-group input-group-outline">
-                                <label class="form-label">Search...</label>
-                                <input type="text" class="form-control" id="searchInput" placeholder="Search by customer or bail">
+                    <form method="GET" id="salesFilterForm">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search customer, email, or bail name">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="status">
+                                    <option value="">All Status</option>
+                                    <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                    <option value="completed" <?php echo $status === 'completed' ? 'selected' : ''; ?>>Completed</option>
+                                    <option value="cancelled" <?php echo $status === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                    <option value="refunded" <?php echo $status === 'refunded' ? 'selected' : ''; ?>>Refunded</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" placeholder="From Date">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" placeholder="To Date">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Filter</button>
+                                <a href="sales.php" class="btn btn-secondary btn-sm">Clear</a>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <select class="form-control" id="saleStatus">
-                                <option value="">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
-                                <option value="refunded">Refunded</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline">
-                                        <label class="form-label">From</label>
-                                        <input type="date" class="form-control" id="dateFrom">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline">
-                                        <label class="form-label">To</label>
-                                        <input type="date" class="form-control" id="dateTo">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="card-body px-0 pb-2">
                     <div class="table-responsive p-0">
@@ -66,18 +65,45 @@ require_once 'partials/header.php';
                             </thead>
                             <tbody>
                                 <?php
-                                // Fetch all purchases with customer and bail details
-                                $sales = $db->query("
-        SELECT 
-            p.*,
-            c.c_name,
-            c.c_email,
-            b.b_name
-        FROM purchases p
-        INNER JOIN customers c ON p.p_customer_id = c.c_id
-        INNER JOIN bails b ON p.p_bail_id = b.b_id
-        ORDER BY p.p_purchase_date DESC
-    ")->fetchAll();
+
+                                // Build query with filters
+                                $whereClause = "WHERE 1=1";
+                                $params = [];
+
+                                if ($search) {
+                                    $whereClause .= " AND (c.c_name LIKE ? OR c.c_email LIKE ? OR b.b_name LIKE ?)";
+                                    $params[] = "%$search%";
+                                    $params[] = "%$search%";
+                                    $params[] = "%$search%";
+                                }
+
+                                if ($status) {
+                                    $whereClause .= " AND p.p_status = ?";
+                                    $params[] = $status;
+                                }
+
+                                if ($dateFrom) {
+                                    $whereClause .= " AND DATE(p.p_purchase_date) >= ?";
+                                    $params[] = $dateFrom;
+                                }
+
+                                if ($dateTo) {
+                                    $whereClause .= " AND DATE(p.p_purchase_date) <= ?";
+                                    $params[] = $dateTo;
+                                }
+
+                                $sql = "SELECT p.*, c.c_name, c.c_email, b.b_name
+                                        FROM purchases p
+                                        INNER JOIN customers c ON p.p_customer_id = c.c_id
+                                        INNER JOIN bails b ON p.p_bail_id = b.b_id
+                                        $whereClause
+                                        ORDER BY p.p_purchase_date DESC";
+
+                                if (empty($params)) {
+                                    $sales = $db->query($sql)->fetchAll();
+                                } else {
+                                    $sales = $db->query($sql, ...$params)->fetchAll();
+                                }
 
                                 foreach ($sales as $sale) {
                                     // Determine badge color based on status

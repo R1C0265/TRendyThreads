@@ -215,258 +215,108 @@
 <script src="assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="assets/js/plugins/chartjs.min.js"></script>
 <script src="../assets/js/jquery-3.7.1.min.js"></script>
+<!-- Dynamic Charts -->
 <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
-
-    new Chart(ctx, {
-        type: "bar",
+if (typeof window.chartData !== 'undefined') {
+    // Weekly Sales Bar Chart
+    const ctx1 = document.getElementById('chart-bars').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
         data: {
-            labels: ["M", "T", "W", "T", "F", "S", "S"],
+            labels: window.chartData.weeklyLabels,
             datasets: [{
-                label: "Views",
-                tension: 0.4,
-                borderWidth: 0,
-                borderRadius: 4,
-                borderSkipped: false,
-                backgroundColor: "#43A047",
-                data: [50, 45, 22, 28, 50, 60, 76],
-                barThickness: "flex",
-            }, ],
+                label: 'Daily Sales (MWK)',
+                data: window.chartData.weeklyData,
+                backgroundColor: '#43A047',
+                borderRadius: 4
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-            },
-            interaction: {
-                intersect: false,
-                mode: "index",
-            },
+            plugins: { legend: { display: false } },
             scales: {
                 y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: "#e5e5e5",
-                    },
-                    ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 500,
-                        beginAtZero: true,
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            lineHeight: 2,
-                        },
-                        color: "#737373",
-                    },
+                    beginAtZero: true,
+                    grid: { color: '#e5e5e5', borderDash: [5, 5] },
+                    ticks: { color: '#737373' }
                 },
                 x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                    },
-                    ticks: {
-                        display: true,
-                        color: "#737373",
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            lineHeight: 2,
-                        },
-                    },
-                },
-            },
-        },
+                    grid: { display: false },
+                    ticks: { color: '#737373' }
+                }
+            }
+        }
     });
 
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
+    // Monthly Sales Line Chart
+    const ctx2 = document.getElementById('chart-line').getContext('2d');
     new Chart(ctx2, {
-        type: "line",
+        type: 'line',
         data: {
-            labels: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
+            labels: window.chartData.monthlyLabels,
             datasets: [{
-                label: "Sales",
-                tension: 0,
+                label: 'Monthly Sales (MWK)',
+                data: window.chartData.monthlyData,
+                borderColor: '#43A047',
+                backgroundColor: 'transparent',
                 borderWidth: 2,
                 pointRadius: 3,
-                pointBackgroundColor: "#43A047",
-                pointBorderColor: "transparent",
-                borderColor: "#43A047",
-                backgroundColor: "transparent",
-                fill: true,
-                data: [120, 230, 130, 440, 250, 360, 270, 180, 90, 300, 310, 220],
-                maxBarThickness: 6,
-            }, ],
+                pointBackgroundColor: '#43A047'
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function(context) {
-                            const fullMonths = [
-                                "January",
-                                "February",
-                                "March",
-                                "April",
-                                "May",
-                                "June",
-                                "July",
-                                "August",
-                                "September",
-                                "October",
-                                "November",
-                                "December",
-                            ];
-                            return fullMonths[context[0].dataIndex];
-                        },
-                    },
-                },
-            },
-            interaction: {
-                intersect: false,
-                mode: "index",
-            },
+            plugins: { legend: { display: false } },
             scales: {
                 y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [4, 4],
-                        color: "#e5e5e5",
-                    },
-                    ticks: {
-                        display: true,
-                        color: "#737373",
-                        padding: 10,
-                        font: {
-                            size: 12,
-                            lineHeight: 2,
-                        },
-                    },
+                    beginAtZero: true,
+                    grid: { color: '#e5e5e5', borderDash: [4, 4] },
+                    ticks: { color: '#737373' }
                 },
                 x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                    },
-                    ticks: {
-                        display: true,
-                        color: "#737373",
-                        padding: 10,
-                        font: {
-                            size: 12,
-                            lineHeight: 2,
-                        },
-                    },
-                },
-            },
-        },
+                    grid: { display: false },
+                    ticks: { color: '#737373' }
+                }
+            }
+        }
     });
 
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
-
+    // Online Purchases Line Chart
+    const ctx3 = document.getElementById('chart-line-tasks').getContext('2d');
     new Chart(ctx3, {
-        type: "line",
+        type: 'line',
         data: {
-            labels: [
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
+            labels: window.chartData.monthlyLabels,
             datasets: [{
-                label: "Tasks",
-                tension: 0,
+                label: 'Online Purchases (MWK)',
+                data: window.chartData.onlineData,
+                borderColor: '#43A047',
+                backgroundColor: 'transparent',
                 borderWidth: 2,
                 pointRadius: 3,
-                pointBackgroundColor: "#43A047",
-                pointBorderColor: "transparent",
-                borderColor: "#43A047",
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-                maxBarThickness: 6,
-            }, ],
+                pointBackgroundColor: '#43A047'
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-            },
-            interaction: {
-                intersect: false,
-                mode: "index",
-            },
+            plugins: { legend: { display: false } },
             scales: {
                 y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [4, 4],
-                        color: "#e5e5e5",
-                    },
-                    ticks: {
-                        display: true,
-                        padding: 10,
-                        color: "#737373",
-                        font: {
-                            size: 14,
-                            lineHeight: 2,
-                        },
-                    },
+                    beginAtZero: true,
+                    grid: { color: '#e5e5e5', borderDash: [4, 4] },
+                    ticks: { color: '#737373' }
                 },
                 x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [4, 4],
-                    },
-                    ticks: {
-                        display: true,
-                        color: "#737373",
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            lineHeight: 2,
-                        },
-                    },
-                },
-            },
-        },
+                    grid: { display: false },
+                    ticks: { color: '#737373' }
+                }
+            }
+        }
     });
+}
 </script>
 <script>
     var win = navigator.platform.indexOf("Win") > -1;

@@ -295,29 +295,61 @@ if ($isLoggedIn) {
 
 <script>
 function viewProduct(productId) {
-  // Load product details via AJAX
-  $.ajax({
-    url: 'model/getProduct.php',
-    type: 'GET',
-    data: { id: productId },
-    success: function(data) {
-      const product = JSON.parse(data);
-      $('#productModalTitle').text(product.product_name + ' - Secondhand Clothing Bail');
+  // Load product details and images via AJAX
+  Promise.all([
+    $.get('model/getProduct.php', { id: productId }),
+    $.get('model/getBailImages.php', { bail_id: productId })
+  ]).then(function([productData, imagesData]) {
+    const product = JSON.parse(productData);
+    const images = JSON.parse(imagesData);
+    
+    $('#productModalTitle').text(product.product_name + ' - Secondhand Clothing Bail');
+    
+    // Build image gallery
+    let imageGallery = '';
+    if (images.success && images.images.length > 0) {
+      const primaryImage = images.images.find(img => img.is_primary) || images.images[0];
       
-      const modalContent = `
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="text-center">
-              <img src="${product.product_image_location}" 
-                   class="product-modal-image" 
-                   alt="${product.product_image_alt}" 
-                   onerror="this.src='assets/img/hero-img.png'"
-                   onclick="openImageFullscreen(this.src)">
-              <p class="text-muted mt-2 small">Click image to view fullscreen</p>
-            </div>
+      imageGallery = `
+        <div class="text-center">
+          <img src="${primaryImage.image_path}" 
+               class="product-modal-image mb-3" 
+               id="mainImage"
+               alt="${product.product_name}" 
+               onclick="openImageFullscreen(this.src)">
+          
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            ${images.images.map(img => `
+              <img src="${img.image_path}" 
+                   class="img-thumbnail" 
+                   style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" 
+                   onclick="changeMainImage('${img.image_path}')"
+                   ${img.is_primary ? 'style="border: 3px solid #007bff;"' : ''}>
+            `).join('')}
           </div>
-          <div class="col-lg-6">
-            <div class="bail-info-card">
+          <p class="text-muted mt-2 small">Click thumbnails to change main image • Click main image for fullscreen</p>
+        </div>
+      `;
+    } else {
+      imageGallery = `
+        <div class="text-center">
+          <img src="${product.product_image_location}" 
+               class="product-modal-image" 
+               alt="${product.product_image_alt}" 
+               onerror="this.src='assets/img/hero-img.png'"
+               onclick="openImageFullscreen(this.src)">
+          <p class="text-muted mt-2 small">Click image to view fullscreen</p>
+        </div>
+      `;
+    }
+    
+    const modalContent = `
+      <div class="row">
+        <div class="col-lg-6">
+          ${imageGallery}
+        </div>
+        <div class="col-lg-6">
+          <div class="bail-info-card">
               <h3 class="text-primary mb-3">${product.product_name}</h3>
               
               <div class="row mb-3">
@@ -358,12 +390,12 @@ function viewProduct(productId) {
                   <li><i class="bi bi-people text-warning"></i> Bulk buying opportunity</li>
                 </ul>
               </div>
-            </div>
           </div>
         </div>
-      `;
+      </div>
+    `;
       
-      $('#productModalBody').html(modalContent);
+    $('#productModalBody').html(modalContent);
       
       // Update modal footer with cart button
       const cartButton = `
@@ -388,11 +420,16 @@ function viewProduct(productId) {
       $('#modalCartButton').html(cartButton);
       const modal = new bootstrap.Modal(document.getElementById('productModal'));
       modal.show();
-    },
-    error: function() {
+    }).catch(function() {
       alert('Error loading product details');
-    }
-  });
+    });
+}
+
+function changeMainImage(imageSrc) {
+  const mainImage = document.getElementById('mainImage');
+  if (mainImage) {
+    mainImage.src = imageSrc;
+  }
 }
 
 function addToCart(productId, quantity = 1) {

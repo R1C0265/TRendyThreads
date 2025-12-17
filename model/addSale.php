@@ -1,5 +1,6 @@
 <?php
 require_once '../config/main.php';
+require_once 'notificationHelper.php';
 header('Content-Type: application/json');
 
 // Get POST data
@@ -72,6 +73,13 @@ try {
     
     if ($stmt->execute()) {
         $new_sale_id = $stmt->insert_id;
+        
+        // Get customer and bail names for notification
+        $customer = $db->query("SELECT c_name FROM customers WHERE c_id = ?", $p_customer_id)->fetch();
+        $bail = $db->query("SELECT b_name FROM bails WHERE b_id = ?", $p_bail_id)->fetch();
+        
+        $total_amount = $p_quantity * $p_unit_price;
+        notifySaleCompleted($customer['c_name'], $bail['b_name'], $total_amount, $new_sale_id);
         
         echo json_encode([
             'success' => true, 
