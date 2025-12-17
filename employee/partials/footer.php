@@ -8,58 +8,22 @@
             <div class="col-lg-6 mb-lg-0 mb-4">
                 <div
                     class="copyright text-center text-sm text-muted text-lg-start">
-                    ©
+                    © <a
+                        href="https://www.palm.tech.ct.ws"
+                        class="font-weight-bold"
+                        target="_blank">
+                        Palm Technologies
+                    </a>
                     <script>
                         document.write(new Date().getFullYear());
                     </script>
-                    , made with
+
                     <i class="fa fa-heart"></i>
-                    by
-                    <a
-                        href="https://www.creative-tim.com"
-                        class="font-weight-bold"
-                        target="_blank">
-                        Creative Tim
-                    </a>
-                    for a better web.
+
                 </div>
             </div>
             <div class="col-lg-6">
-                <ul
-                    class="nav nav-footer justify-content-center justify-content-lg-end">
-                    <li class="nav-item">
-                        <a
-                            href="https://www.creative-tim.com"
-                            class="nav-link text-muted"
-                            target="_blank">
-                            Creative Tim
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a
-                            href="https://www.creative-tim.com/presentation"
-                            class="nav-link text-muted"
-                            target="_blank">
-                            About Us
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a
-                            href="https://www.creative-tim.com/blog"
-                            class="nav-link text-muted"
-                            target="_blank">
-                            Blog
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a
-                            href="https://www.creative-tim.com/license"
-                            class="nav-link pe-0 text-muted"
-                            target="_blank">
-                            License
-                        </a>
-                    </li>
-                </ul>
+       
             </div>
         </div>
     </div>
@@ -217,106 +181,145 @@
 <script src="../assets/js/jquery-3.7.1.min.js"></script>
 <!-- Dynamic Charts -->
 <script>
-if (typeof window.chartData !== 'undefined') {
-    // Weekly Sales Bar Chart
-    const ctx1 = document.getElementById('chart-bars').getContext('2d');
-    new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: window.chartData.weeklyLabels,
-            datasets: [{
-                label: 'Daily Sales (MWK)',
-                data: window.chartData.weeklyData,
-                backgroundColor: '#43A047',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#e5e5e5', borderDash: [5, 5] },
-                    ticks: { color: '#737373' }
+    if (typeof window.chartData !== 'undefined') {
+        // Weekly Sales Bar Chart
+        const ctx1 = document.getElementById('chart-bars').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: window.chartData.weeklyLabels,
+                datasets: [{
+                    label: 'Daily Sales (MWK)',
+                    data: window.chartData.weeklyData,
+                    backgroundColor: '#43A047',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#737373' }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e5e5e5',
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            color: '#737373'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#737373'
+                        }
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Monthly Sales Line Chart
-    const ctx2 = document.getElementById('chart-line').getContext('2d');
-    new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: window.chartData.monthlyLabels,
-            datasets: [{
-                label: 'Monthly Sales (MWK)',
-                data: window.chartData.monthlyData,
-                borderColor: '#43A047',
-                backgroundColor: 'transparent',
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: '#43A047'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#e5e5e5', borderDash: [4, 4] },
-                    ticks: { color: '#737373' }
+        // Monthly Sales Line Chart
+        const ctx2 = document.getElementById('chart-line').getContext('2d');
+        new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: window.chartData.monthlyLabels,
+                datasets: [{
+                    label: 'Monthly Sales (MWK)',
+                    data: window.chartData.monthlyData,
+                    borderColor: '#43A047',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#43A047'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#737373' }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e5e5e5',
+                            borderDash: [4, 4]
+                        },
+                        ticks: {
+                            color: '#737373'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#737373'
+                        }
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Online Purchases Line Chart
-    const ctx3 = document.getElementById('chart-line-tasks').getContext('2d');
-    new Chart(ctx3, {
-        type: 'line',
-        data: {
-            labels: window.chartData.monthlyLabels,
-            datasets: [{
-                label: 'Online Purchases (MWK)',
-                data: window.chartData.onlineData,
-                borderColor: '#43A047',
-                backgroundColor: 'transparent',
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: '#43A047'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#e5e5e5', borderDash: [4, 4] },
-                    ticks: { color: '#737373' }
+        // Online Purchases Line Chart
+        const ctx3 = document.getElementById('chart-line-tasks').getContext('2d');
+        new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: window.chartData.monthlyLabels,
+                datasets: [{
+                    label: 'Online Purchases (MWK)',
+                    data: window.chartData.onlineData,
+                    borderColor: '#43A047',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#43A047'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#737373' }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e5e5e5',
+                            borderDash: [4, 4]
+                        },
+                        ticks: {
+                            color: '#737373'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#737373'
+                        }
+                    }
                 }
             }
-        }
-    });
-}
+        });
+    }
 </script>
 <script>
     var win = navigator.platform.indexOf("Win") > -1;

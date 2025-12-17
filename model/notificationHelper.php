@@ -5,9 +5,9 @@ function addNotification($type, $title, $message, $relatedId = null, $userId = n
     global $db;
     
     try {
-        $sql = "INSERT INTO notifications (n_type, n_title, n_message, n_related_id, n_user_id) 
-                VALUES (?, ?, ?, ?, ?)";
-        $db->query($sql, $type, $title, $message, $relatedId, $userId);
+        $sql = "INSERT INTO notifications (n_type, n_title, n_message, n_related_id) 
+                VALUES (?, ?, ?, ?)";
+        $db->query($sql, $type, $title, $message, $relatedId);
         return true;
     } catch (Exception $e) {
         error_log("Notification error: " . $e->getMessage());

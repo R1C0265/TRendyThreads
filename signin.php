@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Tarama Farms|Signin</title>
+  <title>Trendy Threads|Signin</title>
   <meta name="description" content="" />
   <meta name="keywords" content="" />
 
@@ -42,7 +42,7 @@
     <div
       class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
-        <h1 class="sitename">Tarama Farms</h1>
+        <h1 class="sitename">Trendy Threads</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">

@@ -8,10 +8,8 @@ try {
         n_title VARCHAR(255) NOT NULL,
         n_message TEXT NOT NULL,
         n_related_id INT,
-        n_user_id INT,
         n_is_read BOOLEAN DEFAULT FALSE,
         n_created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_user_read (n_user_id, n_is_read),
         INDEX idx_created_date (n_created_date)
     )";
     

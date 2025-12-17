@@ -206,7 +206,7 @@ if (empty($params)) {
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="bailItemsCount" class="form-label">Items Count *</label>
+                                <label for="bailItemsCount" class="form-label">Items Count (Amount of items when Bail was opened)*</label>
                                 <input type="number" class="form-control" id="bailItemsCount" name="b_items_count" placeholder="Enter items count" value="1" required min="1">
                             </div>
                         </div>
@@ -221,7 +221,7 @@ if (empty($params)) {
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="bailStockQuantity" class="form-label">Stock Quantity</label>
+                                <label for="bailStockQuantity" class="form-label">Stock Quantity(Number of Items Remaining)</label>
                                 <input type="number" class="form-control" id="bailStockQuantity" name="b_stock_quantity" placeholder="Enter stock quantity" value="1" min="1">
                             </div>
                         </div>
@@ -269,217 +269,217 @@ if (empty($params)) {
 </div>
 
 <!-- Bail Detail Modal -->
-<div class="modal fade" id="bailDetailModal" tabindex="-1" aria-labelledby="bailDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-dark">
-                <h5 class="modal-title text-white" id="bailDetailModalLabel">Bail Details</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Keep existing detail fields -->
-                <input type="hidden" id="currentBailId" value="">
-                
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Bail Name</h6>
-                        <p class="text-muted" id="detailBailName">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Status</h6>
-                        <p class="text-muted" id="detailBailStatus">-</p>
-                    </div>
-                </div>
+<div class=" modal fade" id="bailDetailModal" tabindex="-1" aria-labelledby="bailDetailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-gradient-dark">
+                                <h5 class="modal-title text-white" id="bailDetailModalLabel">Bail Details</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Keep existing detail fields -->
+                                <input type="hidden" id="currentBailId" value="">
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Items Available</h6>
-                        <p class="text-muted" id="detailBailItems">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Stock Quantity</h6>
-                        <p class="text-muted" id="detailBailStock">-</p>
-                    </div>
-                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Bail Name</h6>
+                                        <p class="text-muted" id="detailBailName">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Status</h6>
+                                        <p class="text-muted" id="detailBailStatus">-</p>
+                                    </div>
+                                </div>
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Purchase Date</h6>
-                        <p class="text-muted" id="detailBailPurchaseDate">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-dark mb-2">Stock Level</h6>
-                        <div id="detailBailProgressBar">
-                            <div class="progress">
-                                <div class="progress-bar bg-gradient-info" role="progressbar" style="width: 0%"></div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Items Available</h6>
+                                        <p class="text-muted" id="detailBailItems">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Stock Quantity</h6>
+                                        <p class="text-muted" id="detailBailStock">-</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Purchase Date</h6>
+                                        <p class="text-muted" id="detailBailPurchaseDate">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-dark mb-2">Stock Level</h6>
+                                        <div id="detailBailProgressBar">
+                                            <div class="progress">
+                                                <div class="progress-bar bg-gradient-info" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-dark mb-2">Description</h6>
+                                        <p class="text-muted" id="detailBailDescription">-</p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-dark mb-3">Bail Images</h6>
+                                        <div id="bailImagesContainer" class="d-flex flex-wrap gap-3 mb-3">
+                                            <!-- Images will be loaded here -->
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="showImageUpload()">Add Images</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editImages()">Edit Images</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Image upload section (hidden by default) -->
+                                <div id="imageUploadSection" class="row mt-3" style="display: none;">
+                                    <div class="col-12">
+                                        <div class="border rounded p-3">
+                                            <h6>Upload New Images</h6>
+                                            <input type="file" class="form-control mb-2" id="newBailImages" multiple accept="image/*">
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-success" onclick="uploadImages()">Upload</button>
+                                                <button type="button" class="btn btn-sm btn-secondary" onclick="hideImageUpload()">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" onclick="showDeleteConfirmation()">Delete</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="editBail()">Edit</button>
                             </div>
                         </div>
                     </div>
-                </div>
+            </div>
 
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-dark mb-2">Description</h6>
-                        <p class="text-muted" id="detailBailDescription">-</p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <h6 class="text-dark mb-3">Bail Images</h6>
-                        <div id="bailImagesContainer" class="d-flex flex-wrap gap-3 mb-3">
-                            <!-- Images will be loaded here -->
+            <!-- Edit Bail Modal -->
+            <div class="modal fade" id="editBailModal" tabindex="-1" aria-labelledby="editBailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-gradient-primary">
+                            <h5 class="modal-title text-white" id="editBailModalLabel">Edit Bail</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="showImageUpload()">Add Images</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editImages()">Edit Images</button>
+                        <div class="modal-body">
+                            <form id="editBailForm">
+                                <input type="hidden" id="editBailId" name="bail_id">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="editBailName" class="form-label">Bail Name *</label>
+                                            <input type="text" class="form-control" id="editBailName" name="b_name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="editBailItemsCount" class="form-label">Items Count *</label>
+                                            <input type="number" class="form-control" id="editBailItemsCount" name="b_items_count" required min="1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="editBailAvgPrice" class="form-label">Avg Price Per Item (MWK) *</label>
+                                            <input type="number" class="form-control" id="editBailAvgPrice" name="b_avg_price_per_item" step="0.01" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="editBailStockQuantity" class="form-label">Stock Quantity</label>
+                                            <input type="number" class="form-control" id="editBailStockQuantity" name="b_stock_quantity" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="editBailPurchaseDate" class="form-label">Purchase Date *</label>
+                                            <input type="date" class="form-control" id="editBailPurchaseDate" name="b_purchase_date" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="editBailStatus" class="form-label">Status</label>
+                                            <select class="form-control" id="editBailStatus" name="b_status">
+                                                <option value="available">Available</option>
+                                                <option value="sold">Sold</option>
+                                                <option value="discontinued">Discontinued</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editBailDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="editBailDescription" name="b_description" rows="3"></textarea>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Image upload section (hidden by default) -->
-                <div id="imageUploadSection" class="row mt-3" style="display: none;">
-                    <div class="col-12">
-                        <div class="border rounded p-3">
-                            <h6>Upload New Images</h6>
-                            <input type="file" class="form-control mb-2" id="newBailImages" multiple accept="image/*">
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-sm btn-success" onclick="uploadImages()">Upload</button>
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="hideImageUpload()">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="showDeleteConfirmation()">Delete</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="editBail()">Edit</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Bail Modal -->
-<div class="modal fade" id="editBailModal" tabindex="-1" aria-labelledby="editBailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-primary">
-                <h5 class="modal-title text-white" id="editBailModalLabel">Edit Bail</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editBailForm">
-                    <input type="hidden" id="editBailId" name="bail_id">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="editBailName" class="form-label">Bail Name *</label>
-                                <input type="text" class="form-control" id="editBailName" name="b_name" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="editBailItemsCount" class="form-label">Items Count *</label>
-                                <input type="number" class="form-control" id="editBailItemsCount" name="b_items_count" required min="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="editBailAvgPrice" class="form-label">Avg Price Per Item (MWK) *</label>
-                                <input type="number" class="form-control" id="editBailAvgPrice" name="b_avg_price_per_item" step="0.01" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="editBailStockQuantity" class="form-label">Stock Quantity</label>
-                                <input type="number" class="form-control" id="editBailStockQuantity" name="b_stock_quantity" min="1">
-                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btnUpdateBail" form="editBailForm">Update Bail</button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="editBailPurchaseDate" class="form-label">Purchase Date *</label>
-                                <input type="date" class="form-control" id="editBailPurchaseDate" name="b_purchase_date" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="editBailStatus" class="form-label">Status</label>
-                                <select class="form-control" id="editBailStatus" name="b_status">
-                                    <option value="available">Available</option>
-                                    <option value="sold">Sold</option>
-                                    <option value="discontinued">Discontinued</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="editBailDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editBailDescription" name="b_description" rows="3"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="btnUpdateBail" form="editBailForm">Update Bail</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-danger">
-                <h5 class="modal-title text-white" id="deleteConfirmModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this bail?</p>
-                <p class="text-danger"><strong>This action cannot be undone.</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="deleteBail()">Yes, Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Images Modal -->
-<div class="modal fade" id="editImagesModal" tabindex="-1" aria-labelledby="editImagesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-info">
-                <h5 class="modal-title text-white" id="editImagesModalLabel">Manage Bail Images</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="editImagesContainer" class="row g-3">
-                    <!-- Images will be loaded here -->
-                </div>
-                
-                <hr class="my-4">
-                
-                <div class="mb-3">
-                    <h6>Upload New Images</h6>
-                    <input type="file" class="form-control" id="editNewImages" multiple accept="image/*">
-                    <small class="text-muted">Maximum 4 images total per bail</small>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="uploadNewImages()">Upload Selected</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-gradient-danger">
+                            <h5 class="modal-title text-white" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this bail?</p>
+                            <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="deleteBail()">Yes, Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-                                
+
+            <!-- Edit Images Modal -->
+            <div class="modal fade" id="editImagesModal" tabindex="-1" aria-labelledby="editImagesModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-gradient-info">
+                            <h5 class="modal-title text-white" id="editImagesModalLabel">Manage Bail Images</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="editImagesContainer" class="row g-3">
+                                <!-- Images will be loaded here -->
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="mb-3">
+                                <h6>Upload New Images</h6>
+                                <input type="file" class="form-control" id="editNewImages" multiple accept="image/*">
+                                <small class="text-muted">Maximum 4 images total per bail</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" onclick="uploadNewImages()">Upload Selected</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <script src="../assets/js/jquery-3.7.1.min.js"></script>
             <script>
@@ -488,17 +488,17 @@ if (empty($params)) {
                     const files = e.target.files;
                     const preview = document.getElementById('imagePreview');
                     preview.innerHTML = '';
-                    
+
                     if (files.length > 4) {
                         alert('Maximum 4 images allowed');
                         e.target.value = '';
                         return;
                     }
-                    
+
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
                         const reader = new FileReader();
-                        
+
                         reader.onload = function(e) {
                             const img = document.createElement('img');
                             img.src = e.target.result;
@@ -508,7 +508,7 @@ if (empty($params)) {
                             img.style.objectFit = 'cover';
                             preview.appendChild(img);
                         };
-                        
+
                         reader.readAsDataURL(file);
                     }
                 });
@@ -556,47 +556,49 @@ if (empty($params)) {
                 });
             </script>
 
-<script>
-function showBailDetail(id, name, items, purchaseDate, status, stockLevel, description) {
-    // Store the bail ID for deletion
-    document.getElementById('currentBailId').value = id;
-    
-    // Set the bail details
-    document.getElementById('detailBailName').textContent = name;
-    document.getElementById('detailBailStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
-    document.getElementById('detailBailItems').textContent = items;
-    document.getElementById('detailBailStock').textContent = stockLevel + '%';
-    document.getElementById('detailBailPurchaseDate').textContent = purchaseDate;
-    document.getElementById('detailBailDescription').textContent = description;
+            <script>
+                function showBailDetail(id, name, items, purchaseDate, status, stockLevel, description) {
+                    // Store the bail ID for deletion
+                    document.getElementById('currentBailId').value = id;
 
-    // Update progress bar color based on stock level
-    let barColor = 'bg-gradient-success';
-    if (stockLevel < 30) {
-        barColor = 'bg-gradient-danger';
-    } else if (stockLevel < 70) {
-        barColor = 'bg-gradient-warning';
-    }
+                    // Set the bail details
+                    document.getElementById('detailBailName').textContent = name;
+                    document.getElementById('detailBailStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                    document.getElementById('detailBailItems').textContent = items;
+                    document.getElementById('detailBailStock').textContent = stockLevel + '%';
+                    document.getElementById('detailBailPurchaseDate').textContent = purchaseDate;
+                    document.getElementById('detailBailDescription').textContent = description;
 
-    document.getElementById('detailBailProgressBar').innerHTML = `
+                    // Update progress bar color based on stock level
+                    let barColor = 'bg-gradient-success';
+                    if (stockLevel < 30) {
+                        barColor = 'bg-gradient-danger';
+                    } else if (stockLevel < 70) {
+                        barColor = 'bg-gradient-warning';
+                    }
+
+                    document.getElementById('detailBailProgressBar').innerHTML = `
         <div class="progress">
             <div class="progress-bar ${barColor}" role="progressbar" aria-valuenow="${stockLevel}" aria-valuemin="0" aria-valuemax="100" style="width: ${stockLevel}%"></div>
         </div>
     `;
 
-    // Load bail images
-    loadBailImages(id);
+                    // Load bail images
+                    loadBailImages(id);
 
-    // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('bailDetailModal'));
-    modal.show();
-}
+                    // Show the modal
+                    const modal = new bootstrap.Modal(document.getElementById('bailDetailModal'));
+                    modal.show();
+                }
 
-function loadBailImages(bailId) {
-    $.get('../model/getBailImages.php', { bail_id: bailId }, function(response) {
-        const container = document.getElementById('bailImagesContainer');
-        
-        if (response.success && response.images.length > 0) {
-            container.innerHTML = response.images.map(img => `
+                function loadBailImages(bailId) {
+                    $.get('../model/getBailImages.php', {
+                        bail_id: bailId
+                    }, function(response) {
+                        const container = document.getElementById('bailImagesContainer');
+
+                        if (response.success && response.images.length > 0) {
+                            container.innerHTML = response.images.map(img => `
                 <div class="position-relative" style="width: 100px; height: 100px;">
                     <img src="../${img.image_path}" class="img-thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
                     ${img.is_primary ? '<span class="badge bg-primary position-absolute top-0 start-0">Primary</span>' : ''}
@@ -606,92 +608,96 @@ function loadBailImages(bailId) {
                     </button>
                 </div>
             `).join('');
-        } else {
-            container.innerHTML = '<p class="text-muted">No images uploaded</p>';
-        }
-    }, 'json');
-}
-
-function showImageUpload() {
-    document.getElementById('imageUploadSection').style.display = 'block';
-}
-
-function hideImageUpload() {
-    document.getElementById('imageUploadSection').style.display = 'none';
-    document.getElementById('newBailImages').value = '';
-}
-
-function uploadImages() {
-    const bailId = document.getElementById('currentBailId').value;
-    const fileInput = document.getElementById('newBailImages');
-    
-    if (fileInput.files.length === 0) {
-        alert('Please select images to upload');
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('bail_id', bailId);
-    
-    for (let i = 0; i < fileInput.files.length; i++) {
-        formData.append('images[]', fileInput.files[i]);
-    }
-    
-    $.ajax({
-        url: '../model/uploadBailImages.php',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            const result = typeof response === 'string' ? JSON.parse(response) : response;
-            
-            if (result.success) {
-                alert('Images uploaded successfully!');
-                loadBailImages(bailId);
-                hideImageUpload();
-            } else {
-                alert('Error: ' + result.message);
-            }
-        },
-        error: function() {
-            alert('Error uploading images');
-        }
-    });
-}
-
-function deleteImage(imageId) {
-    if (confirm('Are you sure you want to delete this image?')) {
-        $.post('../model/deleteBailImage.php', { image_id: imageId }, function(response) {
-            const result = typeof response === 'string' ? JSON.parse(response) : response;
-            
-            if (result.success) {
-                const bailId = document.getElementById('currentBailId').value;
-                loadBailImages(bailId);
-                // Refresh edit modal if open
-                if ($('#editImagesModal').hasClass('show')) {
-                    loadEditImages(bailId);
+                        } else {
+                            container.innerHTML = '<p class="text-muted">No images uploaded</p>';
+                        }
+                    }, 'json');
                 }
-            } else {
-                alert('Error deleting image');
-            }
-        }, 'json');
-    }
-}
 
-function editImages() {
-    const bailId = document.getElementById('currentBailId').value;
-    loadEditImages(bailId);
-    const modal = new bootstrap.Modal(document.getElementById('editImagesModal'));
-    modal.show();
-}
+                function showImageUpload() {
+                    document.getElementById('imageUploadSection').style.display = 'block';
+                }
 
-function loadEditImages(bailId) {
-    $.get('../model/getBailImages.php', { bail_id: bailId }, function(response) {
-        const container = document.getElementById('editImagesContainer');
-        
-        if (response.success && response.images.length > 0) {
-            container.innerHTML = response.images.map(img => `
+                function hideImageUpload() {
+                    document.getElementById('imageUploadSection').style.display = 'none';
+                    document.getElementById('newBailImages').value = '';
+                }
+
+                function uploadImages() {
+                    const bailId = document.getElementById('currentBailId').value;
+                    const fileInput = document.getElementById('newBailImages');
+
+                    if (fileInput.files.length === 0) {
+                        alert('Please select images to upload');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('bail_id', bailId);
+
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('images[]', fileInput.files[i]);
+                    }
+
+                    $.ajax({
+                        url: '../model/uploadBailImages.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            const result = typeof response === 'string' ? JSON.parse(response) : response;
+
+                            if (result.success) {
+                                alert('Images uploaded successfully!');
+                                loadBailImages(bailId);
+                                hideImageUpload();
+                            } else {
+                                alert('Error: ' + result.message);
+                            }
+                        },
+                        error: function() {
+                            alert('Error uploading images');
+                        }
+                    });
+                }
+
+                function deleteImage(imageId) {
+                    if (confirm('Are you sure you want to delete this image?')) {
+                        $.post('../model/deleteBailImage.php', {
+                            image_id: imageId
+                        }, function(response) {
+                            const result = typeof response === 'string' ? JSON.parse(response) : response;
+
+                            if (result.success) {
+                                const bailId = document.getElementById('currentBailId').value;
+                                loadBailImages(bailId);
+                                // Refresh edit modal if open
+                                if ($('#editImagesModal').hasClass('show')) {
+                                    loadEditImages(bailId);
+                                }
+                            } else {
+                                alert('Error deleting image');
+                            }
+                        }, 'json');
+                    }
+                }
+
+                function editImages() {
+                    const bailId = document.getElementById('currentBailId').value;
+                    loadEditImages(bailId);
+                    const modal = new bootstrap.Modal(document.getElementById('editImagesModal'));
+                    modal.show();
+                }
+
+                function loadEditImages(bailId) {
+                    $.get('../model/getBailImages.php', {
+                        bail_id: bailId
+                    }, function(response) {
+                        const container = document.getElementById('editImagesContainer');
+
+                        if (response.success && response.images.length > 0) {
+                            container.innerHTML = response.images.map(img => `
                 <div class="col-md-6 col-lg-4">
                     <div class="card">
                         <img src="../${img.image_path}" class="card-img-top" style="height: 200px; object-fit: cover;">
@@ -708,205 +714,212 @@ function loadEditImages(bailId) {
                     </div>
                 </div>
             `).join('');
-        } else {
-            container.innerHTML = '<div class="col-12"><p class="text-muted text-center">No images uploaded</p></div>';
-        }
-    }, 'json');
-}
+                        } else {
+                            container.innerHTML = '<div class="col-12"><p class="text-muted text-center">No images uploaded</p></div>';
+                        }
+                    }, 'json');
+                }
 
-function setPrimaryImage(imageId) {
-    const bailId = document.getElementById('currentBailId').value;
-    
-    $.post('../model/setPrimaryImage.php', { image_id: imageId, bail_id: bailId }, function(response) {
-        const result = typeof response === 'string' ? JSON.parse(response) : response;
-        
-        if (result.success) {
-            loadEditImages(bailId);
-            loadBailImages(bailId);
-        } else {
-            alert('Error setting primary image');
-        }
-    }, 'json');
-}
+                function setPrimaryImage(imageId) {
+                    const bailId = document.getElementById('currentBailId').value;
 
-function deleteImageFromEdit(imageId) {
-    if (confirm('Are you sure you want to delete this image?')) {
-        $.post('../model/deleteBailImage.php', { image_id: imageId }, function(response) {
-            const result = typeof response === 'string' ? JSON.parse(response) : response;
-            
-            if (result.success) {
-                const bailId = document.getElementById('currentBailId').value;
-                loadEditImages(bailId);
-                loadBailImages(bailId);
-            } else {
-                alert('Error deleting image');
-            }
-        }, 'json');
-    }
-}
+                    $.post('../model/setPrimaryImage.php', {
+                        image_id: imageId,
+                        bail_id: bailId
+                    }, function(response) {
+                        const result = typeof response === 'string' ? JSON.parse(response) : response;
 
-function uploadNewImages() {
-    const bailId = document.getElementById('currentBailId').value;
-    const fileInput = document.getElementById('editNewImages');
-    
-    if (fileInput.files.length === 0) {
-        alert('Please select images to upload');
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('bail_id', bailId);
-    
-    for (let i = 0; i < fileInput.files.length; i++) {
-        formData.append('images[]', fileInput.files[i]);
-    }
-    
-    $.ajax({
-        url: '../model/uploadBailImages.php',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            const result = typeof response === 'string' ? JSON.parse(response) : response;
-            
-            if (result.success) {
-                alert('Images uploaded successfully!');
-                loadEditImages(bailId);
-                loadBailImages(bailId);
-                document.getElementById('editNewImages').value = '';
-            } else {
-                alert('Error: ' + result.message);
-            }
-        },
-        error: function() {
-            alert('Error uploading images');
-        }
-    });
-}
+                        if (result.success) {
+                            loadEditImages(bailId);
+                            loadBailImages(bailId);
+                        } else {
+                            alert('Error setting primary image');
+                        }
+                    }, 'json');
+                }
 
-function showDeleteConfirmation() {
-    // Hide detail modal
-    const detailModal = bootstrap.Modal.getInstance(document.getElementById('bailDetailModal'));
-    detailModal.hide();
-    
-    // Show confirmation modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    confirmModal.show();
-}
+                function deleteImageFromEdit(imageId) {
+                    if (confirm('Are you sure you want to delete this image?')) {
+                        $.post('../model/deleteBailImage.php', {
+                            image_id: imageId
+                        }, function(response) {
+                            const result = typeof response === 'string' ? JSON.parse(response) : response;
 
-function editBail() {
-    // Get current bail data from detail modal
-    const bailId = document.getElementById('currentBailId').value;
-    const bailName = document.getElementById('detailBailName').textContent;
-    const bailStatus = document.getElementById('detailBailStatus').textContent.toLowerCase();
-    const bailItems = document.getElementById('detailBailItems').textContent;
-    const bailPurchaseDate = document.getElementById('detailBailPurchaseDate').textContent;
-    
-    // Hide detail modal
-    const detailModal = bootstrap.Modal.getInstance(document.getElementById('bailDetailModal'));
-    detailModal.hide();
-    
-    // Populate edit form
-    document.getElementById('editBailId').value = bailId;
-    document.getElementById('editBailName').value = bailName;
-    document.getElementById('editBailItemsCount').value = bailItems;
-    document.getElementById('editBailStatus').value = bailStatus;
-    document.getElementById('editBailPurchaseDate').value = bailPurchaseDate;
-    
-    // Show edit modal
-    const editModal = new bootstrap.Modal(document.getElementById('editBailModal'));
-    editModal.show();
-}
+                            if (result.success) {
+                                const bailId = document.getElementById('currentBailId').value;
+                                loadEditImages(bailId);
+                                loadBailImages(bailId);
+                            } else {
+                                alert('Error deleting image');
+                            }
+                        }, 'json');
+                    }
+                }
 
-// Handle edit form submission
-$("#editBailForm").submit(function(e) {
-    e.preventDefault();
-    
-    $.ajax({
-        url: "../model/updateBail.php",
-        type: "POST",
-        data: new FormData(this),
-        contentType: false,
-        cache: false,
-        processData: false,
-        beforeSend: function() {
-            $("#btnUpdateBail").prop("disabled", true).html("Updating...");
-        },
-        success: function(data) {
-            const response = typeof data === 'string' ? JSON.parse(data) : data;
-            
-            if (response.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editBailModal'));
-                modal.hide();
-                alert("Bail updated successfully!");
-                window.location.reload();
-            } else {
-                alert("Error: " + response.message);
-            }
-            
-            $("#btnUpdateBail").prop("disabled", false).html("Update Bail");
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("AJAX error:", textStatus, errorThrown);
-            alert("Request failed: " + textStatus);
-            $("#btnUpdateBail").prop("disabled", false).html("Update Bail");
-        }
-    });
-});
+                function uploadNewImages() {
+                    const bailId = document.getElementById('currentBailId').value;
+                    const fileInput = document.getElementById('editNewImages');
 
-function deleteBail() {
-    const bailId = document.getElementById('currentBailId').value;
-    
-    $.ajax({
-        url: "../model/delBail.php",
-        type: "POST",
-        data: { bail_id: bailId },
-        dataType: "json",
-        beforeSend: function() {
-            $("#confirmDeleteBtn").prop("disabled", true).html("Deleting...");
-        },
-        /* 
-        The revenant
-        RRR
-        te life of pi
-        me time
-        success: function(response) {
-            if (response.success) {
-                // Hide confirmation modal
-                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-                confirmModal.hide();
-                
-                alert("Bail deleted successfully!");
-                window.location.reload();
-            } else {
-                alert("Error: " + response.message);
-                $("#confirmDeleteBtn").prop("disabled", false).html("Yes, Delete");
-            }
-        }, */
-        success: function(data) {
-            console.log(data);
-            if (data == 1) {
-                // Hide confirmation modal
-                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-                confirmModal.hide();            
-                alert("Bail deleted successfully!");
-                window.location.reload();
-            } else {
-                // show server response for debugging
-                alert("Error: " + response.message);
-                $("#confirmDeleteBtn").prop("disabled", false).html("Yes, Delete");
-            }
+                    if (fileInput.files.length === 0) {
+                        alert('Please select images to upload');
+                        return;
+                    }
 
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("AJAX error:", textStatus, errorThrown);
-            alert("Request failed: " + textStatus);
-            $("#confirmDeleteBtn").prop("disabled", false).html("Yes, Delete");
-        }
-    });
-}
-</script>
+                    const formData = new FormData();
+                    formData.append('bail_id', bailId);
+
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('images[]', fileInput.files[i]);
+                    }
+
+                    $.ajax({
+                        url: '../model/uploadBailImages.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            const result = typeof response === 'string' ? JSON.parse(response) : response;
+
+                            if (result.success) {
+                                alert('Images uploaded successfully!');
+                                loadEditImages(bailId);
+                                loadBailImages(bailId);
+                                document.getElementById('editNewImages').value = '';
+                            } else {
+                                alert('Error: ' + result.message);
+                            }
+                        },
+                        error: function() {
+                            alert('Error uploading images');
+                        }
+                    });
+                }
+
+                function showDeleteConfirmation() {
+                    // Hide detail modal
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('bailDetailModal'));
+                    detailModal.hide();
+
+                    // Show confirmation modal
+                    const confirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                    confirmModal.show();
+                }
+
+                function editBail() {
+                    // Get current bail data from detail modal
+                    const bailId = document.getElementById('currentBailId').value;
+                    const bailName = document.getElementById('detailBailName').textContent;
+                    const bailStatus = document.getElementById('detailBailStatus').textContent.toLowerCase();
+                    const bailItems = document.getElementById('detailBailItems').textContent;
+                    const bailPurchaseDate = document.getElementById('detailBailPurchaseDate').textContent;
+
+                    // Hide detail modal
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('bailDetailModal'));
+                    detailModal.hide();
+
+                    // Populate edit form
+                    document.getElementById('editBailId').value = bailId;
+                    document.getElementById('editBailName').value = bailName;
+                    document.getElementById('editBailItemsCount').value = bailItems;
+                    document.getElementById('editBailStatus').value = bailStatus;
+                    document.getElementById('editBailPurchaseDate').value = bailPurchaseDate;
+
+                    // Show edit modal
+                    const editModal = new bootstrap.Modal(document.getElementById('editBailModal'));
+                    editModal.show();
+                }
+
+                // Handle edit form submission
+                $("#editBailForm").submit(function(e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "../model/updateBail.php",
+                        type: "POST",
+                        data: new FormData(this),
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        beforeSend: function() {
+                            $("#btnUpdateBail").prop("disabled", true).html("Updating...");
+                        },
+                        success: function(data) {
+                            const response = typeof data === 'string' ? JSON.parse(data) : data;
+
+                            if (response.success) {
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('editBailModal'));
+                                modal.hide();
+                                alert("Bail updated successfully!");
+                                window.location.reload();
+                            } else {
+                                alert("Error: " + response.message);
+                            }
+
+                            $("#btnUpdateBail").prop("disabled", false).html("Update Bail");
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error("AJAX error:", textStatus, errorThrown);
+                            alert("Request failed: " + textStatus);
+                            $("#btnUpdateBail").prop("disabled", false).html("Update Bail");
+                        }
+                    });
+                });
+
+                function deleteBail() {
+                    const bailId = document.getElementById('currentBailId').value;
+
+                    $.ajax({
+                        url: "../model/delBail.php",
+                        type: "POST",
+                        data: {
+                            bail_id: bailId
+                        },
+                        dataType: "json",
+                        beforeSend: function() {
+                            $("#confirmDeleteBtn").prop("disabled", true).html("Deleting...");
+                        },
+                        /* 
+                        The revenant
+                        RRR
+                        te life of pi
+                        me time
+                        success: function(response) {
+                            if (response.success) {
+                                // Hide confirmation modal
+                                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+                                confirmModal.hide();
+                                
+                                alert("Bail deleted successfully!");
+                                window.location.reload();
+                            } else {
+                                alert("Error: " + response.message);
+                                $("#confirmDeleteBtn").prop("disabled", false).html("Yes, Delete");
+                            }
+                        }, */
+                        success: function(data) {
+                            console.log(data);
+                            if (data == 1) {
+                                // Hide confirmation modal
+                                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+                                confirmModal.hide();
+                                alert("Bail deleted successfully!");
+                                window.location.reload();
+                            } else {
+                                // show server response for debugging
+                                alert("Error: " + response.message);
+                                $("#confirmDeleteBtn").prop("disabled", false).html("Yes, Delete");
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error("AJAX error:", textStatus, errorThrown);
+                            alert("Request failed: " + textStatus);
+                            $("#confirmDeleteBtn").prop("disabled", false).html("Yes, Delete");
+                        }
+                    });
+                }
+            </script>
 
 
 

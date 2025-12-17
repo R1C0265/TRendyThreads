@@ -71,7 +71,7 @@ $dateTo = $_GET['date_to'] ?? '';
                                 $params = [];
 
                                 if ($search) {
-                                    $whereClause .= " AND (c.c_name LIKE ? OR c.c_email LIKE ? OR b.b_name LIKE ?)";
+                                    $whereClause .= " AND (COALESCE(c.c_name, 'Unknown Customer') LIKE ? OR COALESCE(c.c_email, 'N/A') LIKE ? OR b.b_name LIKE ?)";
                                     $params[] = "%$search%";
                                     $params[] = "%$search%";
                                     $params[] = "%$search%";
@@ -92,9 +92,12 @@ $dateTo = $_GET['date_to'] ?? '';
                                     $params[] = $dateTo;
                                 }
 
-                                $sql = "SELECT p.*, c.c_name, c.c_email, b.b_name
+                                $sql = "SELECT p.*, 
+                                        CASE WHEN p.p_customer_id IS NULL THEN 'Unknown Customer' ELSE c.c_name END as c_name,
+                                        CASE WHEN p.p_customer_id IS NULL THEN 'N/A' ELSE c.c_email END as c_email,
+                                        b.b_name
                                         FROM purchases p
-                                        INNER JOIN customers c ON p.p_customer_id = c.c_id
+                                        LEFT JOIN customers c ON p.p_customer_id = c.c_id
                                         INNER JOIN bails b ON p.p_bail_id = b.b_id
                                         $whereClause
                                         ORDER BY p.p_purchase_date DESC";
@@ -204,6 +207,7 @@ $dateTo = $_GET['date_to'] ?? '';
                                 <label for="saleCustomerId" class="form-label">Customer *</label>
                                 <select class="form-control" id="saleCustomerId" name="p_customer_id" required>
                                     <option value="">Select customer</option>
+                                    <option value="0">Unknown/New Customer</option>
                                     <?php
                                     $customers = $db->query("SELECT c_id, c_name, c_email FROM customers WHERE c_status = 'active' ORDER BY c_name")->fetchAll();
                                     foreach ($customers as $customer) {
@@ -239,7 +243,8 @@ $dateTo = $_GET['date_to'] ?? '';
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="saleUnitPrice" class="form-label">Unit Price (MWK) *</label>
-                                <input type="number" class="form-control" id="saleUnitPrice" name="p_unit_price" placeholder="Enter unit price" step="0.01" required>
+                                <input type="number" class="form-control" id="saleUnitPrice" name="p_unit_price" placeholder="Auto-filled from bail price" step="0.01" required>
+                                <small class="text-muted">Price can be adjusted for haggling</small>
                             </div>
                         </div>
                     </div>
@@ -247,26 +252,10 @@ $dateTo = $_GET['date_to'] ?? '';
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="saleStatus" class="form-label">Status</label>
-                                <select class="form-control" id="saleStatus" name="p_status">
-                                    <option value="pending">Pending</option>
-                                    <option value="completed" selected>Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                    <option value="refunded">Refunded</option>
-                                </select>
+                                <label for="salePurchaseDate" class="form-label">Sale Date</label>
+                                <input type="date" class="form-control" id="salePurchaseDate" name="p_purchase_date" value="<?php echo date('Y-m-d'); ?>">
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="salePaymentMethod" class="form-label">Payment Method</label>
-                                <input type="text" class="form-control" id="salePaymentMethod" name="p_payment_method" placeholder="e.g., cash, card" value="cash">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="salePurchaseDate" class="form-label">Purchase Date</label>
-                        <input type="date" class="form-control" id="salePurchaseDate" name="p_purchase_date" value="<?php echo date('Y-m-d'); ?>">
                     </div>
 
                     <div class="form-group">
