@@ -223,7 +223,7 @@ $dateTo = $_GET['date_to'] ?? '';
                                 <select class="form-control" id="saleBailId" name="p_bail_id" required>
                                     <option value="">Select bail</option>
                                     <?php
-                                    $bails = $db->query("SELECT b_id, b_name, b_avg_price_per_item FROM bails WHERE b_status = 'available' ORDER BY b_name")->fetchAll();
+                                    $bails = $db->query("SELECT b_id, b_name, b_avg_price_per_item FROM bails WHERE b_status = 'available' AND b_avg_price_per_item > 0 ORDER BY b_name")->fetchAll();
                                     foreach ($bails as $bail) {
                                         echo "<option value='{$bail['b_id']}' data-price='{$bail['b_avg_price_per_item']}'>{$bail['b_name']} (MWK {$bail['b_avg_price_per_item']})</option>";
                                     }
@@ -242,14 +242,23 @@ $dateTo = $_GET['date_to'] ?? '';
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="saleUnitPrice" class="form-label">Unit Price (MWK) *</label>
-                                <input type="number" class="form-control" id="saleUnitPrice" name="p_unit_price" placeholder="Auto-filled from bail price" step="0.01" required>
-                                <small class="text-muted">Price can be adjusted for haggling</small>
+                                <label for="saleUnitPrice" class="form-label">Unit Price (MWK)</label>
+                                <input type="number" class="form-control" id="saleUnitPrice" name="p_unit_price" placeholder="Leave empty to use bail price" step="0.01">
+                                <small class="text-muted">Optional - Will use bail price if left empty. Can be adjusted for haggling.</small>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="salePaymentMethod" class="form-label">Payment Method *</label>
+                                <select class="form-control" id="salePaymentMethod" name="p_payment_method" required>
+                                    <option value="cash">Cash</option>
+                                    <option value="credit">Credit</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="salePurchaseDate" class="form-label">Sale Date</label>
@@ -321,10 +330,19 @@ $dateTo = $_GET['date_to'] ?? '';
                     <div class="col-md-6">
                         <h6 class="text-dark mb-2">Status</h6>
                         <p class="text-muted" id="detailSaleStatus">-</p>
+                        <select class="form-control" id="editSaleStatus" style="display: none;">
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <h6 class="text-dark mb-2">Payment Method</h6>
                         <p class="text-muted" id="detailSalePaymentMethod">-</p>
+                        <select class="form-control" id="editSalePaymentMethod" style="display: none;">
+                            <option value="cash">Cash</option>
+                            <option value="credit">Credit</option>
+                        </select>
                     </div>
                 </div>
 
@@ -339,12 +357,15 @@ $dateTo = $_GET['date_to'] ?? '';
                     <div class="col-12">
                         <h6 class="text-dark mb-2">Notes</h6>
                         <p class="text-muted" id="detailSaleNotes">-</p>
+                        <textarea class="form-control" id="editSaleNotes" rows="3" style="display: none;"></textarea>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <div class="text-muted small">Sales records are read-only for audit purposes</div>
+                <button type="button" class="btn btn-primary" id="editSaleBtn" style="display: none;" onclick="enableEditMode()">Edit Credit Sale</button>
+                <button type="button" class="btn btn-success" id="saveSaleBtn" style="display: none;" onclick="saveSaleChanges()">Save Changes</button>
+                <div class="text-muted small" id="readOnlyText">Cash sales are read-only for audit purposes</div>
             </div>
         </div>
     </div>
@@ -353,6 +374,28 @@ $dateTo = $_GET['date_to'] ?? '';
 
 
 <script>
+    // Notification function
+    function showNotification(type, title, message) {
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        
+        const notification = `
+            <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+                 style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+                <i class="fa ${iconClass} me-2"></i>
+                <strong>${title}</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        $('body').append(notification);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut();
+        }, 3000);
+    }
+
     // Auto-fill unit price when bail is selected
     $('#saleBailId').on('change', function() {
         var selectedOption = $(this).find('option:selected');
@@ -384,18 +427,23 @@ $dateTo = $_GET['date_to'] ?? '';
                     const modal = bootstrap.Modal.getInstance(document.getElementById('recordSaleModal'));
                     modal.hide();
 
-                    alert("Sale recorded successfully!");
+                    // Show success notification
+                    showNotification('success', 'Sale Recorded!', 'Sale has been recorded successfully.');
                     $("#recordSaleForm")[0].reset();
-                    window.location.reload();
+                    
+                    // Reload page after short delay to show notification
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
                 } else {
-                    alert("Error: " + response.message);
+                    showNotification('error', 'Error!', response.message);
                 }
 
                 $("#btnSaveSale").prop("disabled", false).html("Record Sale");
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error("AJAX error:", textStatus, errorThrown, "response:", jqXHR.responseText);
-                alert("Request failed: " + textStatus + " — see console for details.");
+                showNotification('error', 'Request Failed!', 'Please check console for details.');
                 $("#btnSaveSale").prop("disabled", false).html("Record Sale");
             }
         });
@@ -414,10 +462,101 @@ $dateTo = $_GET['date_to'] ?? '';
         document.getElementById('detailSalePurchaseDate').textContent = purchaseDate;
         document.getElementById('detailSaleNotes').textContent = notes || 'No notes';
 
+        // Show edit button only for credit transactions
+        const editBtn = document.getElementById('editSaleBtn');
+        const readOnlyText = document.getElementById('readOnlyText');
+        
+        if (paymentMethod.toLowerCase() === 'credit') {
+            editBtn.style.display = 'inline-block';
+            readOnlyText.textContent = 'Credit sales can be edited for reconciliation';
+        } else {
+            editBtn.style.display = 'none';
+            readOnlyText.textContent = 'Cash sales are read-only for audit purposes';
+        }
+        
+        // Reset edit mode
+        document.getElementById('saveSaleBtn').style.display = 'none';
+        disableEditMode();
+
         const modal = new bootstrap.Modal(document.getElementById('saleDetailModal'));
         modal.show();
     }
 
+    function enableEditMode() {
+        // Hide display elements, show edit elements
+        document.getElementById('detailSaleStatus').style.display = 'none';
+        document.getElementById('editSaleStatus').style.display = 'block';
+        document.getElementById('editSaleStatus').value = document.getElementById('detailSaleStatus').textContent.toLowerCase();
+        
+        document.getElementById('detailSalePaymentMethod').style.display = 'none';
+        document.getElementById('editSalePaymentMethod').style.display = 'block';
+        document.getElementById('editSalePaymentMethod').value = document.getElementById('detailSalePaymentMethod').textContent.toLowerCase();
+        
+        document.getElementById('detailSaleNotes').style.display = 'none';
+        document.getElementById('editSaleNotes').style.display = 'block';
+        document.getElementById('editSaleNotes').value = document.getElementById('detailSaleNotes').textContent === 'No notes' ? '' : document.getElementById('detailSaleNotes').textContent;
+        
+        // Toggle buttons
+        document.getElementById('editSaleBtn').style.display = 'none';
+        document.getElementById('saveSaleBtn').style.display = 'inline-block';
+    }
+
+    function disableEditMode() {
+        // Show display elements, hide edit elements
+        document.getElementById('detailSaleStatus').style.display = 'block';
+        document.getElementById('editSaleStatus').style.display = 'none';
+        
+        document.getElementById('detailSalePaymentMethod').style.display = 'block';
+        document.getElementById('editSalePaymentMethod').style.display = 'none';
+        
+        document.getElementById('detailSaleNotes').style.display = 'block';
+        document.getElementById('editSaleNotes').style.display = 'none';
+    }
+
+    function saveSaleChanges() {
+        const saleId = document.getElementById('currentSaleId').value;
+        const status = document.getElementById('editSaleStatus').value;
+        const paymentMethod = document.getElementById('editSalePaymentMethod').value;
+        const notes = document.getElementById('editSaleNotes').value;
+
+        $.ajax({
+            url: '../model/updateSale.php',
+            type: 'POST',
+            data: {
+                sale_id: saleId,
+                status: status,
+                payment_method: paymentMethod,
+                notes: notes
+            },
+            success: function(response) {
+                const result = typeof response === 'string' ? JSON.parse(response) : response;
+                
+                if (result.success) {
+                    showNotification('success', 'Updated!', 'Credit sale updated successfully.');
+                    
+                    // Update display values
+                    document.getElementById('detailSaleStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                    document.getElementById('detailSalePaymentMethod').textContent = paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1);
+                    document.getElementById('detailSaleNotes').textContent = notes || 'No notes';
+                    
+                    // Exit edit mode
+                    disableEditMode();
+                    document.getElementById('editSaleBtn').style.display = 'inline-block';
+                    document.getElementById('saveSaleBtn').style.display = 'none';
+                    
+                    // Reload page after delay to show updated data
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Error!', result.message);
+                }
+            },
+            error: function() {
+                showNotification('error', 'Error!', 'Failed to update sale.');
+            }
+        });
+    }
 
 </script>
 

@@ -9,6 +9,7 @@ $p_customer_id = ($p_customer_id == 0) ? null : intval($p_customer_id); // Conve
 $p_bail_id = intval($_POST['p_bail_id'] ?? 0);
 $p_quantity = intval($_POST['p_quantity'] ?? 1);
 $p_unit_price = floatval($_POST['p_unit_price'] ?? 0);
+$p_payment_method = $_POST['p_payment_method'] ?? 'cash';
 $p_purchase_date = $_POST['p_purchase_date'] ?? date('Y-m-d');
 $p_notes = trim($_POST['p_notes'] ?? '');
 
@@ -22,14 +23,20 @@ if ($p_quantity <= 0) {
     exit;
 }
 
+// If no unit price provided, get it from bail
 if ($p_unit_price <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Valid price is required']);
-    exit;
+    $bail_price = $db->query("SELECT b_avg_price_per_item FROM bails WHERE b_id = ?", $p_bail_id)->fetchArray();
+    
+    if (!$bail_price || $bail_price['b_avg_price_per_item'] <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Bail does not have a valid price set. Please update bail price first.']);
+        exit;
+    }
+    
+    $p_unit_price = $bail_price['b_avg_price_per_item'];
 }
 
 // All sales are completed when recorded
 $p_status = 'completed';
-$p_payment_method = 'cash'; // Default payment method
 
 try {
     // Calculate total amount

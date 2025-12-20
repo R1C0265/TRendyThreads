@@ -49,6 +49,8 @@ function isActive($pageName)
         id="pagestyle"
         href="assets/css/material-dashboard.css?v=3.2.0"
         rel="stylesheet" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">

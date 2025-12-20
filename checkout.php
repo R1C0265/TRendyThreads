@@ -114,7 +114,15 @@ $user = $db->query("SELECT * FROM users WHERE u_id = ?", $userId)->fetchArray();
                                 </div>
                                 
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="radio" name="payment_method" value="stripe" id="stripe" checked>
+                                    <input class="form-check-input" type="radio" name="payment_method" value="paychangu" id="paychangu" checked>
+                                    <label class="form-check-label" for="paychangu">
+                                        <i class="bi bi-phone"></i> PayChangu (Mobile Money)
+                                        <small class="d-block text-muted">Airtel Money, TNM Mpamba, Bank Transfer</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="payment_method" value="stripe" id="stripe">
                                     <label class="form-check-label" for="stripe">
                                         <i class="bi bi-credit-card"></i> Credit Card (Stripe)
                                     </label>
@@ -208,7 +216,10 @@ function processOrder() {
     
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
     
-    if (paymentMethod === 'demo') {
+    if (paymentMethod === 'paychangu') {
+        // PayChangu payment processing
+        processPayChanguPayment(formData);
+    } else if (paymentMethod === 'demo') {
         // Demo payment - just process the order
         processOrderDemo(formData);
     } else if (paymentMethod === 'stripe') {
@@ -216,6 +227,104 @@ function processOrder() {
     } else if (paymentMethod === 'paypal') {
         alert('PayPal integration would be implemented here. For demo, use "Demo Payment" option.');
     }
+}
+
+function processPayChanguPayment(formData) {
+    // Get total amount from the page
+    const totalText = document.querySelector('.card-body strong:last-child').textContent;
+    const amount = totalText.replace('MWK ', '').replace(',', '');
+    
+    // Show mobile money input modal
+    const phoneNumber = prompt('Enter your mobile money number (e.g., 0881234567):');
+    if (!phoneNumber) return;
+    
+    // Validate phone number format
+    if (!/^(088|099|085|084)\d{7}$/.test(phoneNumber)) {
+        alert('Please enter a valid Malawian mobile number (088xxxxxxx, 099xxxxxxx, 085xxxxxxx, or 084xxxxxxx)');
+        return;
+    }
+    
+    // Add PayChangu specific data
+    formData.append('payment_method', 'paychangu');
+    formData.append('phone_number', phoneNumber);
+    formData.append('amount', amount);
+    
+    // Show loading
+    const button = document.querySelector('button[onclick="processOrder()"]');
+    const originalText = button.textContent;
+    button.textContent = 'Processing Payment...';
+    button.disabled = true;
+    
+    $.ajax({
+        url: 'model/processPayChanguOrder.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            const response = JSON.parse(data);
+            if (response.success) {
+                if (response.demo_mode) {
+                    // Demo mode - show message and simulate success
+                    alert(response.message);
+                    setTimeout(() => {
+                        alert('DEMO: Simulating successful payment...');
+                        window.location.href = 'order-success.php?order=' + response.order_id;
+                    }, 2000);
+                } else if (response.payment_url) {
+                    // Redirect to PayChangu payment page
+                    window.location.href = response.payment_url;
+                } else {
+                    alert('Payment initiated! Please check your phone for the mobile money prompt.');
+                    // Poll for payment status
+                    checkPaymentStatus(response.transaction_id, response.order_id);
+                }
+            } else {
+                let errorMsg = 'Error: ' + response.message;
+                if (response.debug) {
+                    console.log('Debug info:', response.debug);
+                    errorMsg += '\n\nCheck browser console for debug info.';
+                }
+                alert(errorMsg);
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        },
+        error: function() {
+            alert('Error processing payment. Please try again.');
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+    });
+}
+
+function checkPaymentStatus(transactionId, orderId) {
+    const checkInterval = setInterval(() => {
+        $.ajax({
+            url: 'model/checkPaymentStatus.php',
+            type: 'POST',
+            data: { transaction_id: transactionId },
+            success: function(data) {
+                const response = JSON.parse(data);
+                if (response.status === 'completed') {
+                    clearInterval(checkInterval);
+                    alert('Payment successful!');
+                    window.location.href = 'order-success.php?order=' + orderId;
+                } else if (response.status === 'failed') {
+                    clearInterval(checkInterval);
+                    alert('Payment failed. Please try again.');
+                    location.reload();
+                }
+                // Continue polling if status is 'pending'
+            }
+        });
+    }, 3000); // Check every 3 seconds
+    
+    // Stop polling after 5 minutes
+    setTimeout(() => {
+        clearInterval(checkInterval);
+        alert('Payment timeout. Please check your order status or contact support.');
+    }, 300000);
 }
 
 function processOrderDemo(formData) {
