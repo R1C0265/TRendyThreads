@@ -77,7 +77,7 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
 <body class="index-page">
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.php" class="logo d-flex align-items-center">
         <h1>Trendy Threads</h1>
       </a>
 
@@ -97,7 +97,7 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
               <ul>
                 <li><a href="#">Help</a></li>
                 <li><a href="profile.php" class="<?php echo isActive('profile.php'); ?>">Profile</a></li>
-                <li><a href=" logout.php">Sign Out</a></li>
+                <li><a href="logout.php">Sign Out</a></li>
               </ul>
             </li>
           <?php else: ?>

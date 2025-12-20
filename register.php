@@ -95,7 +95,7 @@
                                         id="btnSub" type="submit">SIGN UP</button>
                                 </div>
                                 <div class="text-center mt-4 font-weight-light">
-                                    Already have an account? <a href="index.php" class="text-primary">Login</a>
+                                    Already have an account? <a href="signin.php" class="text-primary">Login</a>
                                 </div>
                             </form>
                         </div>
@@ -156,7 +156,7 @@
                     
                     setTimeout(function(){
                         alert("Account Created!");
-                        window.location.href="index.php";
+                        window.location.href="signin.php";
                     },500);
                 }else if(data==3){
                     alert("Email already exists in system!");

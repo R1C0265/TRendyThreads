@@ -83,8 +83,8 @@ function isActive($pageName)
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a
-                        class="nav-link <?php echo isActive('dashboard.php'); ?>"
-                        href="dashboard.php">
+                        class="nav-link <?php echo isActive('index.php'); ?>"
+                        href="index.php">
                         <i class="material-symbols-rounded opacity-5">dashboard</i>
                         <span class="nav-link-text ms-1">Dashboard</span>
                     </a>
@@ -153,7 +153,7 @@ function isActive($pageName)
                 </a>
                 <a
                     class="btn bg-gradient-dark w-100"
-                    href="../../index.html"
+                    href="../../index.php"
                     type="button">
                     Go To Main Site
                 </a>

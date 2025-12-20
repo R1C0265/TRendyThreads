@@ -41,14 +41,14 @@
     class="header d-flex align-items-center position-relative">
     <div
       class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.php" class="logo d-flex align-items-center">
         <h1 class="sitename">Trendy Threads</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="signin.html" class="active">Sign In</a></li>
+          <li><a href="index.php">Home</a></li>
+          <li><a href="signin.php" class="active">Sign In</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -134,7 +134,7 @@
       <div class="container">
         <div class="row gy-4">
           <div class="col-lg-4 col-md-6 footer-about">
-            <a href="index.html" class="logo d-flex align-items-center">
+            <a href="index.php" class="logo d-flex align-items-center">
               <span class="sitename">Tarama Farms</span>
             </a>
             <div class="footer-contact pt-3">
@@ -176,8 +176,8 @@
           <div class="col-lg-2 col-md-3 footer-links">
             <h4>Quick Links</h4>
             <ul>
-              <li><a href="index.html">Home</a></li>
-              <li><a href="signin.html">Sign In</a></li>
+              <li><a href="index.php">Home</a></li>
+              <li><a href="signin.php">Sign In</a></li>
               <li><a href="register.php">Register</a></li>
             </ul>
           </div>
@@ -251,7 +251,7 @@
             window.location.href = "admin/index.php";
           } else if (data == 2) {
             //employee login
-            window.location.href = "employee/dashboard.php";
+            window.location.href = "employee/index.php";
           } else if (data == 3) {
             //customer login
             window.location.href = "index.php";
