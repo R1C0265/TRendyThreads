@@ -107,6 +107,14 @@ function isActive($pageName)
                 </li>
                 <li class="nav-item">
                     <a
+                        class="nav-link <?php echo isActive('users.php'); ?>"
+                        href="users.php">
+                        <i class="material-symbols-rounded opacity-5">group</i>
+                        <span class="nav-link-text ms-1">Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
                         class="nav-link <?php echo isActive('notifications.php'); ?>"
                         href="notifications.php">
                         <i class="material-symbols-rounded opacity-5">notifications</i>

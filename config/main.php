@@ -133,6 +133,11 @@ function create_square_image($original_file, $destination_file = NULL, $square_s
 $db = new Database();
 $meta = new Meta();
 
+// Start session at the end to avoid headers already sent
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 
 ///functions
 function addComment($author, $email, $comment, $id, $db)

@@ -29,23 +29,29 @@ if (empty($title)) {
 // Check if hero content exists
 $existing = $db->query("SELECT * FROM hero_content WHERE is_active = 1 LIMIT 1")->fetchArray();
 
-if ($existing) {
-    // Update existing record
-    $query = "UPDATE hero_content SET 
-              title = '$title', 
-              subtitle = '$subtitle', 
-              cta_text = '$cta_text', 
-              cta_link = '$cta_link', 
-              hero_image = '$hero_image',
-              updated_at = CURRENT_TIMESTAMP
-              WHERE is_active = 1";
-} else {
-    // Insert new record
-    $query = "INSERT INTO hero_content (title, subtitle, cta_text, cta_link, hero_image, is_active) 
-              VALUES ('$title', '$subtitle', '$cta_text', '$cta_link', '$hero_image', 1)";
+// Delete old hero image if updating and new image provided
+if ($existing && !empty($hero_image) && $hero_image !== $existing['hero_image']) {
+    $old_image_path = '../' . $existing['hero_image'];
+    if (file_exists($old_image_path)) {
+        unlink($old_image_path);
+    }
 }
 
-if ($db->query($query)) {
+if ($existing) {
+    // Update existing record using prepared statement
+    $update = $db->query(
+        "UPDATE hero_content SET title = ?, subtitle = ?, cta_text = ?, cta_link = ?, hero_image = ?, updated_at = CURRENT_TIMESTAMP WHERE is_active = 1",
+        $title, $subtitle, $cta_text, $cta_link, $hero_image
+    );
+} else {
+    // Insert new record using prepared statement
+    $update = $db->query(
+        "INSERT INTO hero_content (title, subtitle, cta_text, cta_link, hero_image, is_active) VALUES (?, ?, ?, ?, ?, 1)",
+        $title, $subtitle, $cta_text, $cta_link, $hero_image
+    );
+}
+
+if ($update) {
     header('Location: ../employee/home_about.php?success=hero');
 } else {
     header('Location: ../employee/home_about.php?error=update');

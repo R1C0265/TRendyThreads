@@ -1,176 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Skydash Admin</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="vendors/feather/feather.css">
-    <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
-    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
-    <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
-    <link rel="stylesheet" type="text/css" href="js/select.dataTables.min.css">
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <link rel="stylesheet" href="css/vertical-layout-light/style.css">
-    <!-- endinject -->
-    <link rel="shortcut icon" href="images/favicon.png" />
-</head>
-
-<body>
-
-    <div class="container-scroller">
-        <div class="container-fluid page-body-wrapper full-page-wrapper">
-            <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
-                <div class="row flex-grow">
-                    <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                        <div class="auth-form-transparent text-left p-3">
-                            <div class="brand-logo">
-                            <img src="images/logo.svg" class="mr-2" alt="logo"/>
-                            </div>
-                            <h4>New here?</h4>
-                            <h6 class="font-weight-light">Join us today! It takes only few steps</h6>
-                            <form class="pt-3" id="register">
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend bg-transparent">
-                                            <span class="input-group-text bg-transparent border-right-0">
-                                                <i class="ti-user text-primary"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" required name="name"
-                                            class="form-control form-control-lg border-left-0" placeholder="Username">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend bg-transparent">
-                                            <span class="input-group-text bg-transparent border-right-0">
-                                                <i class="ti-email text-primary"></i>
-                                            </span>
-                                        </div>
-                                        <input type="email" required name="email"
-                                            class="form-control form-control-lg border-left-0" placeholder="Email">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Account Type</label>
-                                    <select required name="type" class="form-control form-control-lg"
-                                        id="exampleFormControlSelect2">
-                                        <option selected disabled>Select Account type</option>
-                                        <option value="3">Final year Student</option>
-                                        <option value="4">General Student</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend bg-transparent">
-                                            <span class="input-group-text bg-transparent border-right-0">
-                                                <i class="ti-lock text-primary"></i>
-                                            </span>
-                                        </div>
-                                        <input type="password" required name="password" id="pass" minlength="8"
-                                            class="form-control form-control-lg border-left-0" id="exampleInputPassword"
-                                            placeholder="Password">
-                                    </div>
-                                </div>
-                                <div class="mb-4">
-                                    <div class="form-check">
-                                        <label class="form-check-label text-muted">
-                                            <input type="checkbox" class="form-check-input">
-                                            I agree to all Terms & Conditions
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
-                                        id="btnSub" type="submit">SIGN UP</button>
-                                </div>
-                                <div class="text-center mt-4 font-weight-light">
-                                    Already have an account? <a href="signin.php" class="text-primary">Login</a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 register-half-bg d-flex flex-row">
-                        <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy;
-                            2021 All rights reserved.</p>
-                    </div>
+<?php
+require_once 'partials/header.php';
+?>
+<main class="main">
+  <section class="section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          <div class="card shadow">
+            <div class="card-body p-5">
+              <div class="text-center mb-4">
+                <h2>Create Account</h2>
+                <p class="text-muted">Join Trendy Threads today!</p>
+              </div>
+              
+              <form id="registerForm">
+                <div class="mb-3">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" name="u_name" class="form-control" required>
                 </div>
+                
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" name="u_email" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label">Phone</label>
+                  <input type="tel" name="u_phone" class="form-control">
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label">Address</label>
+                  <textarea name="u_address" class="form-control" rows="2"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <input type="password" name="u_password" class="form-control" minlength="6" required>
+                </div>
+                
+                <div class="mb-4">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label" for="terms">
+                      I agree to the Terms & Conditions
+                    </label>
+                  </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+                  Create Account
+                </button>
+              </form>
+              
+              <div class="text-center mt-4">
+                <p>Already have an account? <a href="signin.php">Sign In</a></p>
+              </div>
             </div>
-            <!-- content-wrapper ends -->
+          </div>
         </div>
-        <!-- page-body-wrapper ends -->
+      </div>
     </div>
+  </section>
+</main>
 
-    <!-- plugins:js -->
-    <script src="vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <script src="vendors/chart.js/Chart.min.js"></script>
-    <script src="vendors/datatables.net/jquery.dataTables.js"></script>
-    <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
-    <script src="js/dataTables.select.min.js"></script>
-
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="js/off-canvas.js"></script>
-    <script src="js/hoverable-collapse.js"></script>
-    <script src="js/template.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/todolist.js"></script>
-    <script src="../../../../vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page-->
-    <script src="js/dashboard.js"></script>
-    <script src="js/Chart.roundedBarCharts.js"></script>
-    <!-- End custom js for this page-->
-    <script>
-    $("#register").submit(function(e) {
-        e.preventDefault();
-        var pass = $("#password").val();
-        
-            $.ajax({
-            url: "model/addUser.php",
-            type: "POST",
-            data: new FormData(this),
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                $("#btnSub").addClass("disabled");
-                $("#btnSub").html("Processing");
-
-            },
-            success: function(data) {
-                console.log(data);
-                if (data == 1) {
-                    
-                    setTimeout(function(){
-                        alert("Account Created!");
-                        window.location.href="signin.php";
-                    },500);
-                }else if(data==3){
-                    alert("Email already exists in system!");
-                } else {
-                    //user not found
-                    alert("Error Creating Account!");
-                }
-            },
-            error: function() {}
-        });
-        
-        
+<script src="assets/js/jquery-3.7.1.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#registerForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+      url: 'model/addUser.php',
+      type: 'POST',
+      data: $(this).serialize(),
+      beforeSend: function() {
+        $('#registerBtn').prop('disabled', true).text('Creating Account...');
+      },
+      success: function(response) {
+        console.log('Server response:', response);
+        if (response == '1') {
+          alert('Account created successfully!');
+          window.location.href = 'signin.php';
+        } else if (response == '3') {
+          alert('Email already exists!');
+        } else if (response == '4') {
+          alert('Please fill in all required fields.');
+        } else if (response == '0') {
+          alert('Invalid request. Please try again.');
+        } else {
+          alert('Error creating account. Server response: ' + response);
+        }
+      },
+      error: function() {
+        alert('Network error. Please try again.');
+      },
+      complete: function() {
+        $('#registerBtn').prop('disabled', false).text('Create Account');
+      }
     });
-    </script>
-</body>
+  });
+});
+</script>
 
-</html>
+<?php require_once 'partials/footer.php'; ?>

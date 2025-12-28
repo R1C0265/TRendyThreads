@@ -43,6 +43,32 @@ if ($fileSize > 5000000) { // 5MB limit
     exit;
 }
 
+// Get section and ID for cleanup
+$section = $_POST['section'] ?? null;
+$record_id = $_POST['record_id'] ?? null;
+
+// Delete previous image if updating existing record
+if ($section && $record_id) {
+    $table_map = [
+        'hero' => 'hero_content',
+        'about' => 'about_content'
+    ];
+    
+    if (isset($table_map[$section])) {
+        $table = $table_map[$section];
+        $image_field = $section === 'hero' ? 'hero_image' : 'image_path';
+        
+        // Get current image path
+        $current = $db->query("SELECT $image_field FROM $table WHERE id = ?", $record_id)->fetchArray();
+        if ($current && !empty($current[$image_field])) {
+            $old_file = '../' . $current[$image_field];
+            if (file_exists($old_file)) {
+                unlink($old_file); // Delete old file
+            }
+        }
+    }
+}
+
 // Generate unique filename
 $newFileName = uniqid('img_', true) . '.' . $fileExt;
 $uploadPath = $uploadDir . $newFileName;

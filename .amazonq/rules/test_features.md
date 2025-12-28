@@ -1,0 +1,1 @@
+Test the features you implement before confirming them as complete. Always verify functionality works end-to-end by testing forms, database operations, and user flows. Debug any issues found during testing before marking features as finished.

@@ -31,11 +31,14 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-// Update user data
+// Update user data using prepared statement
 $userId = $_SESSION['userId'];
-$query = "UPDATE users SET u_name = '$name', u_email = '$email', u_phone = '$phone', u_address = '$address' WHERE u_id = '$userId'";
+$update = $db->query(
+    "UPDATE users SET u_name = ?, u_email = ?, u_phone = ?, u_address = ? WHERE u_id = ?",
+    $name, $email, $phone, $address, $userId
+);
 
-if ($db->query($query)) {
+if ($update) {
     // Update session data
     $_SESSION['userName'] = $name;
     $_SESSION['userEmail'] = $email;

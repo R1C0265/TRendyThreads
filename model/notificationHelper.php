@@ -1,5 +1,5 @@
 <?php
-require_once '../config/main.php';
+require_once __DIR__ . '/../config/main.php';
 
 function addNotification($type, $title, $message, $relatedId = null, $userId = null) {
     global $db;
@@ -40,6 +40,15 @@ function notifyCustomerRegistered($customerName, $customerId) {
         'New Customer Registered',
         "New customer '$customerName' has registered",
         $customerId
+    );
+}
+
+function notifyUserRegistered($userName, $userId) {
+    return addNotification(
+        'user_registered',
+        'New User Registered',
+        "New user '$userName' has registered",
+        $userId
     );
 }
 
