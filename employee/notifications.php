@@ -46,20 +46,28 @@ $notifications = $db->query($sql)->fetchAll();
                                 
                                 switch ($notification['n_type']) {
                                     case 'bail_added':
-                                        $iconClass = 'fa-plus-circle';
+                                        $iconClass = 'inventory_2';
                                         $iconBg = 'bg-gradient-success';
                                         break;
                                     case 'sale_completed':
-                                        $iconClass = 'fa-shopping-cart';
-                                        $iconBg = 'bg-gradient-primary';
-                                        break;
-                                    case 'customer_registered':
-                                        $iconClass = 'fa-user-plus';
+                                        $iconClass = 'shopping_cart';
                                         $iconBg = 'bg-gradient-info';
                                         break;
+                                    case 'user_registered':
+                                        $iconClass = 'person_add';
+                                        $iconBg = 'bg-gradient-primary';
+                                        break;
+                                    case 'image_uploaded':
+                                        $iconClass = 'image';
+                                        $iconBg = 'bg-gradient-warning';
+                                        break;
                                     case 'item_deleted':
-                                        $iconClass = 'fa-trash';
+                                        $iconClass = 'delete';
                                         $iconBg = 'bg-gradient-danger';
+                                        break;
+                                    default:
+                                        $iconClass = 'notifications';
+                                        $iconBg = 'bg-gradient-secondary';
                                         break;
                                 }
                             ?>
@@ -69,7 +77,7 @@ $notifications = $db->query($sql)->fetchAll();
                                         <div class="d-flex align-items-start">
                                             <div class="me-3">
                                                 <div class="avatar avatar-sm <?php echo $iconBg; ?> rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="fa <?php echo $iconClass; ?> text-white text-sm"></i>
+                                                    <i class="material-symbols-rounded text-white text-sm"><?php echo $iconClass; ?></i>
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1">

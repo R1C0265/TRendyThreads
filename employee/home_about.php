@@ -266,20 +266,22 @@ $message = $_GET['success'] ?? '';
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8">
-                            <div class="input-group input-group-outline mb-3">
-                                <label class="form-label">Hero Image Path</label>
-                                <input type="text" class="form-control" id="heroImagePath" name="hero_image" value="<?php echo htmlspecialchars($hero['hero_image'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <div class="mb-3">
-                                <label class="form-label">Upload New Image</label>
+                                <label class="form-label">Current Hero Image</label>
+                                <div class="text-center">
+                                    <img src="<?php echo '../' . ($hero['hero_image'] ?? 'assets/img/hero-img.png'); ?>" class="img-fluid border-radius-lg" style="max-height: 200px;" alt="Current Hero Image">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Upload New Hero Image</label>
                                 <input type="file" class="form-control" id="heroImageUpload" accept="image/*">
-                                <button type="button" class="btn btn-sm btn-info mt-2" onclick="uploadHeroImage()">Upload</button>
+                                <button type="button" class="btn btn-sm btn-info mt-2" onclick="uploadHeroImage()">Upload & Replace</button>
+                                <small class="text-muted d-block mt-1">This will replace the current hero image</small>
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" id="heroImagePath" name="hero_image" value="<?php echo htmlspecialchars($hero['hero_image'] ?? ''); ?>">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -320,14 +322,17 @@ $message = $_GET['success'] ?? '';
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="input-group input-group-outline mb-3">
-                                <label class="form-label">Image Path</label>
-                                <input type="text" class="form-control" id="aboutImagePath" name="image_path" value="<?php echo htmlspecialchars($about['image_path'] ?? ''); ?>">
+                            <div class="mb-3">
+                                <label class="form-label">Current About Image</label>
+                                <div class="text-center">
+                                    <img src="<?php echo '../' . ($about['image_path'] ?? 'assets/img/about.jpg'); ?>" class="img-fluid border-radius-lg" style="max-height: 200px;" alt="Current About Image">
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Upload New Image</label>
+                                <label class="form-label">Upload New About Image</label>
                                 <input type="file" class="form-control" id="aboutImageUpload" accept="image/*">
-                                <button type="button" class="btn btn-sm btn-info mt-2" onclick="uploadAboutImage()">Upload</button>
+                                <button type="button" class="btn btn-sm btn-info mt-2" onclick="uploadAboutImage()">Upload & Replace</button>
+                                <small class="text-muted d-block mt-1">This will replace the current about image</small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -337,6 +342,7 @@ $message = $_GET['success'] ?? '';
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" id="aboutImagePath" name="image_path" value="<?php echo htmlspecialchars($about['image_path'] ?? ''); ?>">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -637,9 +643,10 @@ function uploadHeroImage() {
     
     const formData = new FormData();
     formData.append('image', file);
+    formData.append('section', 'hero');
     
     $.ajax({
-        url: '../model/uploadImage.php',
+        url: '../model/uploadSectionImage.php',
         type: 'POST',
         data: formData,
         contentType: false,
@@ -651,8 +658,10 @@ function uploadHeroImage() {
             const response = typeof data === 'string' ? JSON.parse(data) : data;
             if (response.success) {
                 document.getElementById('heroImagePath').value = response.path;
-                alert('Image uploaded successfully!');
+                alert('Hero image uploaded and replaced successfully!');
                 fileInput.value = '';
+                // Reload page to show new image
+                window.location.reload();
             } else {
                 alert('Error: ' + response.message);
             }
@@ -661,7 +670,7 @@ function uploadHeroImage() {
             alert('Error uploading image');
         },
         complete: function() {
-            $('button[onclick="uploadHeroImage()"]').prop('disabled', false).text('Upload');
+            $('button[onclick="uploadHeroImage()"]').prop('disabled', false).text('Upload & Replace');
         }
     });
 }
@@ -677,9 +686,10 @@ function uploadAboutImage() {
     
     const formData = new FormData();
     formData.append('image', file);
+    formData.append('section', 'about');
     
     $.ajax({
-        url: '../model/uploadImage.php',
+        url: '../model/uploadSectionImage.php',
         type: 'POST',
         data: formData,
         contentType: false,
@@ -691,8 +701,10 @@ function uploadAboutImage() {
             const response = typeof data === 'string' ? JSON.parse(data) : data;
             if (response.success) {
                 document.getElementById('aboutImagePath').value = response.path;
-                alert('Image uploaded successfully!');
+                alert('About image uploaded and replaced successfully!');
                 fileInput.value = '';
+                // Reload page to show new image
+                window.location.reload();
             } else {
                 alert('Error: ' + response.message);
             }
@@ -701,7 +713,7 @@ function uploadAboutImage() {
             alert('Error uploading image');
         },
         complete: function() {
-            $('button[onclick="uploadAboutImage()"]').prop('disabled', false).text('Upload');
+            $('button[onclick="uploadAboutImage()"]').prop('disabled', false).text('Upload & Replace');
         }
     });
 }

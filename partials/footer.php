@@ -79,6 +79,13 @@
       </div>
     </footer>
 
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle-btn position-fixed" style="top: 20px; right: 20px; z-index: 1050;">
+      <button class="btn btn-outline-primary btn-sm" id="themeToggle" title="Toggle Theme">
+        <i class="bi bi-sun-fill" id="themeIcon"></i>
+      </button>
+    </div>
+
     <!-- Scroll Top -->
     <a
       href="#"
@@ -101,6 +108,183 @@
     <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
     <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Customer Theme Management -->
+    <script>
+    class CustomerThemeManager {
+        constructor() {
+            this.init();
+        }
+        
+        init() {
+            const savedTheme = localStorage.getItem('trendyThreadsTheme') || 'auto';
+            this.applyTheme(savedTheme === 'auto' ? this.getSystemTheme() : savedTheme);
+            this.updateToggleButton(savedTheme === 'auto' ? this.getSystemTheme() : savedTheme);
+            
+            // Toggle button click
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                this.toggleTheme();
+            });
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if (localStorage.getItem('trendyThreadsTheme') === 'auto') {
+                    this.applyTheme(this.getSystemTheme());
+                    this.updateToggleButton(this.getSystemTheme());
+                }
+            });
+        }
+        
+        toggleTheme() {
+            const currentTheme = localStorage.getItem('trendyThreadsTheme') || 'auto';
+            let newTheme;
+            
+            if (currentTheme === 'light') {
+                newTheme = 'dark';
+            } else if (currentTheme === 'dark') {
+                newTheme = 'auto';
+            } else {
+                newTheme = 'light';
+            }
+            
+            localStorage.setItem('trendyThreadsTheme', newTheme);
+            const actualTheme = newTheme === 'auto' ? this.getSystemTheme() : newTheme;
+            this.applyTheme(actualTheme);
+            this.updateToggleButton(actualTheme);
+        }
+        
+        getSystemTheme() {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        updateToggleButton(theme) {
+            const icon = document.getElementById('themeIcon');
+            const button = document.getElementById('themeToggle');
+            
+            if (theme === 'dark') {
+                icon.className = 'bi bi-moon-fill';
+                button.title = 'Switch to Light Mode';
+            } else {
+                icon.className = 'bi bi-sun-fill';
+                button.title = 'Switch to Dark Mode';
+            }
+        }
+        
+        applyTheme(theme) {
+            const body = document.body;
+            
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+            } else {
+                body.classList.remove('dark-theme');
+            }
+        }
+    }
+    
+    // Initialize customer theme manager
+    const customerThemeManager = new CustomerThemeManager();
+    </script>
+    
+    <!-- Customer Dark Theme CSS -->
+    <style>
+    .dark-theme {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .header {
+        background-color: #2d2d2d !important;
+        box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .dark-theme .navmenu a {
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .navmenu a:hover,
+    .dark-theme .navmenu a.active {
+        color: #007bff !important;
+    }
+    
+    .dark-theme .section {
+        background-color: #1a1a1a !important;
+    }
+    
+    .dark-theme .light-background {
+        background-color: #2d2d2d !important;
+    }
+    
+    .dark-theme .card {
+        background-color: #2d2d2d !important;
+        border-color: #404040 !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .form-control {
+        background-color: #404040 !important;
+        border-color: #555555 !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .form-control:focus {
+        background-color: #404040 !important;
+        border-color: #007bff !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .input-group-text {
+        background-color: #404040 !important;
+        border-color: #555555 !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .btn-primary {
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
+    
+    .dark-theme .footer {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-theme .footer a {
+        color: #adb5bd !important;
+    }
+    
+    .dark-theme .footer a:hover {
+        color: #007bff !important;
+    }
+    
+    .dark-theme .text-muted {
+        color: #adb5bd !important;
+    }
+    
+    .dark-theme h1, .dark-theme h2, .dark-theme h3, 
+    .dark-theme h4, .dark-theme h5, .dark-theme h6 {
+        color: #ffffff !important;
+    }
+    
+    .theme-toggle-btn .btn {
+        border-radius: 50px;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .theme-toggle-btn .btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .dark-theme .theme-toggle-btn .btn {
+        background-color: #2d2d2d !important;
+        border-color: #007bff !important;
+        color: #ffffff !important;
+    }
+    </style>
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>

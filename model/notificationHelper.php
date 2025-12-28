@@ -52,6 +52,15 @@ function notifyUserRegistered($userName, $userId) {
     );
 }
 
+function notifyImageUploaded($section, $imagePath) {
+    return addNotification(
+        'image_uploaded',
+        ucfirst($section) . ' Image Updated',
+        "The $section section image has been updated to: $imagePath",
+        null
+    );
+}
+
 function notifyItemDeleted($itemType, $itemName, $itemId) {
     return addNotification(
         'item_deleted',

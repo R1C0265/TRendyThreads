@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_count = count($files['name']);
         
         // Check if adding new images would exceed limit
-        if ($current_images + $file_count > 4) {
-            echo json_encode(['success' => false, 'message' => 'Cannot upload more than 4 images per bail']);
+        if ($current_images + $file_count > 20) {
+            echo json_encode(['success' => false, 'message' => 'Cannot upload more than 20 images per bail']);
             exit;
         }
         

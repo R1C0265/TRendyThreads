@@ -30,6 +30,7 @@
 </footer>
 </div>
 </main>
+<
 <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
         <i class="material-symbols-rounded py-2">settings</i>
@@ -37,8 +38,8 @@
     <div class="card shadow-lg">
         <div class="card-header pb-0 pt-3">
             <div class="float-start">
-                <h5 class="mt-3 mb-0">Material UI Configurator</h5>
-                <p>See our dashboard options.</p>
+                <h5 class="mt-3 mb-0">Page Preferences</h5>
+                <p>Customize your dashboard experience.</p>
             </div>
             <div class="float-end mt-4">
                 <button
@@ -50,69 +51,10 @@
         </div>
         <hr class="horizontal dark my-1" />
         <div class="card-body pt-sm-3 pt-0">
-            <!-- Sidebar Backgrounds -->
-            <div>
-                <h6 class="mb-0">Sidebar Colors</h6>
-            </div>
-            <a href="javascript:void(0)" class="switch-trigger background-color">
-                <div class="badge-colors my-2 text-start">
-                    <span
-                        class="badge filter bg-gradient-primary"
-                        data-color="primary"
-                        onclick="sidebarColor(this)"></span>
-                    <span
-                        class="badge filter bg-gradient-dark active"
-                        data-color="dark"
-                        onclick="sidebarColor(this)"></span>
-                    <span
-                        class="badge filter bg-gradient-info"
-                        data-color="info"
-                        onclick="sidebarColor(this)"></span>
-                    <span
-                        class="badge filter bg-gradient-success"
-                        data-color="success"
-                        onclick="sidebarColor(this)"></span>
-                    <span
-                        class="badge filter bg-gradient-warning"
-                        data-color="warning"
-                        onclick="sidebarColor(this)"></span>
-                    <span
-                        class="badge filter bg-gradient-danger"
-                        data-color="danger"
-                        onclick="sidebarColor(this)"></span>
-                </div>
-            </a>
-            <!-- Sidenav Type -->
-            <div class="mt-3">
-                <h6 class="mb-0">Sidenav Type</h6>
-                <p class="text-sm">Choose between different sidenav types.</p>
-            </div>
-            <div class="d-flex">
-                <button
-                    class="btn bg-gradient-dark px-3 mb-2"
-                    data-class="bg-gradient-dark"
-                    onclick="sidebarType(this)">
-                    Dark
-                </button>
-                <button
-                    class="btn bg-gradient-dark px-3 mb-2 ms-2"
-                    data-class="bg-transparent"
-                    onclick="sidebarType(this)">
-                    Transparent
-                </button>
-                <button
-                    class="btn bg-gradient-dark px-3 mb-2 active ms-2"
-                    data-class="bg-white"
-                    onclick="sidebarType(this)">
-                    White
-                </button>
-            </div>
-            <p class="text-sm d-xl-none d-block mt-2">
-                You can change the sidenav type just on desktop view.
-            </p>
+
             <!-- Navbar Fixed -->
             <div class="mt-3 d-flex">
-                <h6 class="mb-0">Navbar Fixed</h6>
+                <h6 class="mb-0">Fixed Navigation</h6>
                 <div class="form-check form-switch ps-0 ms-auto my-auto">
                     <input
                         class="form-check-input mt-1 ms-auto"
@@ -122,57 +64,233 @@
                 </div>
             </div>
             <hr class="horizontal dark my-3" />
-            <div class="mt-2 d-flex">
-                <h6 class="mb-0">Light / Dark</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input
-                        class="form-check-input mt-1 ms-auto"
-                        type="checkbox"
-                        id="dark-version"
-                        onclick="darkMode(this)" />
+            <!-- Theme Mode Selection -->
+            <div class="mt-2">
+                <h6 class="mb-2">Theme Mode</h6>
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="themeMode" id="lightMode" value="light">
+                        <label class="form-check-label" for="lightMode">
+                            <i class="material-symbols-rounded me-1">light_mode</i> Light Mode
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="themeMode" id="darkMode" value="dark">
+                        <label class="form-check-label" for="darkMode">
+                            <i class="material-symbols-rounded me-1">dark_mode</i> Dark Mode
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="themeMode" id="autoMode" value="auto" checked>
+                        <label class="form-check-label" for="autoMode">
+                            <i class="material-symbols-rounded me-1">brightness_auto</i> Follow Device
+                        </label>
+                    </div>
                 </div>
             </div>
-            <hr class="horizontal dark my-sm-4" />
-            <a
-                class="btn bg-gradient-info w-100"
-                href="https://www.creative-tim.com/product/material-dashboard-pro">
-                Free Download
-            </a>
-            <a
-                class="btn btn-outline-dark w-100"
-                href="https://www.creative-tim.com/learning-lab/bootstrap/overview/material-dashboard">
-                View documentation
-            </a>
-            <div class="w-100 text-center">
-                <a
-                    class="github-button"
-                    href="https://github.com/creativetimofficial/material-dashboard"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star creativetimofficial/material-dashboard on GitHub">
-                    Star
-                </a>
-                <h6 class="mt-3">Thank you for sharing!</h6>
-                <a
-                    href="https://twitter.com/intent/tweet?text=Check%20Material%20UI%20Dashboard%20made%20by%20%40CreativeTim%20%23webdesign%20%23dashboard%20%23bootstrap5&amp;url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fsoft-ui-dashboard"
-                    class="btn btn-dark mb-0 me-2"
-                    target="_blank">
-                    <i class="fab fa-twitter me-1" aria-hidden="true"></i>
-                    Tweet
-                </a>
-                <a
-                    href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-dashboard"
-                    class="btn btn-dark mb-0 me-2"
-                    target="_blank">
-                    <i class="fab fa-facebook-square me-1" aria-hidden="true"></i>
-                    Share
-                </a>
-            </div>
+
         </div>
     </div>
 </div>
-<!--   Core JS Files   -->
+
+<!-- Theme Management Script -->
+<script>
+// Theme Management System
+class ThemeManager {
+    constructor() {
+        this.init();
+    }
+    
+    init() {
+        // Load saved theme or default to auto
+        const savedTheme = localStorage.getItem('trendyThreadsTheme') || 'auto';
+        this.setTheme(savedTheme);
+        this.updateUI(savedTheme);
+        
+        // Load navbar fixed state
+        const navbarFixed = localStorage.getItem('navbarFixed') === 'true';
+        document.getElementById('navbarFixed').checked = navbarFixed;
+        if (navbarFixed) {
+            document.querySelector('.navbar-main').classList.add('position-sticky', 'blur', 'shadow-blur');
+        }
+        
+        // Listen for theme changes
+        document.querySelectorAll('input[name="themeMode"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                this.setTheme(e.target.value);
+            });
+        });
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (localStorage.getItem('trendyThreadsTheme') === 'auto') {
+                this.applyTheme(this.getSystemTheme());
+            }
+        });
+    }
+    
+    setTheme(theme) {
+        localStorage.setItem('trendyThreadsTheme', theme);
+        const actualTheme = theme === 'auto' ? this.getSystemTheme() : theme;
+        this.applyTheme(actualTheme);
+        this.updateUI(theme);
+    }
+    
+    getSystemTheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    
+    applyTheme(theme) {
+        const body = document.body;
+        const sidenav = document.querySelector('.sidenav');
+        const navbar = document.querySelector('.navbar-main');
+        const settingsBtn = document.querySelector('.fixed-plugin-button');
+        
+        if (theme === 'dark') {
+            body.classList.add('dark-version');
+            if (sidenav) {
+                sidenav.classList.remove('bg-white');
+                sidenav.classList.add('bg-gradient-dark');
+                // Update active nav items for dark theme
+                sidenav.querySelectorAll('.nav-link.active').forEach(link => {
+                    link.style.backgroundColor = '#e91e63';
+                    link.style.color = 'white';
+                });
+            }
+            if (navbar) {
+                navbar.classList.add('navbar-dark');
+                navbar.classList.remove('navbar-light');
+            }
+            if (settingsBtn) {
+                settingsBtn.classList.remove('text-dark');
+                settingsBtn.classList.add('text-white');
+                settingsBtn.style.backgroundColor = '#2d2d2d';
+            }
+        } else {
+            body.classList.remove('dark-version');
+            if (sidenav) {
+                sidenav.classList.add('bg-white');
+                sidenav.classList.remove('bg-gradient-dark');
+                // Update active nav items for light theme
+                sidenav.querySelectorAll('.nav-link.active').forEach(link => {
+                    link.style.backgroundColor = '#344767';
+                    link.style.color = 'white';
+                });
+            }
+            if (navbar) {
+                navbar.classList.remove('navbar-dark');
+                navbar.classList.add('navbar-light');
+            }
+            if (settingsBtn) {
+                settingsBtn.classList.remove('text-white');
+                settingsBtn.classList.add('text-dark');
+                settingsBtn.style.backgroundColor = '#ffffff';
+            }
+        }
+    }
+    
+    updateUI(theme) {
+        document.querySelectorAll('input[name="themeMode"]').forEach(input => {
+            input.checked = input.value === theme;
+        });
+    }
+}
+
+// Initialize theme manager
+new ThemeManager();
+
+// Enhanced navbar fixed function with persistence
+function navbarFixed(el) {
+    const navbar = document.querySelector('.navbar-main');
+    const isFixed = el.checked;
+    
+    localStorage.setItem('navbarFixed', isFixed);
+    
+    if (isFixed) {
+        navbar.classList.add('position-sticky', 'blur', 'shadow-blur');
+    } else {
+        navbar.classList.remove('position-sticky', 'blur', 'shadow-blur');
+    }
+}
+</script>
+
+<!-- Dark Mode CSS -->
+<style>
+.dark-version {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+.dark-version .card {
+    background-color: #2d2d2d !important;
+    border-color: #404040 !important;
+    color: #ffffff !important;
+}
+
+.dark-version .card-header {
+    background-color: #2d2d2d !important;
+    border-color: #404040 !important;
+}
+
+.dark-version .table {
+    color: #ffffff !important;
+}
+
+.dark-version .table td, .dark-version .table th {
+    border-color: #404040 !important;
+}
+
+.dark-version .text-dark {
+    color: #ffffff !important;
+}
+
+.dark-version .text-muted {
+    color: #adb5bd !important;
+}
+
+.dark-version .bg-white {
+    background-color: #2d2d2d !important;
+}
+
+.dark-version .border {
+    border-color: #404040 !important;
+}
+
+.dark-version .navbar {
+    background-color: #2d2d2d !important;
+}
+
+.dark-version .footer {
+    background-color: #1a1a1a !important;
+}
+
+.dark-version .sidenav {
+    background-color: #2d2d2d !important;
+}
+
+/* Fixed Plugin Button Styling */
+.fixed-plugin-button {
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.fixed-plugin-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark-version .fixed-plugin-button {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-version .fixed-plugin-button:hover {
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+</style>
 <script src="assets/js/core/popper.min.js"></script>
 <script src="assets/js/core/bootstrap.min.js"></script>
 <script src="assets/js/plugins/perfect-scrollbar.min.js"></script>

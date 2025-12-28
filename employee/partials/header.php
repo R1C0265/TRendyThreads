@@ -272,6 +272,11 @@ function isActive($pageName)
                 transition: all 0.3s ease;
             }
 
+            /* Dark theme hamburger */
+            .dark-version .hamburger-line {
+                background-color: #ffffff;
+            }
+
             #iconNavbarSidenav {
                 min-width: 44px;
                 min-height: 44px;
@@ -284,6 +289,11 @@ function isActive($pageName)
 
             #iconNavbarSidenav:hover {
                 background-color: rgba(52, 71, 103, 0.1);
+            }
+
+            /* Dark theme hover */
+            .dark-version #iconNavbarSidenav:hover {
+                background-color: rgba(255, 255, 255, 0.1);
             }
 
             #iconNavbarSidenav:focus {
