@@ -448,6 +448,52 @@
     color: #007bff !important;
   }
 
+  /* Dropdown menu styling for customer header */
+  .dark-theme .navmenu .dropdown ul {
+    background: #2d2d2d !important;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid #404040 !important;
+  }
+
+  .dark-theme .navmenu li.dropdown ul {
+    background: #2d2d2d !important;
+  }
+
+  .dark-theme .navmenu li.dropdown ul li {
+    background-color: transparent !important;
+  }
+
+  .dark-theme .navmenu li.dropdown ul li a {
+    color: #e0e0e0 !important;
+    background: #2d2d2d !important;
+  }
+
+  .dark-theme .navmenu li.dropdown ul li a:hover {
+    color: #007bff !important;
+    background: #383838 !important;
+  }
+
+  .dark-theme .navmenu li.dropdown ul li:hover>a {
+    color: #007bff !important;
+    background: #383838 !important;
+  }
+
+  .dark-theme .navmenu .dropdown a {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme .navmenu .dropdown a:hover {
+    color: #007bff !important;
+  }
+
+  .dark-theme .navmenu .dropdown i {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme .navmenu .dropdown:hover i {
+    color: #007bff !important;
+  }
+
   /* Theme Settings Panel Styling */
   .fixed-plugin-customer {
     position: fixed;
