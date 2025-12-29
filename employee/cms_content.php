@@ -44,7 +44,7 @@ $message = $_GET['success'] ?? '';
                         <div class="col-md-4">
                             <?php
                             $heroImagePath = $hero['hero_image'] ?? 'assets/img/hero-img.png';
-                            // Add ../ prefix if path doesn't start with ../ (for CMS display)
+                            // Ensure path works from /employee/ subdirectory by adding ../ prefix
                             $displayPath = strpos($heroImagePath, '../') === 0 ? $heroImagePath : '../' . $heroImagePath;
                             ?>
                             <img src="<?php echo $displayPath; ?>" class="img-fluid border-radius-lg" alt="Hero Image">
@@ -77,7 +77,7 @@ $message = $_GET['success'] ?? '';
                         <div class="col-md-6">
                             <?php
                             $aboutImagePath = $about['image_path'] ?? 'assets/img/about.jpg';
-                            // Add ../ prefix if path doesn't start with ../ (for CMS display)
+                            // Ensure path works from /employee/ subdirectory by adding ../ prefix
                             $displayPath = strpos($aboutImagePath, '../') === 0 ? $aboutImagePath : '../' . $aboutImagePath;
                             ?>
                             <img src="<?php echo $displayPath; ?>" class="img-fluid border-radius-lg" alt="About Image">
