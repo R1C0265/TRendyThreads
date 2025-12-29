@@ -85,12 +85,7 @@ function isActive($pageName)
                 class="navbar-brand px-4 py-3 m-0"
                 href="index.php"
                 target="_blank">
-                <img
-                    src="assets/img/logo-ct-dark.png"
-                    class="navbar-brand-img"
-                    width="26"
-                    height="26"
-                    alt="main_logo" />
+
                 <span class="ms-1 text-sm text-dark">Trendy Threads</span>
             </a>
         </div>

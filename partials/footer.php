@@ -21,29 +21,27 @@
       <div class="col-lg-2 col-6 footer-links">
         <h4>Useful Links</h4>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About us</a></li>
-          <li><a href=" store.php">Store</a></li>
+          <li><a href="index.php">Home</a></li>
+          <li><a href="#about">About us</a></li>
+          <li><a href="store.php">Store</a></li>
         </ul>
       </div>
 
-      <div class="col-lg-2 col-6 footer-links">
+      <!--       <div class="col-lg-2 col-6 footer-links">
         <h4>Catch us on</h4>
         <ul>
-          <li><a href="#">Web Design</a></li>
-          <li><a href="#">Web Development</a></li>
-          <li><a href="#">Product Management</a></li>
-          <li><a href="#">Marketing</a></li>
-          <li><a href="#">Graphic Design</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Tik Tok</a></li>
+          <li><a href="#">Instagram</a></li>
         </ul>
-      </div>
+      </div> -->
 
       <div
         class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
         <h4>Contact Us</h4>
-        <p>A108 Adam Street</p>
-        <p>New York, NY 535022</p>
-        <p>United States</p>
+        <p>Sector 4, Behind Dzenza Secondary</p>
+        <p>Area 25, Lilongwe</p>
+        <p>Malawi</p>
         <p class="mt-4">
           <strong>Phone:</strong>
           <span>+1 5589 55488 55</span>
@@ -60,7 +58,7 @@
     <p>
       ©
       <span>Copyright</span>
-      <strong class="px-1 sitename">Trendy Threads</strong>
+      <strong class="px-1 sitename"><a href="https://palmtech.ct.ws">Palm Technologies</a></strong>
       <span>All Rights Reserved</span>
     </p>
     <div class="credits">
