@@ -271,13 +271,13 @@ $dateTo = $_GET['date_to'] ?? '';
                         <label for="saleNotes" class="form-label">Notes</label>
                         <textarea class="form-control" id="saleNotes" name="p_notes" placeholder="Enter sale notes" rows="3"></textarea>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary" id="btnSaveSale" form="recordSaleForm">Record Sale</button>
             </div>
-        </form>
+            </form>
         </div>
     </div>
 </div>
@@ -378,7 +378,7 @@ $dateTo = $_GET['date_to'] ?? '';
     function showNotification(type, title, message) {
         const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
         const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-        
+
         const notification = `
             <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
                  style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
@@ -387,9 +387,9 @@ $dateTo = $_GET['date_to'] ?? '';
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         `;
-        
+
         $('body').append(notification);
-        
+
         // Auto-remove after 3 seconds
         setTimeout(function() {
             $('.alert').fadeOut();
@@ -430,7 +430,7 @@ $dateTo = $_GET['date_to'] ?? '';
                     // Show success notification
                     showNotification('success', 'Sale Recorded!', 'Sale has been recorded successfully.');
                     $("#recordSaleForm")[0].reset();
-                    
+
                     // Reload page after short delay to show notification
                     setTimeout(function() {
                         window.location.reload();
@@ -465,7 +465,7 @@ $dateTo = $_GET['date_to'] ?? '';
         // Show edit button only for credit transactions
         const editBtn = document.getElementById('editSaleBtn');
         const readOnlyText = document.getElementById('readOnlyText');
-        
+
         if (paymentMethod.toLowerCase() === 'credit') {
             editBtn.style.display = 'inline-block';
             readOnlyText.textContent = 'Credit sales can be edited for reconciliation';
@@ -473,7 +473,7 @@ $dateTo = $_GET['date_to'] ?? '';
             editBtn.style.display = 'none';
             readOnlyText.textContent = 'Cash sales are read-only for audit purposes';
         }
-        
+
         // Reset edit mode
         document.getElementById('saveSaleBtn').style.display = 'none';
         disableEditMode();
@@ -487,15 +487,15 @@ $dateTo = $_GET['date_to'] ?? '';
         document.getElementById('detailSaleStatus').style.display = 'none';
         document.getElementById('editSaleStatus').style.display = 'block';
         document.getElementById('editSaleStatus').value = document.getElementById('detailSaleStatus').textContent.toLowerCase();
-        
+
         document.getElementById('detailSalePaymentMethod').style.display = 'none';
         document.getElementById('editSalePaymentMethod').style.display = 'block';
         document.getElementById('editSalePaymentMethod').value = document.getElementById('detailSalePaymentMethod').textContent.toLowerCase();
-        
+
         document.getElementById('detailSaleNotes').style.display = 'none';
         document.getElementById('editSaleNotes').style.display = 'block';
         document.getElementById('editSaleNotes').value = document.getElementById('detailSaleNotes').textContent === 'No notes' ? '' : document.getElementById('detailSaleNotes').textContent;
-        
+
         // Toggle buttons
         document.getElementById('editSaleBtn').style.display = 'none';
         document.getElementById('saveSaleBtn').style.display = 'inline-block';
@@ -505,10 +505,10 @@ $dateTo = $_GET['date_to'] ?? '';
         // Show display elements, hide edit elements
         document.getElementById('detailSaleStatus').style.display = 'block';
         document.getElementById('editSaleStatus').style.display = 'none';
-        
+
         document.getElementById('detailSalePaymentMethod').style.display = 'block';
         document.getElementById('editSalePaymentMethod').style.display = 'none';
-        
+
         document.getElementById('detailSaleNotes').style.display = 'block';
         document.getElementById('editSaleNotes').style.display = 'none';
     }
@@ -530,20 +530,20 @@ $dateTo = $_GET['date_to'] ?? '';
             },
             success: function(response) {
                 const result = typeof response === 'string' ? JSON.parse(response) : response;
-                
+
                 if (result.success) {
                     showNotification('success', 'Updated!', 'Credit sale updated successfully.');
-                    
+
                     // Update display values
                     document.getElementById('detailSaleStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
                     document.getElementById('detailSalePaymentMethod').textContent = paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1);
                     document.getElementById('detailSaleNotes').textContent = notes || 'No notes';
-                    
+
                     // Exit edit mode
                     disableEditMode();
                     document.getElementById('editSaleBtn').style.display = 'inline-block';
                     document.getElementById('saveSaleBtn').style.display = 'none';
-                    
+
                     // Reload page after delay to show updated data
                     setTimeout(function() {
                         window.location.reload();
@@ -557,8 +557,161 @@ $dateTo = $_GET['date_to'] ?? '';
             }
         });
     }
-
 </script>
+
+<style>
+    /* Dark Mode Styling for Sales Modals */
+    .dark-version .modal-content {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #444444 !important;
+    }
+
+    .dark-version .modal-header {
+        background-color: #2d2d2d !important;
+        border-bottom-color: #444444 !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version .modal-header .btn-close {
+        filter: invert(1);
+    }
+
+    .dark-version .modal-footer {
+        background-color: #2d2d2d !important;
+        border-top-color: #444444 !important;
+    }
+
+    .dark-version .modal-body {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version #saleDetailModal .modal-content,
+    .dark-version #recordSaleModal .modal-content,
+    .dark-version #editSaleModal .modal-content {
+        background-color: #2d2d2d !important;
+    }
+
+    /* Form elements in dark mode */
+    .dark-version .form-control,
+    .dark-version .form-select {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #555555 !important;
+    }
+
+    .dark-version .form-control:focus,
+    .dark-version .form-select:focus {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #6c63ff !important;
+        box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+    }
+
+    .dark-version .form-control::placeholder {
+        color: #999999 !important;
+    }
+
+    .dark-version .form-label {
+        color: #ffffff !important;
+    }
+
+    /* Text in modals */
+    .dark-version .modal-body label,
+    .dark-version .modal-body p,
+    .dark-version .modal-body h5,
+    .dark-version .modal-body h6 {
+        color: #ffffff !important;
+    }
+
+    /* Buttons styling */
+    .dark-version .modal-footer .btn-primary {
+        background-color: #6c63ff !important;
+        border-color: #6c63ff !important;
+    }
+
+    .dark-version .modal-footer .btn-primary:hover {
+        background-color: #5551cc !important;
+        border-color: #5551cc !important;
+    }
+
+    .dark-version .modal-footer .btn-secondary {
+        background-color: #555555 !important;
+        border-color: #555555 !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version .modal-footer .btn-secondary:hover {
+        background-color: #666666 !important;
+        border-color: #666666 !important;
+    }
+
+    .dark-version .modal-footer .btn-danger {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+    .dark-version .modal-footer .btn-danger:hover {
+        background-color: #bd2130 !important;
+        border-color: #bd2130 !important;
+    }
+
+    /* Table styling in modals */
+    .dark-version .table {
+        color: #ffffff !important;
+        border-color: #444444 !important;
+    }
+
+    .dark-version .table thead th {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #444444 !important;
+    }
+
+    .dark-version .table tbody tr {
+        border-color: #444444 !important;
+    }
+
+    .dark-version .table tbody tr:hover {
+        background-color: #3a3a3a !important;
+    }
+
+    /* Row styling in detail sections */
+    .dark-version .detail-row {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version .detail-row strong {
+        color: #ffffff !important;
+    }
+
+    /* Alert and badge styling */
+    .dark-version .alert-info {
+        background-color: #1a3a4a !important;
+        color: #b3d9e6 !important;
+        border-color: #2a5a6a !important;
+    }
+
+    .dark-version .badge {
+        background-color: #6c63ff !important;
+    }
+
+    /* Link styling */
+    .dark-version .modal-body a {
+        color: #6c63ff !important;
+    }
+
+    .dark-version .modal-body a:hover {
+        color: #8781ff !important;
+    }
+
+    /* Horizontal rule styling */
+    .dark-version hr {
+        border-color: #444444 !important;
+    }
+</style>
 
 <?php
 require_once "partials/footer.php";

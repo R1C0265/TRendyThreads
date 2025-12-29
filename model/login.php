@@ -15,14 +15,16 @@ if ($user) {
             // Upgrade to bcrypt on successful login
             $new_hash = password_hash($password, PASSWORD_DEFAULT);
             $db->query("UPDATE users SET u_password = ? WHERE u_id = ?", $new_hash, $user['u_id']);
-            
-            // Set session
+
+            // Set session with timeout tracking
             $_SESSION['userName'] = $user['u_name'];
             $_SESSION['userId'] = $user['u_id'];
             $_SESSION['userEmail'] = $user['u_email'];
             $_SESSION['userImg'] = $user['u_img'];
             $_SESSION['userType'] = $user['u_type'];
-            
+            $_SESSION['login_time'] = time();
+            $_SESSION['last_activity'] = time();
+
             echo $user['u_type'];
         } else {
             echo 5; // Wrong password
@@ -30,13 +32,15 @@ if ($user) {
     } else {
         // Modern bcrypt verification
         if (password_verify($password, $user['u_password'])) {
-            // Set session
+            // Set session with timeout tracking
             $_SESSION['userName'] = $user['u_name'];
             $_SESSION['userId'] = $user['u_id'];
             $_SESSION['userEmail'] = $user['u_email'];
             $_SESSION['userImg'] = $user['u_img'];
             $_SESSION['userType'] = $user['u_type'];
-            
+            $_SESSION['login_time'] = time();
+            $_SESSION['last_activity'] = time();
+
             echo $user['u_type'];
         } else {
             echo 5; // Wrong password
@@ -45,4 +49,3 @@ if ($user) {
 } else {
     echo 5; // User not found
 }
-?>

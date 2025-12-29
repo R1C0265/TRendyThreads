@@ -13,56 +13,69 @@ $whereClause = "WHERE b_status = 'available' AND b_stock_quantity > 0";
 $params = [];
 
 if ($search) {
-    $whereClause .= " AND (b_name LIKE ? OR b_description LIKE ?)";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
+  $whereClause .= " AND (b_name LIKE ? OR b_description LIKE ?)";
+  $params[] = "%$search%";
+  $params[] = "%$search%";
 }
 
 $orderClause = "ORDER BY ";
 switch ($sort) {
-    case 'price_low':
-        $orderClause .= "b_avg_price_per_item ASC";
-        break;
-    case 'price_high':
-        $orderClause .= "b_avg_price_per_item DESC";
-        break;
-    case 'stock':
-        $orderClause .= "b_stock_quantity DESC";
-        break;
-    case 'name':
-    default:
-        $orderClause .= "b_name ASC";
-        break;
+  case 'price_low':
+    $orderClause .= "b_avg_price_per_item ASC";
+    break;
+  case 'price_high':
+    $orderClause .= "b_avg_price_per_item DESC";
+    break;
+  case 'stock':
+    $orderClause .= "b_stock_quantity DESC";
+    break;
+  case 'name':
+  default:
+    $orderClause .= "b_name ASC";
+    break;
 }
 
 // Fetch available bails
 if (empty($params)) {
-    $products = $db->query("SELECT *, b_id as product_id, b_name as product_name, b_description as product_description, b_avg_price_per_item as product_price FROM bails $whereClause $orderClause")->fetchAll();
+  $products = $db->query("SELECT *, b_id as product_id, b_name as product_name, b_description as product_description, b_avg_price_per_item as product_price FROM bails $whereClause $orderClause")->fetchAll();
 } else {
-    $products = $db->query("SELECT *, b_id as product_id, b_name as product_name, b_description as product_description, b_avg_price_per_item as product_price FROM bails $whereClause $orderClause", ...$params)->fetchAll();
+  $products = $db->query("SELECT *, b_id as product_id, b_name as product_name, b_description as product_description, b_avg_price_per_item as product_price FROM bails $whereClause $orderClause", ...$params)->fetchAll();
 }
 
 // Add default image for bails
 foreach ($products as &$product) {
-    $imageName = strtolower(str_replace(' ', '-', $product['product_name'])) . '.jpg';
-    $imagePath = 'assets/img/bails/' . $imageName;
-    
-    // Check if specific bail image exists, otherwise use placeholder
-    if (file_exists($imagePath)) {
-        $product['product_image_location'] = $imagePath;
+  // Get primary image from bail_images table
+  $bailImage = $db->query(
+    "SELECT image_path FROM bail_images WHERE bail_id = ? AND is_primary = 1 LIMIT 1",
+    $product['product_id']
+  )->fetchArray();
+
+  if ($bailImage && !empty($bailImage['image_path'])) {
+    $product['product_image_location'] = $bailImage['image_path'];
+  } else {
+    // If no primary image, try to get the first image
+    $firstImage = $db->query(
+      "SELECT image_path FROM bail_images WHERE bail_id = ? ORDER BY is_primary DESC, created_at ASC LIMIT 1",
+      $product['product_id']
+    )->fetchArray();
+
+    if ($firstImage && !empty($firstImage['image_path'])) {
+      $product['product_image_location'] = $firstImage['image_path'];
     } else {
-        $product['product_image_location'] = 'assets/img/hero-img.png'; // Fallback to hero image
+      // Fallback to placeholder
+      $product['product_image_location'] = 'assets/img/hero-img.png';
     }
-    
-    $product['product_image_alt'] = $product['product_name'] . ' - Secondhand Clothing Bundle';
-    $product['product_category'] = 'Secondhand Clothing Bundle';
+  }
+
+  $product['product_image_alt'] = $product['product_name'] . ' - Secondhand Clothing Bundle';
+  $product['product_category'] = 'Secondhand Clothing Bundle';
 }
 
 // Get cart count for logged in users
 $cartCount = 0;
 if ($isLoggedIn) {
-    $cartResult = $db->query("SELECT SUM(quantity) as total FROM cart WHERE user_id = ?", $_SESSION['userId'])->fetchArray();
-    $cartCount = $cartResult['total'] ?? 0;
+  $cartResult = $db->query("SELECT SUM(quantity) as total FROM cart WHERE user_id = ?", $_SESSION['userId'])->fetchArray();
+  $cartCount = $cartResult['total'] ?? 0;
 }
 ?>
 <main class="main">
@@ -80,7 +93,7 @@ if ($isLoggedIn) {
               <i class="bi bi-cart"></i> Cart (<?php echo $cartCount; ?>)
             </a>
           <?php else: ?>
-            <a href="signin.php" class="btn btn-outline-primary">Sign In to Shop</a>
+            <a href="signin.php" class="btn text-bg-dark">Sign In to Shop</a>
           <?php endif; ?>
         </div>
       </div>
@@ -94,7 +107,7 @@ if ($isLoggedIn) {
         <div class="col-lg-3">
           <div class="filter-sidebar">
             <h5>Filters</h5>
-            
+
             <!-- Search -->
             <div class="mb-4">
               <label class="form-label">Search Products</label>
@@ -148,11 +161,11 @@ if ($isLoggedIn) {
                 <div class="col-lg-4 col-md-6">
                   <div class="product-card card h-100 shadow-sm">
                     <div class="product-image">
-                      <img src="<?php echo htmlspecialchars($product['product_image_location']); ?>" 
-                           class="card-img-top" 
-                           alt="<?php echo htmlspecialchars($product['product_image_alt']); ?>"
-                           style="height: 250px; object-fit: cover;"
-                           onerror="this.src='assets/img/hero-img.png'">
+                      <img src="<?php echo htmlspecialchars($product['product_image_location']); ?>"
+                        class="card-img-top"
+                        alt="<?php echo htmlspecialchars($product['product_image_alt']); ?>"
+                        style="height: 250px; object-fit: cover;"
+                        onerror="this.src='assets/img/hero-img.png'">
                       <div class="product-overlay">
                         <button class="btn btn-primary btn-sm" onclick="viewProduct(<?php echo $product['product_id']; ?>)">
                           <i class="bi bi-eye"></i> View
@@ -215,102 +228,234 @@ if ($isLoggedIn) {
 </div>
 
 <style>
-.product-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-}
+  .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
 
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-}
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  }
 
-.product-image {
-  position: relative;
-  overflow: hidden;
-}
+  .product-image {
+    position: relative;
+    overflow: hidden;
+  }
 
-.product-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+  .product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
-.product-card:hover .product-overlay {
-  opacity: 1;
-}
+  .product-card:hover .product-overlay {
+    opacity: 1;
+  }
 
-.filter-sidebar {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  position: sticky;
-  top: 20px;
-}
+  .filter-sidebar {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    position: sticky;
+    top: 20px;
+  }
 
-.store-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 60px 0;
-}
+  .store-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+  }
 
-.store-header h1 {
-  color: white;
-}
+  .store-header h1 {
+    color: white;
+  }
 
-.product-modal-image {
-  max-height: 500px;
-  width: 100%;
-  object-fit: cover;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
+  .product-modal-image {
+    max-height: 500px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
 
-.product-modal-image:hover {
-  transform: scale(1.05);
-}
+  .product-modal-image:hover {
+    transform: scale(1.05);
+  }
 
-.bail-info-card {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
+  .bail-info-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
 
-.badge-large {
-  font-size: 0.9rem;
-  padding: 8px 12px;
-}
+  .badge-large {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  /* Dark Mode Styles for Store and Modal */
+  .dark-theme .filter-sidebar {
+    background: #2d2d2d;
+    color: #ffffff;
+  }
+
+  .dark-theme .alert-info {
+    background-color: #1e5a7a !important;
+    border-color: #2a7fa6 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .form-select,
+  .dark-theme .form-control {
+    background-color: #404040 !important;
+    border-color: #555555 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .form-select:focus,
+  .dark-theme .form-control:focus {
+    background-color: #404040 !important;
+    border-color: #007bff !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .product-card {
+    background-color: #2d2d2d !important;
+    border-color: #404040 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .card-title {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .card-text {
+    color: #adb5bd !important;
+  }
+
+  /* Product Modal Dark Mode */
+  .dark-theme .modal-content {
+    background-color: #2d2d2d !important;
+    border-color: #404040 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .modal-header {
+    background-color: #2d2d2d !important;
+    border-color: #404040 !important;
+  }
+
+  .dark-theme .modal-header .btn-close {
+    filter: invert(1);
+  }
+
+  .dark-theme .modal-footer {
+    background-color: #2d2d2d !important;
+    border-color: #404040 !important;
+  }
+
+  .dark-theme .modal-title {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .bail-info-card {
+    background: #1a1a1a !important;
+    border: 1px solid #404040 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .bail-info-card h3,
+  .dark-theme .bail-info-card h6 {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .bail-info-card .text-muted {
+    color: #adb5bd !important;
+  }
+
+  .dark-theme .bail-info-card .bg-white {
+    background-color: #404040 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .img-thumbnail {
+    background-color: #404040 !important;
+    border-color: #555555 !important;
+  }
+
+  .dark-theme .btn-secondary {
+    background-color: #404040 !important;
+    border-color: #555555 !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .btn-secondary:hover {
+    background-color: #555555 !important;
+    border-color: #666666 !important;
+  }
+
+  /* Thumbnail Gallery Scrollable Container */
+  .thumbnail-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .dark-theme .thumbnail-gallery {
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+  }
+
+  .thumbnail-gallery img {
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .thumbnail-gallery img:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 </style>
 
 <script>
-function viewProduct(productId) {
-  // Load product details and images via AJAX
-  Promise.all([
-    $.get('model/getProduct.php', { id: productId }),
-    $.get('model/getBailImages.php', { bail_id: productId })
-  ]).then(function([productData, imagesData]) {
-    const product = JSON.parse(productData);
-    const images = JSON.parse(imagesData);
-    
-    $('#productModalTitle').text(product.product_name + ' - Secondhand Clothing Bail');
-    
-    // Build image gallery
-    let imageGallery = '';
-    if (images.success && images.images.length > 0) {
-      const primaryImage = images.images.find(img => img.is_primary) || images.images[0];
-      
-      imageGallery = `
+  function viewProduct(productId) {
+    // Load product details and images via AJAX
+    Promise.all([
+      $.get('model/getProduct.php', {
+        id: productId
+      }),
+      $.get('model/getBailImages.php', {
+        bail_id: productId
+      })
+    ]).then(function([productData, imagesData]) {
+      const product = JSON.parse(productData);
+      const images = JSON.parse(imagesData);
+
+      $('#productModalTitle').text(product.product_name + ' - Secondhand Clothing Bail');
+
+      // Build image gallery
+      let imageGallery = '';
+      if (images.success && images.images.length > 0) {
+        const primaryImage = images.images.find(img => img.is_primary) || images.images[0];
+
+        imageGallery = `
         <div class="text-center">
           <img src="${primaryImage.image_path}" 
                class="product-modal-image mb-3" 
@@ -318,20 +463,21 @@ function viewProduct(productId) {
                alt="${product.product_name}" 
                onclick="openImageFullscreen(this.src)">
           
-          <div class="d-flex justify-content-center gap-2 flex-wrap">
+          <div class="thumbnail-gallery">
             ${images.images.map(img => `
               <img src="${img.image_path}" 
                    class="img-thumbnail" 
-                   style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" 
+                   style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 3px solid transparent;" 
                    onclick="changeMainImage('${img.image_path}')"
+                   data-primary="${img.is_primary ? '1' : '0'}"
                    ${img.is_primary ? 'style="border: 3px solid #007bff;"' : ''}>
             `).join('')}
           </div>
-          <p class="text-muted mt-2 small">Click thumbnails to change main image • Click main image for fullscreen</p>
+          <p class="text-muted mt-3 small"><i class="bi bi-info-circle"></i> Click thumbnails to change image • Click main image to view fullscreen</p>
         </div>
       `;
-    } else {
-      imageGallery = `
+      } else {
+        imageGallery = `
         <div class="text-center">
           <img src="${product.product_image_location}" 
                class="product-modal-image" 
@@ -341,9 +487,9 @@ function viewProduct(productId) {
           <p class="text-muted mt-2 small">Click image to view fullscreen</p>
         </div>
       `;
-    }
-    
-    const modalContent = `
+      }
+
+      const modalContent = `
       <div class="row">
         <div class="col-lg-6">
           ${imageGallery}
@@ -394,9 +540,9 @@ function viewProduct(productId) {
         </div>
       </div>
     `;
-      
-    $('#productModalBody').html(modalContent);
-      
+
+      $('#productModalBody').html(modalContent);
+
       // Update modal footer with cart button
       const cartButton = `
         <?php if ($isLoggedIn): ?>
@@ -416,69 +562,72 @@ function viewProduct(productId) {
         </a>
         <?php endif; ?>
       `;
-      
+
       $('#modalCartButton').html(cartButton);
       const modal = new bootstrap.Modal(document.getElementById('productModal'));
       modal.show();
     }).catch(function() {
       alert('Error loading product details');
     });
-}
-
-function changeMainImage(imageSrc) {
-  const mainImage = document.getElementById('mainImage');
-  if (mainImage) {
-    mainImage.src = imageSrc;
   }
-}
 
-function addToCart(productId, quantity = 1) {
-  <?php if ($isLoggedIn): ?>
-  console.log('Adding to cart:', productId, quantity);
-  $.ajax({
-    url: 'model/addToCart.php',
-    type: 'POST',
-    data: { product_id: productId, quantity: quantity },
-    success: function(data) {
-      console.log('Response:', data);
-      try {
-        const response = JSON.parse(data);
-        if (response.success) {
-          alert('Bail added to cart!');
-          location.reload();
-        } else {
-          alert('Error: ' + response.message);
-        }
-      } catch (e) {
-        console.error('JSON parse error:', e);
-        alert('Server response error: ' + data);
-      }
-    },
-    error: function(xhr, status, error) {
-      console.error('AJAX error:', status, error);
-      alert('Network error: ' + error);
+  function changeMainImage(imageSrc) {
+    const mainImage = document.getElementById('mainImage');
+    if (mainImage) {
+      mainImage.src = imageSrc;
     }
-  });
-  <?php else: ?>
-  window.location.href = 'signin.php';
-  <?php endif; ?>
-}
-
-function changeQuantity(change) {
-  const quantityInput = document.getElementById('quantity');
-  if (!quantityInput) return;
-  
-  const currentValue = parseInt(quantityInput.value);
-  const maxValue = parseInt(quantityInput.getAttribute('max'));
-  const newValue = currentValue + change;
-  
-  if (newValue >= 1 && newValue <= maxValue) {
-    quantityInput.value = newValue;
   }
-}
 
-function openImageFullscreen(imageSrc) {
-  const fullscreenModal = `
+  function addToCart(productId, quantity = 1) {
+    <?php if ($isLoggedIn): ?>
+      console.log('Adding to cart:', productId, quantity);
+      $.ajax({
+        url: 'model/addToCart.php',
+        type: 'POST',
+        data: {
+          product_id: productId,
+          quantity: quantity
+        },
+        success: function(data) {
+          console.log('Response:', data);
+          try {
+            const response = JSON.parse(data);
+            if (response.success) {
+              alert('Bail added to cart!');
+              location.reload();
+            } else {
+              alert('Error: ' + response.message);
+            }
+          } catch (e) {
+            console.error('JSON parse error:', e);
+            alert('Server response error: ' + data);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('AJAX error:', status, error);
+          alert('Network error: ' + error);
+        }
+      });
+    <?php else: ?>
+      window.location.href = 'signin.php';
+    <?php endif; ?>
+  }
+
+  function changeQuantity(change) {
+    const quantityInput = document.getElementById('quantity');
+    if (!quantityInput) return;
+
+    const currentValue = parseInt(quantityInput.value);
+    const maxValue = parseInt(quantityInput.getAttribute('max'));
+    const newValue = currentValue + change;
+
+    if (newValue >= 1 && newValue <= maxValue) {
+      quantityInput.value = newValue;
+    }
+  }
+
+  function openImageFullscreen(imageSrc) {
+    const fullscreenModal = `
     <div class="modal fade" id="imageModal" tabindex="-1">
       <div class="modal-dialog modal-fullscreen">
         <div class="modal-content bg-dark">
@@ -492,25 +641,25 @@ function openImageFullscreen(imageSrc) {
       </div>
     </div>
   `;
-  
-  // Remove existing image modal if any
-  const existingModal = document.getElementById('imageModal');
-  if (existingModal) {
-    existingModal.remove();
+
+    // Remove existing image modal if any
+    const existingModal = document.getElementById('imageModal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    // Add new modal to body
+    document.body.insertAdjacentHTML('beforeend', fullscreenModal);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    modal.show();
+
+    // Remove modal from DOM when hidden
+    document.getElementById('imageModal').addEventListener('hidden.bs.modal', function() {
+      this.remove();
+    });
   }
-  
-  // Add new modal to body
-  document.body.insertAdjacentHTML('beforeend', fullscreenModal);
-  
-  // Show the modal
-  const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-  modal.show();
-  
-  // Remove modal from DOM when hidden
-  document.getElementById('imageModal').addEventListener('hidden.bs.modal', function() {
-    this.remove();
-  });
-}
 </script>
 
 <?php

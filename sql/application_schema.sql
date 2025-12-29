@@ -41,7 +41,7 @@ CREATE TABLE bails (
     b_total_value DECIMAL(12, 2) GENERATED ALWAYS AS (b_items_count * b_avg_price_per_item) STORED,
     b_purchase_date DATE NOT NULL,
     b_description TEXT,
-    b_status ENUM('available', 'sold', 'discontinued') DEFAULT 'available',
+    b_status ENUM('unopened', 'available', 'sold') DEFAULT 'unopened',
     b_stock_quantity INT DEFAULT 1,
     b_created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     b_updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -119,7 +119,7 @@ INSERT INTO bails (b_name, b_items_count, b_avg_price_per_item, b_purchase_date,
 ('Summer Collection Bundle', 50, 25.99, '2025-11-01', 'Assorted summer dresses and tops', 'available', 15),
 ('Winter Jacket Pack', 30, 45.50, '2025-10-15', 'Premium winter jackets', 'available', 8),
 ('Denim Essentials', 75, 18.75, '2025-11-05', 'Various denim pants and jeans', 'available', 20),
-('Casual Wear Bundle', 60, 22.00, '2025-10-20', 'T-shirts and casual wear', 'available', 25),
+('Casual Wear Bundle', 60, 22.00, '2025-10-20', 'T-shirts and casual wear', 'unopened', 25),
 ('Formal Wear Collection', 25, 65.00, '2025-09-30', 'Suits and formal attire', 'sold', 0);
 
 -- Insert Sample Purchases

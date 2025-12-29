@@ -1,5 +1,18 @@
 <?php
 
+// IMPORTANT: Session configuration MUST come before anything else
+// Set session configuration BEFORE session_start()
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', 3600); // 1 hour session lifetime
+    session_set_cookie_params([
+        'lifetime' => 3600, // 1 hour
+        'path' => '/',
+        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'httponly' => true,
+        'samesite' => 'Strict'
+    ]);
+    session_start();
+}
 
 define('ROOT', dirname(__DIR__) . "/");
 define('HOME', './');
@@ -133,20 +146,26 @@ function create_square_image($original_file, $destination_file = NULL, $square_s
 $db = new Database();
 $meta = new Meta();
 
-// Start session at the end to avoid headers already sent
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+// Check session timeout (1 hour of inactivity) - only if user is logged in
+if (isset($_SESSION['userId'])) {
+    if (isset($_SESSION['last_activity'])) {
+        if (time() - $_SESSION['last_activity'] > 3600) { // 1 hour = 3600 seconds
+            session_unset();
+            session_destroy();
+            // Redirect to login if on protected page
+            if (basename($_SERVER['PHP_SELF']) !== 'index.php' && strpos($_SERVER['PHP_SELF'], 'employee') === false) {
+                header('Location: ./signin.php');
+                exit();
+            }
+        }
+    }
+    // Update last activity time for logged-in users
+    $_SESSION['last_activity'] = time();
 }
-
 
 ///functions
 function addComment($author, $email, $comment, $id, $db)
 {
     $insert = $db->query("INSERT INTO comment(news_id,author,email,description) VALUES('$id','$author','$email','$comment')");
     echo 1;
-}
-
-// To this:
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
 }

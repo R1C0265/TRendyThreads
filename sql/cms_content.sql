@@ -124,10 +124,10 @@ INSERT INTO `services` (`title`, `description`, `icon_class`, `icon_color`, `sor
 ('Mobile Apps', 'Native and cross-platform mobile application development', 'bi bi-phone', '#df1529', 4);
 
 INSERT INTO `contact_info` (`type`, `label`, `value`, `icon_class`, `sort_order`) VALUES
-('address', 'Address', 'A108 Adam Street, New York, NY 535022', 'bi bi-geo-alt', 1),
+('address', 'Address', 'Zaison Shopping Center, Lilongwe, Area 25', 'bi bi-geo-alt', 1),
 ('phone', 'Call Us', '+1 5589 55488 55', 'bi bi-telephone', 2),
 ('email', 'Email Us', 'info@trendythreads.com', 'bi bi-envelope', 3),
-('map', 'Map', 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059', '', 4);
+('map', 'Map', 'https://maps.google.com/maps?q=-13.8673703,33.7597532&t=&z=15&ie=UTF8&iwloc=&output=embed', '', 4);
 
 INSERT INTO `hero_content` (`title`, `subtitle`, `cta_text`, `cta_link`, `background_image`, `hero_image`) VALUES
 ('CREATING WEBSITES THAT MAKE YOU STOP & STARE', 'We are team of talented designers making websites with Bootstrap', 'Get Started', '#about', 'assets/img/hero-bg.jpg', 'assets/img/hero-img.png');

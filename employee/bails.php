@@ -65,9 +65,9 @@ if (empty($params)) {
                             <div class="col-md-3">
                                 <select class="form-control" name="status">
                                     <option value="">All Status</option>
-                                    <option value="available" <?php echo $status === 'available' ? 'selected' : ''; ?>>Available</option>
-                                    <option value="sold" <?php echo $status === 'sold' ? 'selected' : ''; ?>>Sold</option>
-                                    <option value="discontinued" <?php echo $status === 'discontinued' ? 'selected' : ''; ?>>Discontinued</option>
+                                    <option value="unopened" <?php echo $status === 'unopened' ? 'selected' : ''; ?>>Unopened (Not Priced)</option>
+                                    <option value="available" <?php echo $status === 'available' ? 'selected' : ''; ?>>Available (For Sale)</option>
+                                    <option value="sold" <?php echo $status === 'sold' ? 'selected' : ''; ?>>Sold (Purchased)</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -238,9 +238,9 @@ if (empty($params)) {
                             <div class="form-group">
                                 <label for="bailStatus" class="form-label">Status</label>
                                 <select class="form-control" id="bailStatus" name="b_status">
-                                    <option value="available">Available</option>
-                                    <option value="sold">Sold</option>
-                                    <option value="discontinued">Discontinued</option>
+                                    <option value="unopened">Unopened (Not yet priced/displayed)</option>
+                                    <option value="available">Available (Ready for sale)</option>
+                                    <option value="sold">Sold (Purchased)</option>
                                 </select>
                             </div>
                         </div>
@@ -410,9 +410,9 @@ if (empty($params)) {
                                         <div class="form-group">
                                             <label for="editBailStatus" class="form-label">Status</label>
                                             <select class="form-control" id="editBailStatus" name="b_status">
-                                                <option value="available">Available</option>
-                                                <option value="sold">Sold</option>
-                                                <option value="discontinued">Discontinued</option>
+                                                <option value="unopened">Unopened (Not yet priced/displayed)</option>
+                                                <option value="available">Available (Ready for sale)</option>
+                                                <option value="sold">Sold (Purchased)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -921,7 +921,160 @@ if (empty($params)) {
                 }
             </script>
 
+            <style>
+                /* Dark Mode Styling for Modals */
+                .dark-version .modal-content {
+                    background-color: #2d2d2d !important;
+                    color: #ffffff !important;
+                    border-color: #444444 !important;
+                }
 
+                .dark-version .modal-header {
+                    background-color: #2d2d2d !important;
+                    border-bottom-color: #444444 !important;
+                    color: #ffffff !important;
+                }
+
+                .dark-version .modal-header .btn-close {
+                    filter: invert(1);
+                }
+
+                .dark-version .modal-footer {
+                    background-color: #2d2d2d !important;
+                    border-top-color: #444444 !important;
+                }
+
+                .dark-version .modal-body {
+                    background-color: #2d2d2d !important;
+                    color: #ffffff !important;
+                }
+
+                .dark-version #bailDetailModal .modal-content,
+                .dark-version #editBailModal .modal-content,
+                .dark-version #deleteConfirmModal .modal-content,
+                .dark-version #editImagesModal .modal-content {
+                    background-color: #2d2d2d !important;
+                }
+
+                /* Form elements in dark mode */
+                .dark-version .form-control,
+                .dark-version .form-select {
+                    background-color: #3a3a3a !important;
+                    color: #ffffff !important;
+                    border-color: #555555 !important;
+                }
+
+                .dark-version .form-control:focus,
+                .dark-version .form-select:focus {
+                    background-color: #3a3a3a !important;
+                    color: #ffffff !important;
+                    border-color: #6c63ff !important;
+                    box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+                }
+
+                .dark-version .form-control::placeholder {
+                    color: #999999 !important;
+                }
+
+                .dark-version .form-label {
+                    color: #ffffff !important;
+                }
+
+                /* Text in modals */
+                .dark-version .modal-body label,
+                .dark-version .modal-body p,
+                .dark-version .modal-body h5,
+                .dark-version .modal-body h6 {
+                    color: #ffffff !important;
+                }
+
+                /* Buttons styling */
+                .dark-version .modal-footer .btn-primary {
+                    background-color: #6c63ff !important;
+                    border-color: #6c63ff !important;
+                }
+
+                .dark-version .modal-footer .btn-primary:hover {
+                    background-color: #5551cc !important;
+                    border-color: #5551cc !important;
+                }
+
+                .dark-version .modal-footer .btn-secondary {
+                    background-color: #555555 !important;
+                    border-color: #555555 !important;
+                    color: #ffffff !important;
+                }
+
+                .dark-version .modal-footer .btn-secondary:hover {
+                    background-color: #666666 !important;
+                    border-color: #666666 !important;
+                }
+
+                .dark-version .modal-footer .btn-danger {
+                    background-color: #dc3545 !important;
+                    border-color: #dc3545 !important;
+                }
+
+                .dark-version .modal-footer .btn-danger:hover {
+                    background-color: #bd2130 !important;
+                    border-color: #bd2130 !important;
+                }
+
+                /* Table styling in modals */
+                .dark-version .table {
+                    color: #ffffff !important;
+                    border-color: #444444 !important;
+                }
+
+                .dark-version .table thead th {
+                    background-color: #3a3a3a !important;
+                    color: #ffffff !important;
+                    border-color: #444444 !important;
+                }
+
+                .dark-version .table tbody tr {
+                    border-color: #444444 !important;
+                }
+
+                .dark-version .table tbody tr:hover {
+                    background-color: #3a3a3a !important;
+                }
+
+                /* Thumbnail gallery styling */
+                .dark-version .thumbnail-gallery {
+                    background-color: #3a3a3a !important;
+                    border-color: #444444 !important;
+                }
+
+                .dark-version .thumbnail-gallery img {
+                    border-color: #444444 !important;
+                }
+
+                .dark-version .thumbnail-gallery img:hover,
+                .dark-version .thumbnail-gallery img.active {
+                    border-color: #6c63ff !important;
+                }
+
+                /* Alert and badge styling */
+                .dark-version .alert-info {
+                    background-color: #1a3a4a !important;
+                    color: #b3d9e6 !important;
+                    border-color: #2a5a6a !important;
+                }
+
+                .dark-version .badge {
+                    background-color: #6c63ff !important;
+                }
+
+                /* Link styling */
+                .dark-version .modal-body a {
+                    color: #6c63ff !important;
+                }
+
+                .dark-version .modal-body a:hover {
+                    color: #8781ff !important;
+                }
+            </style>
 
             <?php
             require_once "partials/footer.php";

@@ -1,7 +1,23 @@
 <?php
 
 require_once "../config/main.php";
-//Global Header for TrendyTHreads CMS
+//Global Header for TrendyThreads CMS
+
+// AUTHENTICATION CHECK - Protect employee section
+// Check if user is logged in
+if (!isset($_SESSION['userId'])) {
+    // User not logged in - redirect to signin
+    header('Location: ../../signin.php');
+    exit();
+}
+
+// Check if user is an employee (userType should be 1 or 2 for employees, adjust based on your user types)
+// Assuming: 1 = Admin, 2 = Employee, 3 = Customer
+if (!isset($_SESSION['userType']) || ($_SESSION['userType'] != 1 && $_SESSION['userType'] != 2)) {
+    // User is not an employee - redirect to home
+    header('Location: ../../index.php');
+    exit();
+}
 
 // Get current page filename
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -218,7 +234,8 @@ function isActive($pageName)
         <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
         <script>
-            function toggleSidebar() {
+            function toggleSidebar(e) {
+                if (e) e.stopPropagation();
                 const sidebar = document.getElementById('sidenav-main');
                 const backdrop = document.getElementById('sidebarBackdrop');
                 const body = document.body;
@@ -232,7 +249,8 @@ function isActive($pageName)
                 }
             }
 
-            function closeSidebar() {
+            function closeSidebar(e) {
+                if (e) e.stopPropagation();
                 const sidebar = document.getElementById('sidenav-main');
                 const backdrop = document.getElementById('sidebarBackdrop');
                 const body = document.body;
@@ -242,14 +260,16 @@ function isActive($pageName)
                 body.style.overflow = '';
             }
 
-
-
-
             // Close sidebar on escape key
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
                     closeSidebar();
                 }
+            });
+
+            // Prevent sidebar content clicks from closing sidebar
+            document.getElementById('sidenav-main')?.addEventListener('click', function(e) {
+                e.stopPropagation();
             });
         </script>
 
@@ -275,6 +295,23 @@ function isActive($pageName)
             /* Dark theme hamburger */
             .dark-version .hamburger-line {
                 background-color: #ffffff;
+            }
+
+            /* Dark mode sidebar background */
+            .dark-version .sidenav {
+                background-color: #2d2d2d !important;
+            }
+
+            .dark-version .sidenav.bg-white {
+                background-color: #2d2d2d !important;
+            }
+
+            .dark-version .sidenav .text-dark {
+                color: #ffffff !important;
+            }
+
+            .dark-version .sidenav hr {
+                border-top-color: #404040 !important;
             }
 
             #iconNavbarSidenav {
