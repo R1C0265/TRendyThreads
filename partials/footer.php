@@ -316,6 +316,138 @@
     color: #ffffff !important;
   }
 
+  /* Paragraph and text styling */
+  .dark-theme p {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme p,
+  .dark-theme li,
+  .dark-theme span,
+  .dark-theme div:not(.dark-theme .card):not(.dark-theme .form-control) {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme .section-title p {
+    color: #adb5bd !important;
+  }
+
+  .dark-theme .stats-item p {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme .info-item p {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme .cta-btn {
+    color: #ffffff !important;
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+  }
+
+  .dark-theme .cta-btn:hover {
+    background-color: #0056b3 !important;
+    border-color: #0056b3 !important;
+  }
+
+  .dark-theme ul li {
+    color: #e0e0e0 !important;
+  }
+
+  .dark-theme ul li h5 {
+    color: #ffffff !important;
+  }
+
+  .dark-theme ul li p {
+    color: #adb5bd !important;
+  }
+
+  /* Contact form styling */
+  .dark-theme .php-email-form .loading {
+    color: #007bff !important;
+  }
+
+  .dark-theme .php-email-form .error-message {
+    color: #ff6b6b !important;
+  }
+
+  .dark-theme .php-email-form .sent-message {
+    color: #28a745 !important;
+  }
+
+  .dark-theme .php-email-form button {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: #ffffff !important;
+  }
+
+  .dark-theme .php-email-form button:hover {
+    background-color: #0056b3 !important;
+    border-color: #0056b3 !important;
+  }
+
+  /* Link styling */
+  .dark-theme a {
+    color: #007bff !important;
+  }
+
+  .dark-theme a:hover {
+    color: #0056b3 !important;
+  }
+
+  /* Hero section */
+  .dark-theme .hero {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-theme .hero h2 {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .hero p {
+    color: #adb5bd !important;
+  }
+
+  /* About section */
+  .dark-theme .about h3 {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .about h4 {
+    color: #adb5bd !important;
+  }
+
+  .dark-theme .about p {
+    color: #e0e0e0 !important;
+  }
+
+  /* Stats section */
+  .dark-theme .stats {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-theme .stats-item span {
+    color: #007bff !important;
+  }
+
+  /* Contact section */
+  .dark-theme .contact {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-theme .contact h2 {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .info-item h3 {
+    color: #ffffff !important;
+  }
+
+  .dark-theme .info-item i {
+    color: #007bff !important;
+  }
+
   /* Theme Settings Panel Styling */
   .fixed-plugin-customer {
     position: fixed;
