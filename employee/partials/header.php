@@ -145,9 +145,9 @@ function isActive($pageName)
                 <li class="nav-item">
                     <a
                         class="nav-link <?php echo isActive('home_about.php'); ?>"
-                        href="home_about.php">
+                        href="cms_content.php">
                         <i class="material-symbols-rounded opacity-5">home</i>
-                        <span class="nav-link-text ms-1">Home & About</span>
+                        <span class="nav-link-text ms-1">CMS Content</span>
                     </a>
                 </li>
 
@@ -454,3 +454,63 @@ function isActive($pageName)
                 top: 14px;
             }
         </style>
+
+        <script>
+            // Fix for input-group-outline placeholder overlap issue
+            // This script ensures the 'is-filled' class is added when inputs have values
+            document.addEventListener('DOMContentLoaded', function() {
+                // Function to check all inputs and add 'is-filled' class if they have values
+                function updateInputGroupState() {
+                    document.querySelectorAll('.input-group-outline').forEach(inputGroup => {
+                        const input = inputGroup.querySelector('input, textarea, select');
+                        if (input) {
+                            if (input.value.trim() !== '') {
+                                inputGroup.classList.add('is-filled');
+                            } else {
+                                inputGroup.classList.remove('is-filled');
+                            }
+                        }
+                    });
+                }
+
+                // Run on page load
+                updateInputGroupState();
+
+                // Listen to input events
+                document.querySelectorAll('.input-group-outline input, .input-group-outline textarea, .input-group-outline select').forEach(input => {
+                    input.addEventListener('input', updateInputGroupState);
+                    input.addEventListener('change', updateInputGroupState);
+                    input.addEventListener('focus', updateInputGroupState);
+                    input.addEventListener('blur', updateInputGroupState);
+                });
+
+                // Also watch for dynamic inputs (modals, AJAX-loaded content)
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes.length) {
+                            // New elements added, find any new input-group-outline elements
+                            mutation.addedNodes.forEach(node => {
+                                if (node.nodeType === 1) { // Element node
+                                    const newInputGroups = node.querySelectorAll ? node.querySelectorAll('.input-group-outline input, .input-group-outline textarea, .input-group-outline select') : [];
+                                    newInputGroups.forEach(input => {
+                                        input.addEventListener('input', updateInputGroupState);
+                                        input.addEventListener('change', updateInputGroupState);
+                                        input.addEventListener('focus', updateInputGroupState);
+                                        input.addEventListener('blur', updateInputGroupState);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Observe body for changes
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: false,
+                    characterData: false
+                });
+            });
+        </script>
+        </head>

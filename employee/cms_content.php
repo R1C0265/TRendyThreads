@@ -42,7 +42,7 @@ $message = $_GET['success'] ?? '';
                             <p><strong>CTA Link:</strong> <?php echo htmlspecialchars($hero['cta_link'] ?? '#about'); ?></p>
                         </div>
                         <div class="col-md-4">
-                            <?php 
+                            <?php
                             $heroImagePath = $hero['hero_image'] ?? 'assets/img/hero-img.png';
                             // Add ../ prefix if path doesn't start with ../ (for CMS display)
                             $displayPath = strpos($heroImagePath, '../') === 0 ? $heroImagePath : '../' . $heroImagePath;
@@ -75,7 +75,7 @@ $message = $_GET['success'] ?? '';
                 <div class="card-body px-3 pb-2 pt-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <?php 
+                            <?php
                             $aboutImagePath = $about['image_path'] ?? 'assets/img/about.jpg';
                             // Add ../ prefix if path doesn't start with ../ (for CMS display)
                             $displayPath = strpos($aboutImagePath, '../') === 0 ? $aboutImagePath : '../' . $aboutImagePath;
@@ -88,7 +88,7 @@ $message = $_GET['success'] ?? '';
                                 <h6 class="text-info"><?php echo htmlspecialchars($about['subtitle']); ?></h6>
                             <?php endif; ?>
                             <p class="text-sm"><?php echo htmlspecialchars($about['description'] ?? 'Learn more about our company and mission.'); ?></p>
-                            
+
                             <h6 class="mt-4">Features:</h6>
                             <ul class="list-unstyled">
                                 <?php foreach ($about_features as $feature): ?>
@@ -410,23 +410,23 @@ $message = $_GET['success'] ?? '';
                 <div class="modal-body">
                     <input type="hidden" id="featureId" name="feature_id" value="">
                     <input type="hidden" id="featureAction" name="action" value="add">
-                    
+
                     <div class="mb-3">
                         <label for="featureIcon" class="form-label">Icon Class</label>
                         <input type="text" class="form-control" id="featureIcon" name="icon_class" placeholder="e.g., bi bi-diagram-3" required>
                         <small class="text-muted">Use Bootstrap Icons classes</small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="featureTitle" class="form-label">Title</label>
                         <input type="text" class="form-control" id="featureTitle" name="title" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="featureDescription" class="form-label">Description</label>
                         <textarea class="form-control" id="featureDescription" name="description" rows="3" required></textarea>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="featureOrder" class="form-label">Sort Order</label>
                         <input type="number" class="form-control" id="featureOrder" name="sort_order" value="1" min="1">
@@ -614,200 +614,439 @@ $message = $_GET['success'] ?? '';
 </div>
 
 <script>
-// Placeholder functions for CRUD operations
-function editService(id) { alert('Edit Service ' + id + ' - Feature coming soon!'); }
-function deleteService(id) { if(confirm('Delete this service?')) alert('Delete Service ' + id + ' - Feature coming soon!'); }
-function addService() { alert('Add Service - Feature coming soon!'); }
-
-function editStat(id) { alert('Edit Stat ' + id + ' - Feature coming soon!'); }
-function deleteStat(id) { if(confirm('Delete this stat?')) alert('Delete Stat ' + id + ' - Feature coming soon!'); }
-function addStat() { alert('Add Stat - Feature coming soon!'); }
-
-function editClient(id) { alert('Edit Client ' + id + ' - Feature coming soon!'); }
-function deleteClient(id) { if(confirm('Delete this client?')) alert('Delete Client ' + id + ' - Feature coming soon!'); }
-function addClient() { alert('Add Client - Feature coming soon!'); }
-
-function editContact(id) { alert('Edit Contact ' + id + ' - Feature coming soon!'); }
-function deleteContact(id) { if(confirm('Delete this contact?')) alert('Delete Contact ' + id + ' - Feature coming soon!'); }
-function addContact() { alert('Add Contact - Feature coming soon!'); }
-
-// Image upload functions
-function uploadHeroImage() {
-    const fileInput = document.getElementById('heroImageUpload');
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        alert('Please select an image first');
-        return;
+    // Placeholder functions for CRUD operations
+    function editService(id) {
+        alert('Edit Service ' + id + ' - Feature coming soon!');
     }
-    
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('section', 'hero');
-    
-    $.ajax({
-        url: '../model/uploadSectionImage.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        beforeSend: function() {
-            $('button[onclick="uploadHeroImage()"]').prop('disabled', true).text('Uploading...');
-        },
-        success: function(data) {
-            const response = typeof data === 'string' ? JSON.parse(data) : data;
-            if (response.success) {
-                document.getElementById('heroImagePath').value = response.path;
-                alert('Hero image uploaded and replaced successfully!');
-                fileInput.value = '';
-                // Reload page to show new image
-                window.location.reload();
-            } else {
-                alert('Error: ' + response.message);
-            }
-        },
-        error: function() {
-            alert('Error uploading image');
-        },
-        complete: function() {
-            $('button[onclick="uploadHeroImage()"]').prop('disabled', false).text('Upload & Replace');
+
+    function deleteService(id) {
+        if (confirm('Delete this service?')) alert('Delete Service ' + id + ' - Feature coming soon!');
+    }
+
+    function addService() {
+        alert('Add Service - Feature coming soon!');
+    }
+
+    function editStat(id) {
+        alert('Edit Stat ' + id + ' - Feature coming soon!');
+    }
+
+    function deleteStat(id) {
+        if (confirm('Delete this stat?')) alert('Delete Stat ' + id + ' - Feature coming soon!');
+    }
+
+    function addStat() {
+        alert('Add Stat - Feature coming soon!');
+    }
+
+    function editClient(id) {
+        alert('Edit Client ' + id + ' - Feature coming soon!');
+    }
+
+    function deleteClient(id) {
+        if (confirm('Delete this client?')) alert('Delete Client ' + id + ' - Feature coming soon!');
+    }
+
+    function addClient() {
+        alert('Add Client - Feature coming soon!');
+    }
+
+    function editContact(id) {
+        alert('Edit Contact ' + id + ' - Feature coming soon!');
+    }
+
+    function deleteContact(id) {
+        if (confirm('Delete this contact?')) alert('Delete Contact ' + id + ' - Feature coming soon!');
+    }
+
+    function addContact() {
+        alert('Add Contact - Feature coming soon!');
+    }
+
+    // Image upload functions
+    function uploadHeroImage() {
+        const fileInput = document.getElementById('heroImageUpload');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select an image first');
+            return;
         }
-    });
-}
 
-function uploadAboutImage() {
-    const fileInput = document.getElementById('aboutImageUpload');
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        alert('Please select an image first');
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('section', 'about');
-    
-    $.ajax({
-        url: '../model/uploadSectionImage.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        beforeSend: function() {
-            $('button[onclick="uploadAboutImage()"]').prop('disabled', true).text('Uploading...');
-        },
-        success: function(data) {
-            const response = typeof data === 'string' ? JSON.parse(data) : data;
-            if (response.success) {
-                document.getElementById('aboutImagePath').value = response.path;
-                alert('About image uploaded and replaced successfully!');
-                fileInput.value = '';
-                // Reload page to show new image
-                window.location.reload();
-            } else {
-                alert('Error: ' + response.message);
-            }
-        },
-        error: function() {
-            alert('Error uploading image');
-        },
-        complete: function() {
-            $('button[onclick="uploadAboutImage()"]').prop('disabled', false).text('Upload & Replace');
-        }
-    });
-}
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('section', 'hero');
 
-// Features management functions
-function addFeature() {
-    document.getElementById('featureFormModalLabel').textContent = 'Add Feature';
-    document.getElementById('featureAction').value = 'add';
-    document.getElementById('featureId').value = '';
-    document.getElementById('featureForm').reset();
-    
-    const modal = new bootstrap.Modal(document.getElementById('featureFormModal'));
-    modal.show();
-}
-
-function editFeature(id, iconClass, title, description, sortOrder) {
-    document.getElementById('featureFormModalLabel').textContent = 'Edit Feature';
-    document.getElementById('featureAction').value = 'edit';
-    document.getElementById('featureId').value = id;
-    document.getElementById('featureIcon').value = iconClass;
-    document.getElementById('featureTitle').value = title;
-    document.getElementById('featureDescription').value = description;
-    document.getElementById('featureOrder').value = sortOrder;
-    
-    const modal = new bootstrap.Modal(document.getElementById('featureFormModal'));
-    modal.show();
-}
-
-function deleteFeature(id) {
-    if (confirm('Are you sure you want to delete this feature?')) {
         $.ajax({
-            url: '../model/updateFeature.php',
+            url: '../model/uploadSectionImage.php',
             type: 'POST',
-            data: { action: 'delete', feature_id: id },
-            success: function(data) {
-                try {
-                    const response = typeof data === 'string' ? JSON.parse(data) : data;
-                    if (response.success) {
-                        alert('Feature deleted successfully!');
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + response.message);
-                    }
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    alert('Error processing response');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error);
-                alert('Error deleting feature');
-            }
-        });
-    }
-}
-
-// Handle feature form submission
-$(document).ready(function() {
-    $('#featureForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: '../model/updateFeature.php',
-            type: 'POST',
-            data: $(this).serialize(),
+            data: formData,
+            contentType: false,
+            processData: false,
             beforeSend: function() {
-                $('#featureSubmitBtn').prop('disabled', true).text('Saving...');
+                $('button[onclick="uploadHeroImage()"]').prop('disabled', true).text('Uploading...');
             },
             success: function(data) {
-                console.log('Raw response:', data);
-                try {
-                    const response = typeof data === 'string' ? JSON.parse(data) : data;
-                    if (response.success) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('featureFormModal'));
-                        modal.hide();
-                        alert('Feature saved successfully!');
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + response.message);
-                    }
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    alert('Error processing response');
+                const response = typeof data === 'string' ? JSON.parse(data) : data;
+                if (response.success) {
+                    document.getElementById('heroImagePath').value = response.path;
+                    alert('Hero image uploaded and replaced successfully!');
+                    fileInput.value = '';
+                    // Reload page to show new image
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + response.message);
                 }
-                $('#featureSubmitBtn').prop('disabled', false).text('Save Feature');
             },
-            error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error);
-                alert('Error saving feature');
-                $('#featureSubmitBtn').prop('disabled', false).text('Save Feature');
+            error: function() {
+                alert('Error uploading image');
+            },
+            complete: function() {
+                $('button[onclick="uploadHeroImage()"]').prop('disabled', false).text('Upload & Replace');
             }
         });
+    }
+
+    function uploadAboutImage() {
+        const fileInput = document.getElementById('aboutImageUpload');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select an image first');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('section', 'about');
+
+        $.ajax({
+            url: '../model/uploadSectionImage.php',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $('button[onclick="uploadAboutImage()"]').prop('disabled', true).text('Uploading...');
+            },
+            success: function(data) {
+                const response = typeof data === 'string' ? JSON.parse(data) : data;
+                if (response.success) {
+                    document.getElementById('aboutImagePath').value = response.path;
+                    alert('About image uploaded and replaced successfully!');
+                    fileInput.value = '';
+                    // Reload page to show new image
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('Error uploading image');
+            },
+            complete: function() {
+                $('button[onclick="uploadAboutImage()"]').prop('disabled', false).text('Upload & Replace');
+            }
+        });
+    }
+
+    // Features management functions
+    function addFeature() {
+        document.getElementById('featureFormModalLabel').textContent = 'Add Feature';
+        document.getElementById('featureAction').value = 'add';
+        document.getElementById('featureId').value = '';
+        document.getElementById('featureForm').reset();
+
+        const modal = new bootstrap.Modal(document.getElementById('featureFormModal'));
+        modal.show();
+    }
+
+    function editFeature(id, iconClass, title, description, sortOrder) {
+        document.getElementById('featureFormModalLabel').textContent = 'Edit Feature';
+        document.getElementById('featureAction').value = 'edit';
+        document.getElementById('featureId').value = id;
+        document.getElementById('featureIcon').value = iconClass;
+        document.getElementById('featureTitle').value = title;
+        document.getElementById('featureDescription').value = description;
+        document.getElementById('featureOrder').value = sortOrder;
+
+        const modal = new bootstrap.Modal(document.getElementById('featureFormModal'));
+        modal.show();
+    }
+
+    function deleteFeature(id) {
+        if (confirm('Are you sure you want to delete this feature?')) {
+            $.ajax({
+                url: '../model/updateFeature.php',
+                type: 'POST',
+                data: {
+                    action: 'delete',
+                    feature_id: id
+                },
+                success: function(data) {
+                    try {
+                        const response = typeof data === 'string' ? JSON.parse(data) : data;
+                        if (response.success) {
+                            alert('Feature deleted successfully!');
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        alert('Error processing response');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    alert('Error deleting feature');
+                }
+            });
+        }
+    }
+
+    // Handle feature form submission
+    $(document).ready(function() {
+        $('#featureForm').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '../model/updateFeature.php',
+                type: 'POST',
+                data: $(this).serialize(),
+                beforeSend: function() {
+                    $('#featureSubmitBtn').prop('disabled', true).text('Saving...');
+                },
+                success: function(data) {
+                    console.log('Raw response:', data);
+                    try {
+                        const response = typeof data === 'string' ? JSON.parse(data) : data;
+                        if (response.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('featureFormModal'));
+                            modal.hide();
+                            alert('Feature saved successfully!');
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        alert('Error processing response');
+                    }
+                    $('#featureSubmitBtn').prop('disabled', false).text('Save Feature');
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    alert('Error saving feature');
+                    $('#featureSubmitBtn').prop('disabled', false).text('Save Feature');
+                }
+            });
+        });
     });
-});
 </script>
+
+<style>
+    /* Dark Mode Styling for Home/About Modals */
+    .dark-version .modal-content {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #444444 !important;
+    }
+
+    .dark-version .modal-header {
+        background-color: #2d2d2d !important;
+        border-bottom-color: #444444 !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version .modal-header .btn-close {
+        filter: invert(1);
+    }
+
+    .dark-version .modal-footer {
+        background-color: #2d2d2d !important;
+        border-top-color: #444444 !important;
+    }
+
+    .dark-version .modal-body {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version #editHeroModal .modal-content,
+    .dark-version #editAboutModal .modal-content,
+    .dark-version #manageFeaturesModal .modal-content,
+    .dark-version #featureFormModal .modal-content,
+    .dark-version #manageServicesModal .modal-content,
+    .dark-version #manageStatsModal .modal-content,
+    .dark-version #manageClientsModal .modal-content,
+    .dark-version #manageContactModal .modal-content {
+        background-color: #2d2d2d !important;
+    }
+
+    /* Form elements in dark mode */
+    .dark-version .form-control,
+    .dark-version .form-select,
+    .dark-version .input-group input,
+    .dark-version .input-group textarea {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #555555 !important;
+    }
+
+    .dark-version .form-control:focus,
+    .dark-version .form-select:focus,
+    .dark-version .input-group input:focus,
+    .dark-version .input-group textarea:focus {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #6c63ff !important;
+        box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+    }
+
+    .dark-version .form-control::placeholder,
+    .dark-version .input-group input::placeholder,
+    .dark-version .input-group textarea::placeholder {
+        color: #999999 !important;
+    }
+
+    .dark-version .form-label,
+    .dark-version .input-group-outline label {
+        color: #ffffff !important;
+    }
+
+    /* Text in modals */
+    .dark-version .modal-body label,
+    .dark-version .modal-body p,
+    .dark-version .modal-body h5,
+    .dark-version .modal-body h6 {
+        color: #ffffff !important;
+    }
+
+    .dark-version .modal-body small {
+        color: #adb5bd !important;
+    }
+
+    /* Buttons styling */
+    .dark-version .modal-footer .btn-primary,
+    .dark-version .modal-footer .bg-gradient-primary {
+        background-color: #6c63ff !important;
+        border-color: #6c63ff !important;
+    }
+
+    .dark-version .modal-footer .btn-primary:hover,
+    .dark-version .modal-footer .bg-gradient-primary:hover {
+        background-color: #5551cc !important;
+        border-color: #5551cc !important;
+    }
+
+    .dark-version .modal-footer .btn-secondary {
+        background-color: #555555 !important;
+        border-color: #555555 !important;
+        color: #ffffff !important;
+    }
+
+    .dark-version .modal-footer .btn-secondary:hover {
+        background-color: #666666 !important;
+        border-color: #666666 !important;
+    }
+
+    .dark-version .modal-footer .btn-success {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+
+    .dark-version .modal-footer .btn-success:hover {
+        background-color: #218838 !important;
+        border-color: #218838 !important;
+    }
+
+    .dark-version .modal-footer .btn-danger {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+    .dark-version .modal-footer .btn-danger:hover {
+        background-color: #bd2130 !important;
+        border-color: #bd2130 !important;
+    }
+
+    .dark-version .btn-info {
+        background-color: #0dcaf0 !important;
+        border-color: #0dcaf0 !important;
+        color: #000000 !important;
+    }
+
+    .dark-version .btn-info:hover {
+        background-color: #0aa2c0 !important;
+        border-color: #0aa2c0 !important;
+    }
+
+    /* Table styling in modals */
+    .dark-version .table {
+        color: #ffffff !important;
+        border-color: #444444 !important;
+    }
+
+    .dark-version .table thead th {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #444444 !important;
+    }
+
+    .dark-version .table tbody tr {
+        border-color: #444444 !important;
+    }
+
+    .dark-version .table tbody tr:hover {
+        background-color: #3a3a3a !important;
+    }
+
+    .dark-version .table td {
+        color: #ffffff !important;
+    }
+
+    /* Input groups */
+    .dark-version .input-group-outline {
+        border-color: #555555 !important;
+    }
+
+    .dark-version .input-group-outline:hover {
+        border-color: #666666 !important;
+    }
+
+    /* Text styles */
+    .dark-version .text-muted {
+        color: #adb5bd !important;
+    }
+
+    .dark-version .text-info {
+        color: #0dcaf0 !important;
+    }
+
+    .dark-version .badge {
+        background-color: #6c63ff !important;
+        color: #ffffff !important;
+    }
+
+    /* Link styling */
+    .dark-version .modal-body a {
+        color: #0dcaf0 !important;
+    }
+
+    .dark-version .modal-body a:hover {
+        color: #0aa2c0 !important;
+    }
+
+    /* Horizontal rule styling */
+    .dark-version hr {
+        border-color: #444444 !important;
+    }
+
+    /* Image containers */
+    .dark-version .text-center img {
+        border-color: #444444 !important;
+    }
+</style>
 
 <?php require_once 'partials/footer.php'; ?>
