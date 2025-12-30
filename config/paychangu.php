@@ -2,8 +2,8 @@
 // PayChangu Configuration
 class PayChanguConfig {
     // Test/Sandbox credentials (replace with your actual credentials from PayChangu dashboard)
-    const TEST_SECRET_KEY = 'your_test_secret_key_here';
-    const TEST_PUBLIC_KEY = 'your_test_public_key_here';
+    const TEST_SECRET_KEY = 'sec-test-nqz12F0yyOMuU2gZOnfJaJ48HWzfWSYu';
+    const TEST_PUBLIC_KEY = 'pub-test-IwAPlDTi1icfUFjxg258kSxkNZDJ2erB';
     
     // Production credentials (replace when going live)
     const LIVE_SECRET_KEY = 'your_live_secret_key_here';
@@ -17,9 +17,9 @@ class PayChanguConfig {
     const LIVE_BASE_URL = 'https://api.paychangu.com/live';
     
     // Webhook URLs
-    const WEBHOOK_URL = 'https://yourdomain.com/model/paychanguWebhook.php';
-    const RETURN_URL = 'https://yourdomain.com/order-success.php';
-    const CANCEL_URL = 'https://yourdomain.com/checkout.php';
+    const WEBHOOK_URL = 'https://trendythreads.kesug.com/model/paychanguWebhook.php';
+    const RETURN_URL = 'https://trendythreads.kesug.com/order-success.php';
+    const CANCEL_URL = 'https://trendythreads.kesug.com/checkout.php';
     
     // Get current environment settings
     public static function getSecretKey() {

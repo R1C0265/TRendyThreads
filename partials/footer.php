@@ -494,6 +494,61 @@
     color: #007bff !important;
   }
 
+  /* Mobile/Hamburger menu dropdown styling */
+  @media (max-width: 1199px) {
+    .dark-theme .navmenu li.dropdown {
+      background-color: transparent !important;
+    }
+
+    .dark-theme .navmenu li.dropdown>a {
+      color: #e0e0e0 !important;
+    }
+
+    .dark-theme .navmenu li.dropdown>a:hover {
+      color: #007bff !important;
+    }
+
+    .dark-theme .navmenu li.dropdown ul {
+      background: #383838 !important;
+      box-shadow: none !important;
+      border: none !important;
+      position: relative !important;
+      inset: auto !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      top: auto !important;
+      left: auto !important;
+      display: none !important;
+      padding: 10px 0 !important;
+      margin: 5px 0 !important;
+    }
+
+    .dark-theme .navmenu li.dropdown.dropdown-active>ul {
+      display: block !important;
+    }
+
+    .dark-theme .navmenu li.dropdown ul li a {
+      color: #e0e0e0 !important;
+      background: #383838 !important;
+      padding: 10px 30px !important;
+      font-size: 14px !important;
+    }
+
+    .dark-theme .navmenu li.dropdown ul li a:hover {
+      color: #007bff !important;
+      background: #454545 !important;
+    }
+  }
+
+  /* Mobile nav overlay styling in dark mode */
+  .dark-theme.mobile-nav-active .navmenu {
+    background: rgba(29, 29, 29, 0.95) !important;
+  }
+
+  .dark-theme.mobile-nav-active .mobile-nav-toggle {
+    color: #e0e0e0 !important;
+  }
+
   /* Theme Settings Panel Styling */
   .fixed-plugin-customer {
     position: fixed;
@@ -513,7 +568,7 @@
     width: 50px;
     height: 50px;
     cursor: pointer;
-    top: 20px;
+    bottom: 20px;
     right: 20px;
   }
 
@@ -535,7 +590,7 @@
   .theme-panel-customer {
     position: fixed;
     right: -350px;
-    top: 20px;
+    bottom: 80px;
     width: 320px;
     transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 999;
@@ -545,6 +600,19 @@
 
   .theme-panel-customer.show {
     right: 20px;
+  }
+
+  /* Mobile view - position theme icon below hamburger menu */
+  @media (max-width: 1199px) {
+    .fixed-plugin-button-customer {
+      top: 80px;
+      bottom: auto;
+    }
+
+    .theme-panel-customer {
+      bottom: auto;
+      top: 130px;
+    }
   }
 
   .dark-theme .theme-panel-customer {

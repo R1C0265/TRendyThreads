@@ -28,8 +28,8 @@ function isActive($pageName)
     $currentPage = basename($_SERVER['PHP_SELF']);
     return ($currentPage === $pageName) ? 'active bg-gradient-dark text-white' : 'text-dark';
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
