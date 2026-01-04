@@ -106,5 +106,6 @@ $pageName = ucfirst(str_replace('.php', '', $currentPage));
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
+      
     </div>
   </header>

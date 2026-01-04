@@ -75,7 +75,7 @@
 <!-- Theme Settings Panel -->
 <div class="fixed-plugin-customer">
   <a class="fixed-plugin-button-customer text-dark position-fixed px-3 py-2" title="Theme Settings">
-    <i class="bi bi-gear" style="font-size: 20px;"></i>
+    <i class="bi bi-list" style="font-size: 20px;"></i>
   </a>
   <div class="card shadow-lg theme-panel-customer">
     <div class="card-header pb-0 pt-3">
@@ -92,6 +92,29 @@
     </div>
     <hr class="my-1" />
     <div class="card-body pt-sm-3 pt-0">
+
+      <ul>
+        <li><a href="index.php" class="<?php echo isActive('index.php', true); ?>">Home</a></li>
+        <li><a href="index.php#about" class="<?php echo isActive('about', true); ?>">About Us</a></li>
+        <li><a href="index.php#contact" class="<?php echo isActive('contact', true); ?>">Contact</a></li>
+        <li><a href="store.php" class="<?php echo isActive('store.php'); ?>">Store</a></li>
+
+        <?php if ($isLoggedIn && $userType == '3'): ?>
+          <li class="dropdown">
+            <a href="#">
+              <span><i class="icon bi bi-person-down toggle-dropdown"></i></span>
+              <i class="bi bi-chevron-down toggle-dropdown"></i>
+            </a>
+            <ul>
+              <li><a href="#">Help</a></li>
+              <li><a href="profile.php" class="<?php echo isActive('profile.php'); ?>">Profile</a></li>
+              <li><a href="logout.php">Sign Out</a></li>
+            </ul>
+          </li>
+        <?php else: ?>
+          <li><a href="signin.php" class="<?php echo isActive('signin.php'); ?>">Login</a></li>
+        <?php endif; ?>
+      </ul>
       <!-- Theme Mode Selection -->
       <div class="mt-2">
         <h6 class="mb-3">Theme Mode</h6>
